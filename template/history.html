@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Card Detector</title>
+    <style>
+        :root {
+            --primary: #df99f5;
+        }
+    </style>
+    <!-- Подключение стилей PicoCSS -->
+    <link rel="stylesheet" type="text/css" href="/static/pico.css">
+
+</head>
+<body>
+<div>
+    <nav class="container-fluid">
+        <ul>
+
+        </ul>
+        <ul>
+            <li><a href="/">Загрузить</a></li>
+            <li><a href="/history" class="secondary">История</a></li>
+            <li><a href="/about">Что тут?</a></li>
+        </ul>
+    </nav>
+
+    <header class="container">
+        <hgroup>
+            <a href="/">
+                <h1>
+
+                </h1>
+            </a>
+            <h2>Card Detector</h2>
+        </hgroup>
+    </header>
+</div>
+
+<div class="container">
+    <main>
+        <table class="pico-table">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Данные</th>
+                <th>О файле</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{ range . }}
+            <tr>
+                <td>
+                    <a href="{{ .PhotoUrl }}" target="_blank">
+                        <img src="{{ .PhotoUrl }}" width="100">
+                    </a>
+                </td>
+                <td>
+                    <ul>
+                        <li><b>Email</b> {{ .Email }}</li>
+                        <li><b>Name</b> {{ .Name }}</li>
+                        <li><b>Phone</b> {{ .Phone }}</li>
+                        <li><b>Site</b> {{ .Site }}</li>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <li><b>UploadedAt</b> {{ .UploadedAt | formatDate }}</li>
+                        <li><b>Owner</b> {{ .Owner }}</li>
+                    </ul>
+                </td>
+            </tr>
+            {{ end }}
+            </tbody>
+        </table>
+    </main>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,19 @@
+name: card_detector
+version: 1.0.0
+
+port: 8080
+
+tmp_folder: ./tmp
+storage_folder: ./storage
+path_profession_list: ../config/professions.txt
+path_company_list: ../config/companies.txt
+path_names_list: ../config/names.txt
+
+onnx:
+  path_runtime: ../lib/libonnxruntime.so
+  path_model: ../onnx/my-card-detector.onnx
+
+log:
+  level: info
+  time: true
+debug: true

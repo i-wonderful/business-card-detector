@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Card Detector</title>
+    <!-- Подключение стилей PicoCSS -->
+    <link rel="stylesheet" type="text/css" href="/static/pico.min.css">
+    {{ block "css" . }}{{ end }}
+</head>
+<body>
+<div>
+    <nav class="container-fluid">
+        <ul>
+        </ul>
+        <ul>
+            <li><a href="/" class="secondary">Загрузить</a></li>
+            <li><a href="/history">История</a></li>
+        </ul>
+    </nav>
+    <header class="container">
+        <hgroup>
+            <h1></h1>
+            <h2>Card Detector</h2>
+        </hgroup>
+    </header>
+</div>
+
+<!--<article>-->
+{{ block "content" . }}{{ end }}
+<!--</article>-->
+
+<footer>
+    footer
+    <!-- Футер сайта -->
+</footer>
+
+</body>
+</html>
