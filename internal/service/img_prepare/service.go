@@ -44,7 +44,7 @@ func (s *Service) Prepare(imgFile *os.File) (image.Image, string) {
 	log.Println("Image type:", reflect.TypeOf(im))
 	//im = img.MakeRectMinZero(im) // to NRGBA
 	bytes := img.ToBytes(im)
-	//im, _ = img.ToImage(bytes)            // save image type
+	//im, _ = img.ToImage(bytes) // save image type
 	currentFilePath := s.storageFolder + "/" + uuid.New().String() + "." + format
 	//img.SaveNRGBA(&im, currentFilePath)
 	if err = img.SaveImg(currentFilePath, bytes); err != nil {
@@ -82,8 +82,10 @@ func RotateImageWithOrientation(im image.Image, orientation string) (image.Image
 
 func getOrientation(imgFile *os.File) string {
 	metaData, err := exif.Decode(imgFile)
+
 	if err != nil {
 		log.Printf("Error decoding image metadata: %v", err)
+		imgFile.Seek(0, 0)
 		return ORIENTATION_NONE
 	}
 
