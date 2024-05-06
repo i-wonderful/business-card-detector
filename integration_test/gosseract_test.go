@@ -6,8 +6,9 @@ import (
 	"card_detector/internal/util/img"
 	"fmt"
 	"github.com/disintegration/imaging"
-	"github.com/otiai10/gosseract"
+	"github.com/otiai10/gosseract/v2"
 	"github.com/stretchr/testify/assert"
+	"reflect"
 
 	"testing"
 )
@@ -99,7 +100,7 @@ func TestRecognizeTextRawImg(t *testing.T) {
 		{
 			// phone
 			name:     "phone 2912",
-			imgPath:  "./data/phone_2912_raw.jpg",
+			imgPath:  "./data/phone_2912_raw2.jpg",
 			expected: "+356 99723767",
 		},
 	}
@@ -109,6 +110,7 @@ func TestRecognizeTextRawImg(t *testing.T) {
 
 		t.Run(tc.name, func(t *testing.T) {
 			im, _ := img.OpenImg(tc.imgPath)
+			fmt.Println("type im:", reflect.TypeOf(im))
 			//bytes := manage_file.ReadFileBytes(tc.imgPath)
 
 			//im, _ := img.ToImage(bytes)
@@ -117,10 +119,11 @@ func TestRecognizeTextRawImg(t *testing.T) {
 			// увеличить контраст
 			im = imaging.AdjustContrast(im, 20)
 			// резкость
-			im = imaging.Sharpen(im, 0.36)
+			im = imaging.Sharpen(im, 0.35)
 			// светлость
-			//im = imaging.AdjustGamma(im, 0.8)
+			//im = imaging.AdjustGamma(im, 1.2)
 
+			fmt.Println("type im:", reflect.TypeOf(im))
 			bytes := img.ToBytes(im)
 			content := [][]byte{bytes}
 			img.SaveImg("./tmp/"+fmt.Sprintf("im_gosseract_%s.jpg", tc.name), bytes)
@@ -141,7 +144,7 @@ func TestDetectFromFile(t *testing.T) {
 	client.SetPageSegMode(gosseract.PSM_RAW_LINE | gosseract.PSM_SINGLE_LINE)
 	client.SetBlacklist("№;`^>\\'‘")
 
-	err := client.SetImage("./data/subimage2.jpg")
+	err := client.SetImage("./tmp/subimage2.jpg")
 	if err != nil {
 		t.Error(err)
 	}

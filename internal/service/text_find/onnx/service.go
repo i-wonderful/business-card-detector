@@ -12,6 +12,11 @@ import (
 )
 
 const IMG_SIZE = 640
+const COUNT_CLASSES = 2
+const CLASS_TEXT = "text"
+const CLASS_CARD = "card"
+const IOU_LIMIT = 0.87 // 0.8
+const PROB_MIN = 0.37  // 0.5
 
 type FindTextService struct {
 	pathToOnnxRuntime string
@@ -63,7 +68,7 @@ func (s *FindTextService) PredictTextCoord(img image.Image) ([]model.TextArea, e
 		x1 = x1 - wAdd
 		w += 2 * wAdd
 
-		if label == "text" {
+		if label == CLASS_TEXT {
 			prediction := model.TextArea{X: int(x1), Y: int(y1), Width: int(w), Height: int(h)}
 			result = append(result, prediction)
 		}
@@ -71,8 +76,6 @@ func (s *FindTextService) PredictTextCoord(img image.Image) ([]model.TextArea, e
 
 	return result, nil
 }
-
-const COUNT_CLASSES = 2
 
 // Returns Array of bounding boxes in format [[x1,y1,x2,y2,object_type,probability],..]
 func detect_objects_on_image(pathModel string, img image.Image) [][]interface{} {
@@ -87,7 +90,6 @@ func detect_objects_on_image(pathModel string, img image.Image) [][]interface{} 
 //
 // e.g. to concat these three colors in one after one
 func prepare_input(img image.Image) ([]float32, int64, int64) {
-	//img, _, _ := image.Decode(buf)
 	size := img.Bounds().Size()
 	img_width, img_height := int64(size.X), int64(size.Y)
 
@@ -143,10 +145,13 @@ func process_output(output []float32, img_width, img_height int64) [][]interface
 				class_id = col
 			}
 		}
-		if prob < 0.5 {
+		if prob < PROB_MIN {
 			continue
 		}
 		label := yolo_classes[class_id]
+		if label == CLASS_CARD {
+			continue
+		}
 		xc := output[index] // center
 		yc := output[8400+index]
 		w := output[2*8400+index]
@@ -160,16 +165,17 @@ func process_output(output []float32, img_width, img_height int64) [][]interface
 	}
 
 	sort.Slice(boxes, func(i, j int) bool {
-		return boxes[i][5].(float32) < boxes[j][5].(float32)
+		return boxes[i][5].(float32) > boxes[j][5].(float32)
 	})
 	//  non-maximum suppression (NMS)
 	// удаляем лишние боксы
 	result := [][]interface{}{}
 	for len(boxes) > 0 {
 		result = append(result, boxes[0])
+		boxes = boxes[1:]
 		tmp := [][]interface{}{}
 		for _, box := range boxes {
-			if iou(boxes[0], box) < 0.8 {
+			if iou(result[len(result)-1], box) < IOU_LIMIT {
 				tmp = append(tmp, box)
 			}
 		}

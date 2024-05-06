@@ -1,9 +1,10 @@
 package text_recognize
 
 import (
-	"github.com/otiai10/gosseract"
 	"log"
 	"time"
+
+	"github.com/otiai10/gosseract/v2"
 )
 
 // TextRecognizeService - recognize text from image
@@ -15,7 +16,7 @@ type TextRecognizeService struct {
 func NewService(isLogTime bool) *TextRecognizeService {
 	client := gosseract.NewClient()
 	client.SetLanguage("eng+rus")
-	client.SetPageSegMode(gosseract.PSM_RAW_LINE | gosseract.PSM_SINGLE_LINE)
+	client.SetPageSegMode(gosseract.PSM_SINGLE_LINE)
 	client.SetBlacklist("№;`^>\\'‘›!¢][¥|")
 
 	//client.SetVariable("user_words", "../config/names")

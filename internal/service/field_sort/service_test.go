@@ -1,6 +1,7 @@
 package field_sort
 
 import (
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -140,6 +141,11 @@ func TestExtractSkype(t *testing.T) {
 			input:    "Mail: b2b@lLinebet.com Skype: partners@Linebet.com",
 			expected: "partners@Linebet.com",
 		},
+		{
+			"Without colon",
+			"Skype flavio.tamega",
+			"flavio.tamega",
+		},
 	}
 
 	for _, test := range tests {
@@ -180,6 +186,7 @@ func TestExtractEmail(t *testing.T) {
 		})
 	}
 }
+
 func TestService_Sort(t *testing.T) {
 
 	testCases := []struct {
@@ -222,7 +229,6 @@ func TestService_Sort(t *testing.T) {
 			},
 		},
 		{
-			// ivk@colibrix.io
 			name: "Simple Email",
 			input: []string{
 				"ivk@colibrix.io",
@@ -232,12 +238,76 @@ func TestService_Sort(t *testing.T) {
 			},
 		},
 		{
-			"Simpe site",
+			"Simple site",
 			[]string{
 				"www.tornado-games.com",
 			},
 			map[string]interface{}{
 				"site": "www.tornado-games.com",
+			},
+		}, {
+			name: "Complex",
+			input: []string{
+				"-endorphina",
+				"GRETTA KOCHKONYAN",
+				"Head Of Account Management",
+				"5 gretta@endorphina.com",
+				"5) gretta@endorphina.com",
+				"+420 222 564 222",
+				"‚ endorphina.com",
+			},
+			expected: map[string]interface{}{
+				"name":     "GRETTA KOCHKONYAN",
+				"jobTitle": "Head Of Account Management",
+				"company":  "endorphina",
+				"email":    "gretta@endorphina.com",
+				"skype":    "gretta@endorphina.com",
+				"phone":    []string{"+420 222 564 222"},
+				"site":     "endorphina.com",
+			},
+		},
+		{
+			"Complex2",
+			[]string{
+				"Areg Oganesian",
+				"www.igtrm.com",
+				"+374 99 452772",
+			},
+			map[string]interface{}{
+				"name":  "Areg Oganesian",
+				"site":  "www.igtrm.com",
+				"phone": []string{"+374 99 452772"},
+			},
+		},
+		{
+			"Company",
+			[]string{
+				"Payment.Center",
+			},
+			map[string]interface{}{
+				"company": "Payment.Center",
+			},
+		},
+		{
+			"Complex3",
+			[]string{
+				"GAMING",
+				", www.369gaming media",
+				"VRID",
+				"Martin Buero",
+				"General Manager",
+				": +598 95 641 888",
+				"Martin@369gaming.media",
+				"Skype live: cid. 9e53d8c1 1 51546",
+			},
+			map[string]interface{}{
+				"name":     "Martin Buero",
+				"jobTitle": "General Manager",
+				"company":  "GAMING",
+				"email":    "Martin@369gaming.media",
+				"site":     "www.369gaming.media",
+				//"skype":    "cid. 9e53d8c1 1 51546",
+				"phone": []string{"+598 95 641 888"},
 			},
 		},
 	}
@@ -251,9 +321,7 @@ func TestService_Sort(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			result := service.Sort(tc.input)
 			for k, v := range tc.expected {
-				if result[k] != v {
-					t.Errorf("Field %q. Expected %q, got %q", k, v, result[k])
-				}
+				assert.Equal(t, result[k], v, "Field %q. Expected %q, got %q", k, v, result[k])
 			}
 		})
 	}

@@ -118,7 +118,9 @@ func (d *Detector) Detect(imgPath string) (*model.Person, error) {
 		// резкость (???)
 		subImage = imaging.Sharpen(subImage, 0.36)
 		// светлость
-		subImage = imaging.AdjustGamma(subImage, 1.4)
+		subImage = imaging.AdjustGamma(subImage, 1.3)
+
+		//subImage = imaging.Threshold(subImage, 128)
 
 		subImageBytes := ToBytes(subImage)
 		if d.isDebug {

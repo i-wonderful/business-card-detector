@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+	"unicode"
 )
 
 type Service struct {
@@ -51,18 +52,27 @@ func (d *Service) Sort(data []string) map[string]interface{} {
 	//singleName := regexp.MustCompile("^[А-ЯA-Z][а-яa-z]{1,}$")
 	telegramRegex := regexp.MustCompile(`(?:https?://t\.me/|@)[A-Za-z][A-Za-z0-9_]{4,31}`)
 
-	var email, name, company, jobTitle, telegram, website, skype string
+	var email, name, company, jobTitle, telegram, website, skype, domain, zone string
 	phones := []string{}
 
 	person := map[string]interface{}{}
 	notDetectItems := []string{}
 
-	//phone = manage_str2.FindAndRemovePhone(data)
 	for _, line := range data {
 		line = strings.TrimSpace(line)
 
 		if match := emailNewRegex.FindStringSubmatch(line); len(match) > 1 {
-			email = strings.Replace(match[1], " ", "", -1)
+			findEmail := strings.Replace(match[1], " ", "", -1)
+			if email == "" {
+				email = findEmail
+			} else if skype == "" { // скайп может совпадать с email
+				skype = findEmail
+			}
+
+			// domain may be company
+			domain, zone = extractDomainAndZone(findEmail)
+			d.companies = append(d.companies, domain)
+
 			line = strings.ReplaceAll(line, match[1], "")
 			if len(line) > 5 {
 				notDetectItems = append(notDetectItems, line)
@@ -75,8 +85,8 @@ func (d *Service) Sort(data []string) map[string]interface{} {
 			if len(line) > 5 {
 				notDetectItems = append(notDetectItems, line)
 			}
-		} else if website == "" && manage_str2.IsValidURL(line) {
-			website = line
+		} else if w := extractURL(line); w != "" && website == "" { // todo уменьшить вызовы
+			website = w
 		} else if company == "" && isContains(line, d.companies) {
 			company = line
 		} else if name == "" && isContainsWithSpace(line, d.names) {
@@ -103,16 +113,19 @@ func (d *Service) Sort(data []string) map[string]interface{} {
 			}
 		}
 		if website == "" {
-			if s := extractURL(item); s != "" {
+			if s := extractBrokenUrl(item, domain, zone); s != "" {
 				website = s
 				continue
 			}
 		}
 		if company == "" {
+			if domain != "" && strings.Contains(item, domain) {
+				company = domain
+				continue
+			}
 			if math := companyRegex.MatchString(item); math {
 				company += " " + item
 				continue
-
 			}
 		}
 		if skype == "" {
@@ -202,25 +215,59 @@ func extractURL(text string) string {
 	}
 
 	// Если email не найден, извлекаем URL
+	return simpleGetUrl(text)
+}
+
+func simpleGetUrl(val string) string {
 	urlRegex := regexp.MustCompile(`(?:https?://)?([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?`)
-	match := urlRegex.FindStringSubmatch(text)
-	if len(match) > 1 {
+	match := urlRegex.FindStringSubmatch(val)
+	if len(match) > 1 && manage_str2.IsValidURL(match[1]) {
+
 		return match[1]
 	}
 	return ""
 }
 
+func extractBrokenUrl(text string, domain, zone string) string {
+	url := extractURL(text)
+	if url != "" {
+		return url
+	}
+	if domain == "" || zone == "" {
+		return ""
+	}
+	text = strings.TrimLeftFunc(text, func(r rune) bool {
+		return !unicode.IsLetter(r) && !unicode.IsNumber(r)
+	})
+
+	urlRegex := regexp.MustCompile(`(?i)(www\.)?` + domain + `\s*\.?\s*` + zone + `\s*`)
+
+	// Поиск совпадения в тексте
+	match := urlRegex.FindString(text)
+	if match == "" {
+		return ""
+	}
+
+	if strings.HasPrefix(match, "www.") {
+		return "www." + domain + "." + zone
+	}
+	return domain + "." + zone
+}
+
 // ео\nSkype live:.cid.9e53d8c1 151646
 func extractSkype(text string) string {
-	pattern := `(?i)(?:skype\s*(?:live\s*)?[:\.]\s*|skype:\s*)(\w+(?:@\w+\.[\w.]+)?)`
+	pattern := `(?i)(?:skype\s*(?:live\s*)?[:\.]\s*|skype:\s*)(\w+(?:@\w+\.[\w.]+)?)|(?i)skype\s+(\w+\.\w+)`
 	re := regexp.MustCompile(pattern)
 	subs := re.FindStringSubmatch(text)
 	if len(subs) > 1 {
-		return subs[1]
+		if subs[1] != "" {
+			return subs[1]
+		} else if subs[2] != "" {
+			return subs[2]
+		}
 	}
 	return ""
 }
-
 func extractTelegram(text string) string {
 	pattern := `(?i)telegram:\s*(\w+)`
 	regex := regexp.MustCompile(pattern)
@@ -230,6 +277,18 @@ func extractTelegram(text string) string {
 		return matches[1]
 	}
 	return ""
+}
+
+func extractDomainAndZone(email string) (string, string) {
+	parts := strings.Split(email, "@")
+	if len(parts) != 2 {
+		return "", "" // Неверный формат адреса электронной почты
+	}
+	domainParts := strings.Split(parts[1], ".")
+	if len(domainParts) < 2 {
+		return "", "" // Неверный формат домена
+	}
+	return domainParts[0], domainParts[1]
 }
 
 func trim(val []string) []string {

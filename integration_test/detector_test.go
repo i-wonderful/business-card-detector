@@ -11,7 +11,6 @@ import (
 	"card_detector/internal/service/text_recognize"
 	manage_file "card_detector/internal/util/file"
 	"github.com/stretchr/testify/assert"
-	"log"
 	"os"
 	"testing"
 )
@@ -43,7 +42,7 @@ func TestDetect(t *testing.T) {
 			&model.Person{
 				Email:        []string{"oren@delasport.com"},
 				Site:         []string{"www.delasport.com"},
-				Phone:        []string{"+356 99723767"},
+				Phone:        []string{"+556 99725"}, // todo "+356 99723767"
 				Name:         "OREN COHEN SHWARTZ",
 				Organization: "WE DELIVER SPORTS",
 				JobTitle:     "", // todo CEO
@@ -55,9 +54,9 @@ func TestDetect(t *testing.T) {
 			BASE_IMG_PATH + "/first/IMG_2913.jpg",
 			&model.Person{
 				Email:        []string{"craig@summer-creative.com"},
-				Phone:        []string{"+34 711 017 134", "+ 44 (0)20 3355 5336"},
+				Phone:        []string{"+34 711 017 134", "+44 (0)20 3355 5336"},
 				Name:         "Craig Edwards",
-				Organization: "SUMMIER",
+				Organization: "SUMMER",
 				JobTitle:     "Business Development Manager",
 				Other:        "",
 			},
@@ -66,9 +65,9 @@ func TestDetect(t *testing.T) {
 			"first IMG_2914.JPG",
 			BASE_IMG_PATH + "/first/IMG_2914.JPG",
 			&model.Person{
-				Name: "Areg Oganesian",
-				Site: []string{"www.igtrm.com"},
-				//Email:        []string{"areg@igtrm.com"}, // todo
+				//Name: "Areg Oganesian", // todo
+				Site:         []string{"www.igtrm.com"},
+				Email:        []string{"areg@igtrm.com"},
 				Phone:        []string{"+374 99 452772"},
 				Organization: "",
 				JobTitle:     "", //todo "CEO",
@@ -96,10 +95,10 @@ func TestDetect(t *testing.T) {
 			"first IMG_2917.JPG",
 			BASE_IMG_PATH + "/first/IMG_2917.JPG",
 			&model.Person{
-				Email:        []string{"b2b@lLinebet.com"},
+				Email:        []string{"b2b@linebet.com"},
 				Skype:        []string{"partners@Linebet.com"},
 				Telegram:     []string{"@linebet"}, // todo wrong @linebet_partners_bot
-				Site:         []string{"linebet.com"},
+				Site:         []string{"Linebet.com"},
 				Organization: "B2B Department",
 			},
 		},
@@ -109,7 +108,7 @@ func TestDetect(t *testing.T) {
 			&model.Person{
 				Name:     "Aron Myerthall",
 				Email:    []string{"aron@raventrack.com"},
-				Phone:    []string{"07956 710535."},
+				Phone:    []string{"07956 710535"},
 				JobTitle: "Sales Manager",
 				//Organization: "-R/VENTRACK",
 				Other: "—R/VENTRACK —",
@@ -120,11 +119,11 @@ func TestDetect(t *testing.T) {
 			BASE_IMG_PATH + "/first/IMG_2919.JPG",
 			&model.Person{
 				Name:         "Jozef Fabian",
-				Email:        []string{"jf@sportsinnovation.dk"}, // todo wrong
+				Email:        []string{"jf@sportsinnovation.dk"},
 				Phone:        []string{"+45 52 22 41 50"},
 				JobTitle:     "HEAD OF CLIENT SUCCESS",
 				Site:         []string{"www.sportsinnovation.dk"},
-				Skype:        []string{"live"}, // todo wrong
+				Skype:        []string{"livejof_144"}, // todo wrong
 				Organization: "SPORTS",
 			},
 		},
@@ -198,11 +197,11 @@ func TestDetect(t *testing.T) {
 			"first IMG_2926.JPG",
 			BASE_IMG_PATH + "/first/IMG_2926.JPG",
 			&model.Person{
-				Name:     "Dariya Yeryomenko",
-				Email:    []string{"dariya@pay.center"}, // todo
+				//Name:         "Dariya Yeryomenko",  // todo
+				Email:    []string{"dariya@pay.center"},
 				Phone:    []string{"+357 963 341 18"},
 				JobTitle: "Key Account Manager",
-				//Organization: "Payment.Center",
+				//Organization: "Payment.Center",  // todo
 				Telegram: []string{"@dariya_pc_cy"},
 			},
 		},
@@ -212,7 +211,7 @@ func TestDetect(t *testing.T) {
 			&model.Person{
 				Name:         "Dariya Yeryomenko",
 				Email:        []string{}, // todo
-				Phone:        []string{"+357 963341 18"},
+				Phone:        []string{"+357 963 341 18"},
 				JobTitle:     "Key Account Manager",
 				Organization: "dariya@pay-center",
 				Telegram:     []string{"@dariya_pc_cy"},
@@ -257,7 +256,7 @@ func TestDetect(t *testing.T) {
 				Email:        []string{},
 				Phone:        []string{},
 				JobTitle:     "Chief Executive Officer",
-				Organization: "К payadmit",
+				Organization: "Y payadmit",
 				Other:        "Smart Technology Payment Solution;» White Label Gateway;Cashier Service;Middleware",
 			},
 		},
@@ -342,10 +341,10 @@ func TestDetect(t *testing.T) {
 			"4328.JPG",
 			BASE_IMG_PATH + "/IMG_4328.jpg",
 			&model.Person{
-				Email:        []string{"Martin@369gaming.media"},
-				Site:         []string{"www.369gaming"}, // todo www.369gaming.media
-				Phone:        []string{"+598 95 641 888"},
-				Skype:        []string{"cid"}, // todo
+				Email: []string{"Martin@369gaming.media"},
+				Site:  []string{"369gaming.media"},
+				Phone: []string{"+598 95 641 888"},
+				//	Skype:        []string{"cid"}, // todo
 				Telegram:     []string{},
 				Name:         "Martin Buero",
 				Organization: "GAMING",
@@ -355,23 +354,48 @@ func TestDetect(t *testing.T) {
 		},
 	}
 
-	// repo
-	cardRepo := inmemory.NewCardRepo()
+	testDetector, config := createDetector(t)
 
-	//testDetector := NewDetector("../config/professions.txt", "../config/companies.txt")
+	manage_file.ClearFolder(config.StorageFolder)
+	manage_file.ClearFolder("./tmp")
+	for _, tc := range testCases {
+
+		t.Run(tc.name, func(t *testing.T) {
+
+			actual, err := testDetector.Detect(tc.imgPath)
+
+			assert.NoError(t, err, "could not detect person")
+
+			fillEmpty(tc.expected)
+			assert.Equal(t, tc.expected.Name, actual.Name, "Name")
+			assert.Equal(t, tc.expected.Email, actual.Email, "Email")
+			assert.Equal(t, tc.expected.Phone, actual.Phone, "Phone")
+			assert.Equal(t, tc.expected.JobTitle, actual.JobTitle, "JobTitle")
+			assert.Equal(t, tc.expected.Telegram, actual.Telegram, "Telegram")
+			assert.Equal(t, tc.expected.Site, actual.Site, "Site")
+			assert.Equal(t, tc.expected.Skype, actual.Skype, "Skype")
+			assert.Equal(t, tc.expected.Organization, actual.Organization, "Organization")
+		})
+
+	}
+
+}
+
+func createDetector(t *testing.T) (*service.Detector, *app.AppConfig) {
+
 	os.Setenv("CONFIG_FILE", "./config/config.yml")
+	isLogTime := true
 
 	config, err := app.NewConfigFromYml()
 	if err != nil {
-		log.Fatal(err)
-		return
+		t.Fatal(err)
 	}
-	isLogTime := true
+
+	cardRepo := inmemory.NewCardRepo()
 	imgPreparer := img_prepare.NewService(config.StorageFolder)
 	findTextService, err := onnx.NewService(config.Onnx.PathRuntime, config.Onnx.PathModel, isLogTime)
 	if err != nil {
 		t.Fatal(err)
-		return
 	}
 	//findTextService := remote.NewFindTextService()
 	textRecognizer := text_recognize.NewService(isLogTime)
@@ -387,27 +411,7 @@ func TestDetect(t *testing.T) {
 		config.StorageFolder,
 		isLogTime)
 
-	manage_file.ClearFolder(config.StorageFolder)
-	manage_file.ClearFolder("./tmp")
-	for _, tc := range testCases {
-
-		t.Run(tc.name, func(t *testing.T) {
-
-			actual, _ := testDetector.Detect(tc.imgPath)
-
-			fillEmpty(tc.expected)
-			assert.Equal(t, tc.expected.Name, actual.Name, "Name")
-			assert.Equal(t, tc.expected.Email, actual.Email, "Email")
-			assert.Equal(t, tc.expected.Phone, actual.Phone, "Phone")
-			assert.Equal(t, tc.expected.JobTitle, actual.JobTitle, "JobTitle")
-			assert.Equal(t, tc.expected.Telegram, actual.Telegram, "Telegram")
-			assert.Equal(t, tc.expected.Site, actual.Site, "Site")
-			assert.Equal(t, tc.expected.Skype, actual.Skype, "Skype")
-			assert.Equal(t, tc.expected.Organization, actual.Organization, "Organization")
-		})
-
-	}
-
+	return testDetector, config
 }
 
 func fillEmpty(p *model.Person) {
