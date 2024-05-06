@@ -1,4 +1,4 @@
-FROM golang:1.20.1
+FROM golang:latest
 
 RUN mkdir /app
 WORKDIR /app
@@ -18,7 +18,10 @@ RUN mkdir /app/storage
 
 # Устанавливаем пакеты, необходимые для использования gosseract
 RUN apt-get update && \
-    apt-get install -y libleptonica-dev libtesseract-dev tesseract-ocr tesseract-ocr-eng tesseract-ocr-rus
+    apt-get install -y libleptonica-dev libtesseract-dev tesseract-ocr \
+        tesseract-ocr-eng \
+        tesseract-ocr-rus && \
+    apt-get clean
 
 ENV GO111MODULE=on
 RUN go build -o main ./cmd
