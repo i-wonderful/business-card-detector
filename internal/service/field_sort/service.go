@@ -59,7 +59,7 @@ func (d *Service) Sort(data []string) map[string]interface{} {
 	notDetectItems := []string{}
 
 	for _, line := range data {
-		line = strings.TrimSpace(line)
+		line = clearTrashSymbols(line)
 
 		if match := emailNewRegex.FindStringSubmatch(line); len(match) > 1 {
 			findEmail := strings.Replace(match[1], " ", "", -1)
@@ -236,9 +236,6 @@ func extractBrokenUrl(text string, domain, zone string) string {
 	if domain == "" || zone == "" {
 		return ""
 	}
-	text = strings.TrimLeftFunc(text, func(r rune) bool {
-		return !unicode.IsLetter(r) && !unicode.IsNumber(r)
-	})
 
 	urlRegex := regexp.MustCompile(`(?i)(www\.)?` + domain + `\s*\.?\s*` + zone + `\s*`)
 
@@ -289,6 +286,13 @@ func extractDomainAndZone(email string) (string, string) {
 		return "", "" // Неверный формат домена
 	}
 	return domainParts[0], domainParts[1]
+}
+
+func clearTrashSymbols(val string) string {
+	val = strings.TrimFunc(val, func(r rune) bool {
+		return !unicode.IsLetter(r) && !unicode.IsNumber(r) && r != '+' && r != '@'
+	})
+	return val
 }
 
 func trim(val []string) []string {

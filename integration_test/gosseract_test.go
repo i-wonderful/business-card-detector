@@ -144,7 +144,7 @@ func TestDetectFromFile(t *testing.T) {
 	client.SetPageSegMode(gosseract.PSM_RAW_LINE | gosseract.PSM_SINGLE_LINE)
 	client.SetBlacklist("№;`^>\\'‘")
 
-	err := client.SetImage("./tmp/subimage2.jpg")
+	err := client.SetImage("./testdata/crop.jpeg")
 	if err != nil {
 		t.Error(err)
 	}

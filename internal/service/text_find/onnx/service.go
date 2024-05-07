@@ -6,7 +6,6 @@ import (
 	ort "github.com/yalue/onnxruntime_go"
 	"image"
 	"log"
-	"math"
 	"sort"
 	"time"
 )
@@ -15,8 +14,14 @@ const IMG_SIZE = 640
 const COUNT_CLASSES = 2
 const CLASS_TEXT = "text"
 const CLASS_CARD = "card"
-const IOU_LIMIT = 0.87 // 0.8
-const PROB_MIN = 0.37  // 0.5
+const IOU_LIMIT = 0.8 // 0.8
+const PROB_MIN = 0.4  // 0.5
+
+type box struct {
+	x1, y1, x2, y2 float64
+	label          string
+	prob           float32
+}
 
 type FindTextService struct {
 	pathToOnnxRuntime string
@@ -50,11 +55,15 @@ func (s *FindTextService) PredictTextCoord(img image.Image) ([]model.TextArea, e
 
 	result := []model.TextArea{}
 	for _, p := range rawPrediction {
-		x1 := p[0].(float64)
-		y1 := p[1].(float64)
-		x2 := p[2].(float64)
-		y2 := p[3].(float64)
-		label := p[4]
+		if p.label == CLASS_CARD {
+			continue
+		}
+
+		x1 := p.x1
+		y1 := p.y1
+		x2 := p.x2
+		y2 := p.y2
+
 		h := y2 - y1
 		w := x2 - x1
 
@@ -68,24 +77,20 @@ func (s *FindTextService) PredictTextCoord(img image.Image) ([]model.TextArea, e
 		x1 = x1 - wAdd
 		w += 2 * wAdd
 
-		if label == CLASS_TEXT {
-			prediction := model.TextArea{X: int(x1), Y: int(y1), Width: int(w), Height: int(h)}
-			result = append(result, prediction)
-		}
+		prediction := model.TextArea{X: int(x1), Y: int(y1), Width: int(w), Height: int(h)}
+		result = append(result, prediction)
 	}
 
 	return result, nil
 }
 
 // Returns Array of bounding boxes in format [[x1,y1,x2,y2,object_type,probability],..]
-func detect_objects_on_image(pathModel string, img image.Image) [][]interface{} {
+func detect_objects_on_image(pathModel string, img image.Image) []box {
 	input, img_width, img_height := prepare_input(img)
 	output := runModel(pathModel, input)
 	return process_output(output, img_width, img_height)
 }
 
-// todo передавать image?
-//
 //	the ONNX library for Go, requires you to provide tensor RGB as a flat array,
 //
 // e.g. to concat these three colors in one after one
@@ -135,8 +140,8 @@ func runModel(pathToModel string, input []float32) []float32 {
 }
 
 // Returns Array of bounding boxes in format [[x1,y1,x2,y2,object_type,probability],..]
-func process_output(output []float32, img_width, img_height int64) [][]interface{} {
-	boxes := [][]interface{}{}
+func process_output(output []float32, img_width, img_height int64) []box {
+	boxes := []box{}
 	for index := 0; index < 8400; index++ {
 		class_id, prob := 0, float32(0.0)
 		for col := 0; col < COUNT_CLASSES; col++ {
@@ -161,55 +166,43 @@ func process_output(output []float32, img_width, img_height int64) [][]interface
 		x2 := (xc + w/2) / IMG_SIZE * float32(img_width)
 		y2 := (yc + h/2) / IMG_SIZE * float32(img_height)
 		//prediction{X: x1}
-		boxes = append(boxes, []interface{}{float64(x1), float64(y1), float64(x2), float64(y2), label, prob})
+		b := box{float64(x1), float64(y1), float64(x2), float64(y2), label, prob}
+		boxes = append(boxes, b)
 	}
 
-	sort.Slice(boxes, func(i, j int) bool {
-		return boxes[i][5].(float32) > boxes[j][5].(float32)
-	})
-	//  non-maximum suppression (NMS)
-	// удаляем лишние боксы
-	result := [][]interface{}{}
-	for len(boxes) > 0 {
-		result = append(result, boxes[0])
-		boxes = boxes[1:]
-		tmp := [][]interface{}{}
-		for _, box := range boxes {
-			if iou(result[len(result)-1], box) < IOU_LIMIT {
-				tmp = append(tmp, box)
-			}
-		}
-		boxes = tmp
-	}
-
+	result := nmsFilter(boxes)
 	return result
 
 }
 
+//	non-maximum suppression (NMS)
+
+// удаляем лишние боксы
+func nmsFilter(boxes []box) []box {
+	// сортируем боксы по убыванию вероятности
+	sort.Slice(boxes, func(i, j int) bool {
+		return boxes[i].prob > boxes[j].prob
+	})
+
+	result := []box{}
+	for _, b := range boxes {
+		keepBox := true
+		for _, selectedBox := range result {
+			iouBox := iou(b, selectedBox)
+			if iouBox >= IOU_LIMIT {
+				keepBox = false
+				break
+			}
+		}
+		if keepBox {
+			result = append(result, b)
+		}
+	}
+	return result
+}
+
 // -------------- IoU ----------------
 var yolo_classes = []string{"card", "text"}
-
-func iou(box1, box2 []interface{}) float64 {
-	return intersection(box1, box2) / union(box1, box2)
-}
-
-func union(box1, box2 []interface{}) float64 {
-	box1_x1, box1_y1, box1_x2, box1_y2 := box1[0].(float64), box1[1].(float64), box1[2].(float64), box1[3].(float64)
-	box2_x1, box2_y1, box2_x2, box2_y2 := box2[0].(float64), box2[1].(float64), box2[2].(float64), box2[3].(float64)
-	box1_area := (box1_x2 - box1_x1) * (box1_y2 - box1_y1)
-	box2_area := (box2_x2 - box2_x1) * (box2_y2 - box2_y1)
-	return box1_area + box2_area - intersection(box1, box2)
-}
-
-func intersection(box1, box2 []interface{}) float64 {
-	box1_x1, box1_y1, box1_x2, box1_y2 := box1[0].(float64), box1[1].(float64), box1[2].(float64), box1[3].(float64)
-	box2_x1, box2_y1, box2_x2, box2_y2 := box2[0].(float64), box2[1].(float64), box2[2].(float64), box2[3].(float64)
-	x1 := math.Max(box1_x1, box2_x1)
-	y1 := math.Max(box1_y1, box2_y1)
-	x2 := math.Min(box1_x2, box2_x2)
-	y2 := math.Min(box1_y2, box2_y2)
-	return (x2 - x1) * (y2 - y1)
-}
 
 func get10Percent(v float64) float64 {
 	return v * 0.1

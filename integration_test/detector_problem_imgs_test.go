@@ -59,6 +59,31 @@ func TestDetectProblem(t *testing.T) {
 				Other:        "meeting оля pee И РС —",
 			},
 		},
+		{
+			"55.jpg",
+			BASE_IMG_PATH + "/55.JPG",
+			&model.Person{
+				Email:    []string{"guilherme.rezende@nobrebet.com"},
+				Site:     []string{"www.nobrebet.com"},
+				Name:     "GUILHERME REZENDE",
+				JobTitle: "LEAD ANALYST",
+			},
+		},
+		{
+			"75.JPG",
+			BASE_IMG_PATH + "/75.JPG",
+			&model.Person{
+				Email:        []string{"OMgonzalez@sis.tv"},
+				Site:         []string{"www.sis.tv"},
+				Phone:        []string{"+34 658 777 836"},
+				Skype:        []string{},
+				Telegram:     []string{},
+				Name:         "Oscar Murueta",
+				Organization: "", // todo
+				JobTitle:     "",
+				Other:        "Sports;Information;Services;Office;2 Whitehall Avenue;Kingston;Milton Keynes;MK10 ОАХ",
+			},
+		},
 	}
 
 	detector, config := createDetector(t)

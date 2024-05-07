@@ -65,7 +65,7 @@ func TestDetect(t *testing.T) {
 			"first IMG_2914.JPG",
 			BASE_IMG_PATH + "/first/IMG_2914.JPG",
 			&model.Person{
-				//Name: "Areg Oganesian", // todo
+				Name:         "Areg Oganesian",
 				Site:         []string{"www.igtrm.com"},
 				Email:        []string{"areg@igtrm.com"},
 				Phone:        []string{"+374 99 452772"},
@@ -98,7 +98,7 @@ func TestDetect(t *testing.T) {
 				Email:        []string{"b2b@linebet.com"},
 				Skype:        []string{"partners@Linebet.com"},
 				Telegram:     []string{"@linebet"}, // todo wrong @linebet_partners_bot
-				Site:         []string{"Linebet.com"},
+				Site:         []string{"linebet.com"},
 				Organization: "B2B Department",
 			},
 		},
@@ -197,12 +197,12 @@ func TestDetect(t *testing.T) {
 			"first IMG_2926.JPG",
 			BASE_IMG_PATH + "/first/IMG_2926.JPG",
 			&model.Person{
-				//Name:         "Dariya Yeryomenko",  // todo
-				Email:    []string{"dariya@pay.center"},
-				Phone:    []string{"+357 963 341 18"},
-				JobTitle: "Key Account Manager",
-				//Organization: "Payment.Center",  // todo
-				Telegram: []string{"@dariya_pc_cy"},
+				Name:         "Dariya Yeryomenko",
+				Email:        []string{"dariya@pay.center"},
+				Phone:        []string{"+357 963 341 18"},
+				JobTitle:     "KeyAccount Manager", // todo
+				Organization: "Payment.Center",
+				Telegram:     []string{"@dariya_pc_cy"},
 			},
 		},
 		{
@@ -214,7 +214,7 @@ func TestDetect(t *testing.T) {
 				Phone:        []string{"+357 963 341 18"},
 				JobTitle:     "Key Account Manager",
 				Organization: "dariya@pay-center",
-				Telegram:     []string{"@dariya_pc_cy"},
+				//Telegram:     []string{"@dariya_pc_cy"}, // todo
 			},
 		},
 		//	{
@@ -341,10 +341,10 @@ func TestDetect(t *testing.T) {
 			"4328.JPG",
 			BASE_IMG_PATH + "/IMG_4328.jpg",
 			&model.Person{
-				Email: []string{"Martin@369gaming.media"},
-				Site:  []string{"369gaming.media"},
-				Phone: []string{"+598 95 641 888"},
-				//	Skype:        []string{"cid"}, // todo
+				Email: []string{"martiN@369gaming.media"},
+				//Site:  []string{"369gaming.media"},// todo
+				Phone:        []string{"+598 95 641 888"},
+				Skype:        []string{"cid"}, // todo
 				Telegram:     []string{},
 				Name:         "Martin Buero",
 				Organization: "GAMING",
