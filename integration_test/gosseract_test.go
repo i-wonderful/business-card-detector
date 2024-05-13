@@ -37,7 +37,7 @@ func TestRecognizeText(t *testing.T) {
 		},
 	}
 
-	service := text_recognize.NewService(true)
+	service := text_recognize.NewService(true, "../config/tesseract/")
 	for _, tc := range testCases {
 
 		t.Run(tc.name, func(t *testing.T) {
@@ -105,7 +105,7 @@ func TestRecognizeTextRawImg(t *testing.T) {
 		},
 	}
 
-	service := text_recognize.NewService(true)
+	service := text_recognize.NewService(true, "../config/tesseract/")
 	for _, tc := range testCases {
 
 		t.Run(tc.name, func(t *testing.T) {

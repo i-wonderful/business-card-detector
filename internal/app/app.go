@@ -44,7 +44,7 @@ func (a *app) Run() error {
 		log.Fatal(err)
 		return err
 	}
-	textRecognizer := text_recognize.NewService(isLogTime)
+	textRecognizer := text_recognize.NewService(isLogTime, "./config/tesseract/")
 	fieldSorter := field_sort.NewService(
 		a.config.PathProfessionList,
 		a.config.PathCompanyList,

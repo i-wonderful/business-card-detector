@@ -1,6 +1,7 @@
 package img
 
 import (
+	"golang.org/x/image/tiff"
 	"image"
 	"image/png"
 	"log"
@@ -31,6 +32,22 @@ func SaveNRGBA(img *image.Image, filename string) error {
 	defer file.Close()
 
 	err = png.Encode(file, *img)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func SaveTiff(im image.Image, filename string) error {
+	outFile, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer outFile.Close()
+
+	// Кодируем изображение в TIFF формат
+	err = tiff.Encode(outFile, im, nil)
 	if err != nil {
 		return err
 	}

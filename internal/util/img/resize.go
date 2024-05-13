@@ -31,10 +31,6 @@ func Resize(img image.Image) image.Image {
 // ResizeImages scaled and resizes 'im' return a new `image.Image` instance whose maximum dimension is 'max'.
 func ResizeWith(img image.Image, max int) image.Image {
 
-	// calculating w,h is probably unnecessary since we're
-	// calling resize.Thumbnail but it will do for now...
-	// (20180708/thisisaaronland)
-
 	bounds := img.Bounds()
 	dims := bounds.Max
 

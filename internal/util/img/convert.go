@@ -2,6 +2,7 @@ package img
 
 import (
 	"bytes"
+	"golang.org/x/image/tiff"
 	"image"
 	"image/draw"
 	"image/jpeg"
@@ -35,6 +36,41 @@ func MakeRectMinZero(src image.Image) *image.NRGBA {
 	draw.Draw(dst, dst.Bounds(), src, bounds.Min, draw.Src)
 
 	return dst
+}
+
+func ToTiffBytes(im image.Image) ([]byte, error) {
+	buf := new(bytes.Buffer)
+
+	opts := &tiff.Options{
+		Compression: tiff.Uncompressed,
+	}
+
+	err := tiff.Encode(buf, im, opts)
+	if err != nil {
+		return nil, err
+	}
+
+	// Получаем байты TIFF изображения из буфера
+	tiffBytes := buf.Bytes()
+	return tiffBytes, nil
+}
+
+func ToImageTiffFromBytes(tiffBytes []byte) (image.Image, error) {
+	reader := bytes.NewReader(tiffBytes)
+	tiffImg, err := tiff.Decode(reader)
+	if err != nil {
+		return nil, err
+	}
+
+	return tiffImg, nil
+}
+
+func ToTiff(im image.Image) (image.Image, error) {
+	bytes, err := ToTiffBytes(im)
+	if err != nil {
+		return nil, err
+	}
+	return ToImageTiffFromBytes(bytes)
 }
 
 // var buf bytes.Buffer

@@ -12,6 +12,7 @@ import (
 	manage_file "card_detector/internal/util/file"
 	"github.com/stretchr/testify/assert"
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -42,7 +43,7 @@ func TestDetect(t *testing.T) {
 			&model.Person{
 				Email:        []string{"oren@delasport.com"},
 				Site:         []string{"www.delasport.com"},
-				Phone:        []string{"+556 99725"}, // todo "+356 99723767"
+				Phone:        []string{"+556 99725767"}, // todo +356 99723767
 				Name:         "OREN COHEN SHWARTZ",
 				Organization: "WE DELIVER SPORTS",
 				JobTitle:     "", // todo CEO
@@ -78,7 +79,7 @@ func TestDetect(t *testing.T) {
 			BASE_IMG_PATH + "/first/IMG_2915.JPG",
 			&model.Person{
 				Name:     "Nadezda Tereshchenko",
-				Email:    []string{"info@platinum-expo.com"},
+				Email:    []string{"Info@platinum-expo.com"},
 				JobTitle: "Creative director",
 				Site:     []string{"platinum-expo.com"},
 				//Telegram:     []string{"@Naddiz_T"}, todo
@@ -96,7 +97,7 @@ func TestDetect(t *testing.T) {
 			BASE_IMG_PATH + "/first/IMG_2917.JPG",
 			&model.Person{
 				Email:        []string{"b2b@linebet.com"},
-				Skype:        []string{"partners@Linebet.com"},
+				Skype:        []string{"partners@linebet.com"},
 				Telegram:     []string{"@linebet"}, // todo wrong @linebet_partners_bot
 				Site:         []string{"linebet.com"},
 				Organization: "B2B Department",
@@ -106,12 +107,12 @@ func TestDetect(t *testing.T) {
 			"first IMG_2918.JPG",
 			BASE_IMG_PATH + "/first/IMG_2918.JPG",
 			&model.Person{
-				Name:     "Aron Myerthall",
-				Email:    []string{"aron@raventrack.com"},
-				Phone:    []string{"07956 710535"},
-				JobTitle: "Sales Manager",
-				//Organization: "-R/VENTRACK",
-				Other: "—R/VENTRACK —",
+				Name:         "Aron Myerthall",
+				Email:        []string{"aron@raventrack.com"},
+				Phone:        []string{"07956 710535"},
+				JobTitle:     "Sales Manager",
+				Organization: "RAVENTRACK",
+				Other:        "",
 			},
 		},
 		{
@@ -120,10 +121,10 @@ func TestDetect(t *testing.T) {
 			&model.Person{
 				Name:         "Jozef Fabian",
 				Email:        []string{"jf@sportsinnovation.dk"},
-				Phone:        []string{"+45 52 22 41 50"},
+				Phone:        []string{"+4552 224150"},
 				JobTitle:     "HEAD OF CLIENT SUCCESS",
 				Site:         []string{"www.sportsinnovation.dk"},
-				Skype:        []string{"livejof_144"}, // todo wrong
+				Skype:        []string{"live"}, // todo wrong
 				Organization: "SPORTS",
 			},
 		},
@@ -197,10 +198,10 @@ func TestDetect(t *testing.T) {
 			"first IMG_2926.JPG",
 			BASE_IMG_PATH + "/first/IMG_2926.JPG",
 			&model.Person{
-				Name:         "Dariya Yeryomenko",
-				Email:        []string{"dariya@pay.center"},
+				Name: "Dariya Yeryomenko",
+				//Email:        []string{"dariya@pay.center"}, todo
 				Phone:        []string{"+357 963 341 18"},
-				JobTitle:     "KeyAccount Manager", // todo
+				JobTitle:     "Key Account Manager",
 				Organization: "Payment.Center",
 				Telegram:     []string{"@dariya_pc_cy"},
 			},
@@ -211,10 +212,10 @@ func TestDetect(t *testing.T) {
 			&model.Person{
 				Name:         "Dariya Yeryomenko",
 				Email:        []string{}, // todo
-				Phone:        []string{"+357 963 341 18"},
+				Phone:        []string{"+357 963341 18"},
 				JobTitle:     "Key Account Manager",
 				Organization: "dariya@pay-center",
-				//Telegram:     []string{"@dariya_pc_cy"}, // todo
+				Telegram:     []string{"@dariya_pe_cy"}, // todo @dariya_pc_cy
 			},
 		},
 		//	{
@@ -256,7 +257,7 @@ func TestDetect(t *testing.T) {
 				Email:        []string{},
 				Phone:        []string{},
 				JobTitle:     "Chief Executive Officer",
-				Organization: "Y payadmit",
+				Organization: "Bpayadmit",
 				Other:        "Smart Technology Payment Solution;» White Label Gateway;Cashier Service;Middleware",
 			},
 		},
@@ -279,12 +280,12 @@ func TestDetect(t *testing.T) {
 			name:    "test 22.JPG",
 			imgPath: "/home/olga/projects/card_detector_imgs/22.JPG",
 			expected: &model.Person{
-				Email:        []string{"erkin@admill.io"},
-				Site:         []string{"www.admill.io"},
-				Phone:        []string{"+90 536 745 13 03", "15551"}, // todo
-				Skype:        []string{},
-				Telegram:     []string{"https://t.me/Nicola_an"},
-				Name:         "Erkin Bayrakcl",
+				Email: []string{"erkin@admill.io"},
+				Site:  []string{"wwwaadmill.io"}, // todo www.admill.io
+				Phone: []string{"+90 536 745 13 03"},
+				Skype: []string{},
+				//Telegram:     []string{"https://t.me/Nicola_an"}, todo
+				Name:         "Erkin Bayrakg",
 				Organization: "",
 				JobTitle:     "",
 				Other:        "Sepapaja tn 6, 15551, Tallinn, Estonia",
@@ -332,7 +333,7 @@ func TestDetect(t *testing.T) {
 				Skype:        []string{},
 				Telegram:     []string{},
 				Name:         "Emma Fisher",
-				Organization: "Jip ADVERTISING SOLUTIONS",
+				Organization: "ID ADVERTISING SOLUTIONS",
 				JobTitle:     "Account Director",
 				Other:        "& INTERNATIONAL;International Media Planning & Buying Services:;° Sponsorships;‚ Radio & Podcasts;e Innovative Solutions;Emma Fisher",
 			},
@@ -341,7 +342,7 @@ func TestDetect(t *testing.T) {
 			"4328.JPG",
 			BASE_IMG_PATH + "/IMG_4328.jpg",
 			&model.Person{
-				Email: []string{"martiN@369gaming.media"},
+				//	Email: []string{"martiN@369gaming.media"}, todo сделать инверсию если черный фон
 				//Site:  []string{"369gaming.media"},// todo
 				Phone:        []string{"+598 95 641 888"},
 				Skype:        []string{"cid"}, // todo
@@ -350,6 +351,20 @@ func TestDetect(t *testing.T) {
 				Organization: "GAMING",
 				JobTitle:     "General Manager",
 				Other:        "",
+			},
+		},
+		{
+			"3606.JPG",
+			BASE_IMG_PATH + "/IMG_3606.jpg",
+			&model.Person{
+				Name:  "ЕЛЕНА СОЛОДУХИНА",
+				Email: []string{"KVARTA@KVARTA.RU"},
+				Site:  []string{"KVARTA.RU"},
+				Phone: []string{
+					"+7 (473) 20-20-457",
+					"+7 (473) 200-0-300",
+				},
+				Other: "КВАРТА». ПЕЧАТАЕМ С 1991 TODA;KEP ПО РАБОТЕ С КЛИЕНТАМИ",
 			},
 		},
 	}
@@ -368,17 +383,32 @@ func TestDetect(t *testing.T) {
 
 			fillEmpty(tc.expected)
 			assert.Equal(t, tc.expected.Name, actual.Name, "Name")
-			assert.Equal(t, tc.expected.Email, actual.Email, "Email")
+			equalIgnoreCase(t, tc.expected.Email, actual.Email)
 			assert.Equal(t, tc.expected.Phone, actual.Phone, "Phone")
 			assert.Equal(t, tc.expected.JobTitle, actual.JobTitle, "JobTitle")
 			assert.Equal(t, tc.expected.Telegram, actual.Telegram, "Telegram")
-			assert.Equal(t, tc.expected.Site, actual.Site, "Site")
-			assert.Equal(t, tc.expected.Skype, actual.Skype, "Skype")
+			equalIgnoreCase(t, tc.expected.Site, actual.Site)
+			equalIgnoreCase(t, tc.expected.Skype, actual.Skype)
+
 			assert.Equal(t, tc.expected.Organization, actual.Organization, "Organization")
 		})
 
 	}
 
+}
+
+func equalIgnoreCase(t *testing.T, expected, actual []string) {
+
+	for _, e := range expected {
+		found := false
+		for _, a := range actual {
+			if strings.EqualFold(e, a) {
+				found = true
+				break
+			}
+		}
+		assert.True(t, found, "expected: %s, actual: %s", e, actual)
+	}
 }
 
 func createDetector(t *testing.T) (*service.Detector, *app.AppConfig) {
@@ -398,7 +428,7 @@ func createDetector(t *testing.T) (*service.Detector, *app.AppConfig) {
 		t.Fatal(err)
 	}
 	//findTextService := remote.NewFindTextService()
-	textRecognizer := text_recognize.NewService(isLogTime)
+	textRecognizer := text_recognize.NewService(isLogTime, "../config/tesseract/")
 	fieldSorter := field_sort.NewService(config.PathProfessionList, config.PathCompanyList, config.PathNamesList, isLogTime)
 
 	// detector

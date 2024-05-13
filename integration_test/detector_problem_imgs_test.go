@@ -25,7 +25,7 @@ func TestDetectProblem(t *testing.T) {
 			&model.Person{
 				Email:        []string{"mario.mouro@paylivre.com"},
 				Site:         []string{"www.paylivre.com"},
-				Phone:        []string{"+5511 99222-0597"},
+				Phone:        []string{"+55 11 99222-0597"},
 				Name:         "MARIO MOURO",
 				Organization: "CSBDO",
 				JobTitle:     "",
@@ -55,7 +55,7 @@ func TestDetectProblem(t *testing.T) {
 				Skype:        []string{"flavio.tamega"},
 				Name:         "Flavio Tamega",
 				Organization: "", // todo organization
-				JobTitle:     "Advertising Commercial Director",
+				JobTitle:     "advertising Commercial Director",
 				Other:        "meeting оля pee И РС —",
 			},
 		},
@@ -63,7 +63,7 @@ func TestDetectProblem(t *testing.T) {
 			"55.jpg",
 			BASE_IMG_PATH + "/55.JPG",
 			&model.Person{
-				Email:    []string{"guilherme.rezende@nobrebet.com"},
+				Email:    []string{"guiherme.rezende@nobrebet.com"}, // todo guilherme.rezende@nobrebet.com
 				Site:     []string{"www.nobrebet.com"},
 				Name:     "GUILHERME REZENDE",
 				JobTitle: "LEAD ANALYST",

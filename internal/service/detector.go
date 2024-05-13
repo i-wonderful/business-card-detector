@@ -25,7 +25,9 @@ type (
 	}
 
 	TextRecognizer interface {
+		DetectLang(path string)
 		RecognizeBatch(contents [][]byte) ([]string, error)
+		//	RecognizeByPath(paths []string) ([]string, error)
 	}
 
 	FieldSorter interface {
@@ -102,12 +104,13 @@ func (d *Detector) Detect(imgPath string) (*model.Person, error) {
 
 	// 3. Create subimages with text area
 	var imagesWithText [][]byte
-	//currentImg = MakeRectMinZero(currentImg)
+	var paths []string
 	for i, coord := range coords {
 		subImage := GetSubImage(currentImg, coord.X, coord.Y, coord.Width, coord.Height)
-		//subImage = MakeRectMinZero(subImage)
+		subImage, _ = ToTiff(subImage)
 
 		//fmt.Println("type subImage:", reflect.TypeOf(subImage))
+		//subImage = BinarizeImage(subImage, 128)
 		//if reflect.TypeOf(subImage) == reflect.TypeOf(&image.YCbCr{}) {
 		//	subImage = YCbCrToRGBA(subImage.(*image.YCbCr))
 		//}
@@ -118,18 +121,23 @@ func (d *Detector) Detect(imgPath string) (*model.Person, error) {
 		// резкость (???)
 		subImage = imaging.Sharpen(subImage, 0.36)
 		// светлость
-		subImage = imaging.AdjustGamma(subImage, 1.3)
+		subImage = imaging.AdjustGamma(subImage, 1.6)
 
-		//subImage = imaging.Threshold(subImage, 128)
+		//subImage = imaging.AdjustBrightness(subImage, -10)
 
-		subImageBytes := ToBytes(subImage)
+		subImageBytes, _ := ToTiffBytes(subImage)
 		if d.isDebug {
-			SaveImg("./tmp/"+fmt.Sprintf("subimage%d.jpg", i), subImageBytes)
+			//SaveImg("./tmp/"+fmt.Sprintf("subimage%d.jpg", i), subImageBytes)
+			path := "./tmp/" + fmt.Sprintf("subimage%d.tiff", i)
+			SaveTiff(subImage, path)
+			paths = append(paths, path)
 		}
 		imagesWithText = append(imagesWithText, subImageBytes)
 	}
 
 	// 4. Recognize text
+	//worlds, err := d.textRecognizeService.RecognizeByPath(paths)
+	d.textRecognizeService.DetectLang(currentFilePath)
 	worlds, err := d.textRecognizeService.RecognizeBatch(imagesWithText)
 	if err != nil {
 		return nil, err
@@ -167,9 +175,3 @@ func mapCard(p model.Person, photoUrl string) model.Card {
 		Other:      p.Other,
 	}
 }
-
-// todo подумать о close
-
-//func (d *Detector) Close() {
-//	//d.textRecognizeService.Close()
-//}

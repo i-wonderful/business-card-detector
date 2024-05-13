@@ -245,7 +245,7 @@ func extractBrokenUrl(text string, domain, zone string) string {
 		return ""
 	}
 
-	if strings.HasPrefix(match, "www.") {
+	if strings.HasPrefix(match, "www") {
 		return "www." + domain + "." + zone
 	}
 	return domain + "." + zone

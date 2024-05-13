@@ -146,6 +146,12 @@ func TestExtractSkype(t *testing.T) {
 			"Skype flavio.tamega",
 			"flavio.tamega",
 		},
+		//{ todo
+		//	"With spaces",
+		//	"Skype live.cid 9e53d8c1151b4b",
+		//	"cid.9e53d8c1151b4b",
+		//},
+		// live:.cid.8fea70d56a6d360e
 	}
 
 	for _, test := range tests {
