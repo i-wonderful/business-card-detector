@@ -24,7 +24,7 @@ func rgbaToYCbCr(src *image.NRGBA) *image.YCbCr {
 	return dst
 }
 
-func OpenJPEGAsNRGBA(filename string) (*image.NRGBA, error) {
+func OpenJPEGAsNRGBA(filename string) (*image.RGBA, error) {
 	file, err := os.Open(filename)
 	if err != nil {
 		return nil, err
@@ -37,15 +37,15 @@ func OpenJPEGAsNRGBA(filename string) (*image.NRGBA, error) {
 	}
 
 	bounds := img.Bounds()
-	nrgba := image.NewNRGBA(bounds)
+	rgba := image.NewRGBA(bounds)
 
 	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
 		for x := bounds.Min.X; x < bounds.Max.X; x++ {
-			nrgba.Set(x, y, color.NRGBAModel.Convert(img.At(x, y)))
+			rgba.Set(x, y, color.RGBAModel.Convert(img.At(x, y)))
 		}
 	}
 
-	return nrgba, nil
+	return rgba, nil
 }
 
 func YCbCrToRGBA(src *image.YCbCr) *image.NRGBA {

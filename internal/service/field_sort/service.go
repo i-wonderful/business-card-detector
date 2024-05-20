@@ -159,7 +159,7 @@ func (d *Service) Sort(data []string) map[string]interface{} {
 	}
 
 	person["email"] = email
-	person["phone"] = trim(phones)
+	person["phone"] = clearPhones(phones)
 	person["name"] = strings.TrimSpace(name)
 	person["skype"] = skype
 	person["company"] = strings.TrimSpace(company)
@@ -293,6 +293,19 @@ func clearTrashSymbols(val string) string {
 		return !unicode.IsLetter(r) && !unicode.IsNumber(r) && r != '+' && r != '@'
 	})
 	return val
+}
+
+func clearPhones(phones []string) []string {
+	for i, phone := range phones {
+		phones[i] = strings.TrimLeftFunc(phone, func(r rune) bool {
+			return !unicode.IsDigit(r) && r != '+'
+		})
+		phones[i] = strings.TrimRightFunc(phone, func(r rune) bool {
+			return !unicode.IsDigit(r)
+		})
+	}
+
+	return phones
 }
 
 func trim(val []string) []string {

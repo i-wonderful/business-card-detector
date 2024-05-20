@@ -146,6 +146,7 @@ func TestExtractSkype(t *testing.T) {
 			"Skype flavio.tamega",
 			"flavio.tamega",
 		},
+		// live:.cid.a53b3a75cdo63b4a   test skype todo
 		//{ todo
 		//	"With spaces",
 		//	"Skype live.cid 9e53d8c1151b4b",
@@ -202,7 +203,7 @@ func TestService_Sort(t *testing.T) {
 	}{
 		{
 			// len:3, cap:3
-			name: "Sort names",
+			name: "Find names",
 			input: []string{
 				"Site: Linebet.com Telegram: @linebet partners bot",
 				"Mail: b2b@lLinebet.com Skype: partners@Linebet.com",
@@ -316,6 +317,19 @@ func TestService_Sort(t *testing.T) {
 				"phone": []string{"+598 95 641 888"},
 			},
 		},
+		{
+			"Phones",
+			[]string{
+				"+7 (473) 200-0-300 © KVARTA@KVARTA.RU",
+				"+7 (473) 20-20-457 (© KVARTA_PRINT",
+			},
+			map[string]interface{}{
+				"phone": []string{
+					"+7 (473) 20-20-457",
+					"+7 (473) 200-0-300",
+				},
+			},
+		},
 	}
 
 	service := NewService(
@@ -327,7 +341,7 @@ func TestService_Sort(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			result := service.Sort(tc.input)
 			for k, v := range tc.expected {
-				assert.Equal(t, result[k], v, "Field %q. Expected %q, got %q", k, v, result[k])
+				assert.Equal(t, v, result[k])
 			}
 		})
 	}

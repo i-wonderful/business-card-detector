@@ -73,9 +73,9 @@ func (s *FindTextService) PredictTextCoord(img image.Image) ([]model.TextArea, e
 		y1 = y1 - hAdd
 		h += 2 * hAdd
 		// прибавка по ширине
-		wAdd := get20Percent(h)
-		x1 = x1 - wAdd
-		w += 2 * wAdd
+		//wAdd := get20Percent(h)
+		//x1 = x1 - wAdd
+		//w += 2 * wAdd
 
 		prediction := model.TextArea{X: int(x1), Y: int(y1), Width: int(w), Height: int(h)}
 		result = append(result, prediction)

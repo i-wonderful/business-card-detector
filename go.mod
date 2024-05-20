@@ -10,7 +10,7 @@ require (
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 
 	// detect
-//	github.com/otiai10/gosseract v2.2.1+incompatible
+	//	github.com/otiai10/gosseract v2.2.1+incompatible
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd
 
 	// util
@@ -20,9 +20,11 @@ require (
 )
 
 require (
+	github.com/otiai10/gosseract/v2 v2.4.1
+	golang.org/x/image v0.16.0
+)
+
+require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/otiai10/gosseract/v2 v2.4.1 // indirect
-	github.com/otiai10/mint v1.6.3 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	golang.org/x/image v0.16.0 // indirect
 )

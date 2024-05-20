@@ -38,8 +38,8 @@ func (s *Service) Prepare(imgFile *os.File) (image.Image, string) {
 	//im, _ = img.OpenJPEGAsNRGBA(imgFile.Name())
 	im, _ = RotateImageWithOrientation(im, orientation)
 
-	// вырезать центр
-	im = img.CropToSquare(im, 0.8)
+	// вырезать центр // уберу, иногда картинки внизу фото (
+	// im = img.CropToSquare(im, 0.98)
 
 	log.Println("Image type:", reflect.TypeOf(im))
 	//im = img.MakeRectMinZero(im) // to NRGBA

@@ -50,6 +50,29 @@ func ResizeWith(img image.Image, max int) image.Image {
 	return sm
 }
 
+func ResizeImageByHeight(img image.Image, h int) image.Image {
+	bounds := img.Bounds()
+	w, hImg := bounds.Max.X, bounds.Max.Y
+
+	// Если изображение уже меньше или равно заданной высоте, ничего не делаем
+	if hImg <= h {
+		return img
+	}
+
+	// Вычисляем новую ширину, чтобы сохранить пропорции
+	newW := int(math.Round(float64(w) * float64(h) / float64(hImg)))
+
+	// Создаем новое изображение с рассчитанными размерами
+	//newImg := imaging.Resize(img, newW, h, imaging.Lanczos)
+
+	newImg := r.Thumbnail(uint(newW), uint(h), img, r.NearestNeighbor)
+
+	// Заполняем фон белым цветом, чтобы избежать прозрачного фона
+	//newImg = imaging.Fill(newImg, bounds.Max.X, bounds.Max.Y, color.White, imaging.Top, imaging.Left)
+
+	return newImg
+}
+
 //func ResizeToL(img image.Image, l int) image.Image {
 //	bounds := img.Bounds()
 //	w, h := bounds.Max.X, bounds.Max.Y

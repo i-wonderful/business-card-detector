@@ -139,6 +139,12 @@ func (d *Detector) Detect(imgPath string) (*model.Person, error) {
 	//worlds, err := d.textRecognizeService.RecognizeByPath(paths)
 	d.textRecognizeService.DetectLang(currentFilePath)
 	worlds, err := d.textRecognizeService.RecognizeBatch(imagesWithText)
+	if d.isDebug {
+		log.Println("Recognized:")
+		for _, world := range worlds {
+			log.Println(world)
+		}
+	}
 	if err != nil {
 		return nil, err
 	}

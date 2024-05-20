@@ -91,7 +91,7 @@ func (s *TextRecognizeService) DetectLang(path string) {
 	lang := DetectLang(path)
 	if lang == RUS {
 		log.Printf("Language: %s", RUS)
-		s.lang = "eng+rus"
+		s.lang = "rus+eng"
 	} else {
 		s.lang = "eng"
 	}

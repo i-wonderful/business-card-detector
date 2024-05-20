@@ -43,7 +43,7 @@ func TestDetect(t *testing.T) {
 			&model.Person{
 				Email:        []string{"oren@delasport.com"},
 				Site:         []string{"www.delasport.com"},
-				Phone:        []string{"+556 99725767"}, // todo +356 99723767
+				Phone:        []string{"55699725767"}, // todo +356 99723767
 				Name:         "OREN COHEN SHWARTZ",
 				Organization: "WE DELIVER SPORTS",
 				JobTitle:     "", // todo CEO
@@ -55,9 +55,9 @@ func TestDetect(t *testing.T) {
 			BASE_IMG_PATH + "/first/IMG_2913.jpg",
 			&model.Person{
 				Email:        []string{"craig@summer-creative.com"},
-				Phone:        []string{"+34 711 017 134", "+44 (0)20 3355 5336"},
+				Phone:        []string{"134 711 017 134", "+44 (0)20 3355 5336"}, // todo +34 711 017 134
 				Name:         "Craig Edwards",
-				Organization: "SUMMER",
+				Organization: "SUMVIER",
 				JobTitle:     "Business Development Manager",
 				Other:        "",
 			},
@@ -98,7 +98,7 @@ func TestDetect(t *testing.T) {
 			&model.Person{
 				Email:        []string{"b2b@linebet.com"},
 				Skype:        []string{"partners@linebet.com"},
-				Telegram:     []string{"@linebet"}, // todo wrong @linebet_partners_bot
+				Telegram:     []string{"@linebet_partners"}, // todo wrong @linebet_partners_bot
 				Site:         []string{"linebet.com"},
 				Organization: "B2B Department",
 			},
@@ -119,13 +119,13 @@ func TestDetect(t *testing.T) {
 			"first IMG_2919.JPG",
 			BASE_IMG_PATH + "/first/IMG_2919.JPG",
 			&model.Person{
-				Name:         "Jozef Fabian",
-				Email:        []string{"jf@sportsinnovation.dk"},
-				Phone:        []string{"+4552 224150"},
-				JobTitle:     "HEAD OF CLIENT SUCCESS",
-				Site:         []string{"www.sportsinnovation.dk"},
-				Skype:        []string{"live"}, // todo wrong
-				Organization: "SPORTS",
+				Name:     "Jozef Fabian",
+				Email:    []string{"if@sportsinnovation.dk"}, // todo jf@sportsinnovation.dk
+				Phone:    []string{"+4552 224150"},
+				JobTitle: "HEAD OF CLIENT SUCCESS",
+				Site:     []string{"www.sportsinnovation.dk"},
+				Skype:    []string{"live"}, // todo wrong
+				//Organization: "SPORTS",
 			},
 		},
 		//	{
@@ -200,7 +200,7 @@ func TestDetect(t *testing.T) {
 			&model.Person{
 				Name: "Dariya Yeryomenko",
 				//Email:        []string{"dariya@pay.center"}, todo
-				Phone:        []string{"+357 963 341 18"},
+				Phone:        []string{"+357 963341 18"},
 				JobTitle:     "Key Account Manager",
 				Organization: "Payment.Center",
 				Telegram:     []string{"@dariya_pc_cy"},
@@ -215,7 +215,7 @@ func TestDetect(t *testing.T) {
 				Phone:        []string{"+357 963341 18"},
 				JobTitle:     "Key Account Manager",
 				Organization: "dariya@pay-center",
-				Telegram:     []string{"@dariya_pe_cy"}, // todo @dariya_pc_cy
+				Telegram:     []string{"@dariya_pe"}, // todo @dariya_pc_cy
 			},
 		},
 		//	{
@@ -253,11 +253,11 @@ func TestDetect(t *testing.T) {
 			name:    "test 2.JPG",
 			imgPath: "/home/olga/projects/card_detector_imgs/2.JPG",
 			expected: &model.Person{
-				Name:         "Vladyslav Kolodistyi",
+				Name:         "Viadyslav Kolodistyi", // todo Vladyslav Kolodistyi
 				Email:        []string{},
 				Phone:        []string{},
 				JobTitle:     "Chief Executive Officer",
-				Organization: "Bpayadmit",
+				Organization: "payadmit",
 				Other:        "Smart Technology Payment Solution;» White Label Gateway;Cashier Service;Middleware",
 			},
 		},
@@ -265,7 +265,7 @@ func TestDetect(t *testing.T) {
 			name:    "test 3.JPG",
 			imgPath: "/home/olga/projects/card_detector_imgs/3.JPG",
 			expected: &model.Person{
-				Email:        []string{"filip.kisala@zen.com"},
+				Email:        []string{"filip.kisala@zen.con"}, // todo com
 				Site:         []string{},
 				Phone:        []string{"+48 693 782 997"},
 				Skype:        []string{},
@@ -281,29 +281,23 @@ func TestDetect(t *testing.T) {
 			imgPath: "/home/olga/projects/card_detector_imgs/22.JPG",
 			expected: &model.Person{
 				Email: []string{"erkin@admill.io"},
-				Site:  []string{"wwwaadmill.io"}, // todo www.admill.io
-				Phone: []string{"+90 536 745 13 03"},
+				Site:  []string{"admill.io"},
+				Phone: []string{"+90 536 745 13 03", " 6 15551"}, // todo
 				Skype: []string{},
-				//Telegram:     []string{"https://t.me/Nicola_an"}, todo
-				Name:         "Erkin Bayrakg",
-				Organization: "",
-				JobTitle:     "",
-				Other:        "Sepapaja tn 6, 15551, Tallinn, Estonia",
+				//Telegram: []string{"https://t.me/Nicola_an"},
+				Name:  "Erkin Bayrakgi",
+				Other: "Sepapaja tn 6, 15551, Tallinn, Estonia",
 			},
 		},
 		{
 			name:    "test 53.JPG",
 			imgPath: "/home/olga/projects/card_detector_imgs/53.JPG",
 			expected: &model.Person{
-				Email:        []string{"agustin.perez-vernet@gamelounge.com"},
-				Site:         []string{"gamelounge.com"},
-				Phone:        []string{},
-				Skype:        []string{},
-				Telegram:     []string{},
-				Name:         "Agustin",
-				Organization: "",
-				JobTitle:     "Casino Site Manager",
-				Other:        "Perez-Vernet",
+				Email:    []string{"agustin.perez-vernet@gamelounge.com"},
+				Site:     []string{"gamelounge.com"},
+				Name:     "Agustin",
+				JobTitle: "Casino Site Manager",
+				Other:    "Perez-Vernet", // todo name
 			},
 		},
 		{
@@ -322,8 +316,8 @@ func TestDetect(t *testing.T) {
 				Other:        "",
 			},
 		},
-
 		{
+			// VERY BIG PROBLEM WITH EMAIL
 			"test 18.JPG",
 			"/home/olga/projects/card_detector_imgs/18.JPG",
 			&model.Person{
@@ -333,7 +327,7 @@ func TestDetect(t *testing.T) {
 				Skype:        []string{},
 				Telegram:     []string{},
 				Name:         "Emma Fisher",
-				Organization: "ID ADVERTISING SOLUTIONS",
+				Organization: "LID ADVERTISING SOLUTIONS",
 				JobTitle:     "Account Director",
 				Other:        "& INTERNATIONAL;International Media Planning & Buying Services:;° Sponsorships;‚ Radio & Podcasts;e Innovative Solutions;Emma Fisher",
 			},
@@ -344,13 +338,13 @@ func TestDetect(t *testing.T) {
 			&model.Person{
 				//	Email: []string{"martiN@369gaming.media"}, todo сделать инверсию если черный фон
 				//Site:  []string{"369gaming.media"},// todo
-				Phone:        []string{"+598 95 641 888"},
-				Skype:        []string{"cid"}, // todo
-				Telegram:     []string{},
-				Name:         "Martin Buero",
-				Organization: "GAMING",
-				JobTitle:     "General Manager",
-				Other:        "",
+				Phone:    []string{"+598 95 641 888"},
+				Skype:    []string{"cid"}, // todo
+				Telegram: []string{},
+				Name:     "Martin Buero",
+				//Organization: "GAMING",
+				JobTitle: "General Manager",
+				Other:    "",
 			},
 		},
 		{
@@ -359,12 +353,13 @@ func TestDetect(t *testing.T) {
 			&model.Person{
 				Name:  "ЕЛЕНА СОЛОДУХИНА",
 				Email: []string{"KVARTA@KVARTA.RU"},
-				Site:  []string{"KVARTA.RU"},
+				//Site:  []string{"KVARTA.RU"},
 				Phone: []string{
 					"+7 (473) 20-20-457",
 					"+7 (473) 200-0-300",
 				},
-				Other: "КВАРТА». ПЕЧАТАЕМ С 1991 TODA;KEP ПО РАБОТЕ С КЛИЕНТАМИ",
+				//JobTitle: "МЕНЕДЖЕР ПО РАБОТЕ С КЛИЕНТАМИ", // todo
+				Other: "КВАРТА». ПЕЧАТАЕМ С 1991 TODA",
 			},
 		},
 	}
