@@ -1,5 +1,4 @@
 Manager
-Manage
 Director
 President
 Supervisor
@@ -126,3 +125,6 @@ Chauffeur
 Провизор
 Development
 Founder
+PARTNER
+Senior
+CSBDO

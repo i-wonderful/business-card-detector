@@ -11,6 +11,6 @@ func main() {
 		log.Fatal(err)
 		return
 	}
-	app := NewApp(config)
+	app := NewApp2(config)
 	log.Fatal(app.Run())
 }

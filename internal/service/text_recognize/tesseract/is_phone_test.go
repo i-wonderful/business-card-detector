@@ -1,4 +1,4 @@
-package text_recognize
+package tesseract
 
 import "testing"
 

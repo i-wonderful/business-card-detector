@@ -1,7 +1,7 @@
 package integration_test
 
 import (
-	"card_detector/internal/service/text_recognize"
+	"card_detector/internal/service/text_recognize/tesseract"
 	manage_file "card_detector/internal/util/file"
 	"card_detector/internal/util/img"
 	"fmt"
@@ -37,7 +37,7 @@ func TestRecognizeText(t *testing.T) {
 		},
 	}
 
-	service := text_recognize.NewService(true, "../config/tesseract/")
+	service := tesseract.NewService(true, "../config/tesseract/")
 	for _, tc := range testCases {
 
 		t.Run(tc.name, func(t *testing.T) {
@@ -105,7 +105,7 @@ func TestRecognizeTextRawImg(t *testing.T) {
 		},
 	}
 
-	service := text_recognize.NewService(true, "../config/tesseract/")
+	service := tesseract.NewService(true, "../config/tesseract/")
 	for _, tc := range testCases {
 
 		t.Run(tc.name, func(t *testing.T) {

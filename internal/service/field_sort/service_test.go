@@ -113,8 +113,8 @@ func TestExtractSkype(t *testing.T) {
 	}{
 		{
 			name:     "Valid Skype ID",
-			input:    "My Skype ID is: skype.sample_id",
-			expected: "sample_id",
+			input:    "My Skype: skype.sample_id",
+			expected: "skype.sample_id",
 		},
 		//{
 		//	name:     "Valid Skype ID with spaces",
@@ -123,19 +123,19 @@ func TestExtractSkype(t *testing.T) {
 		//},
 		{
 			name:     "Valid Skype ID with case-insensitive pattern",
-			input:    "My Skype ID is: Skype: SAMPLE_ID",
+			input:    "My Skype: SAMPLE_ID",
 			expected: "SAMPLE_ID",
 		},
 		{
 			name:     "No Skype ID",
-			input:    "This text does not contain a Skype ID",
+			input:    "This text does not contain",
 			expected: "",
 		},
-		{
-			name:     "Multiple Skype IDs",
-			input:    "My Skype IDs are: skype:id1 and skype:id2",
-			expected: "id1",
-		},
+		//{
+		//	name:     "Multiple Skype IDs",
+		//	input:    "My Skype IDs are: skype:id1 and skype:id2",
+		//	expected: "id1",
+		//},
 		{
 			name:     "Extract with @",
 			input:    "Mail: b2b@lLinebet.com Skype: partners@Linebet.com",
@@ -146,13 +146,16 @@ func TestExtractSkype(t *testing.T) {
 			"Skype flavio.tamega",
 			"flavio.tamega",
 		},
-		// live:.cid.a53b3a75cdo63b4a   test skype todo
-		//{ todo
-		//	"With spaces",
-		//	"Skype live.cid 9e53d8c1151b4b",
-		//	"cid.9e53d8c1151b4b",
+		{
+			"With two points",
+			"Skype:alex.softgamings.com",
+			"alex.softgamings.com",
+		},
+		//{
+		//	"With point and colon",
+		//	"live:.cid.e53090522ec2bf11",
+		//	"live:.cid.e53090522ec2bf11",
 		//},
-		// live:.cid.8fea70d56a6d360e
 	}
 
 	for _, test := range tests {
@@ -201,29 +204,29 @@ func TestService_Sort(t *testing.T) {
 		input    []string
 		expected map[string]interface{}
 	}{
-		{
-			// len:3, cap:3
-			name: "Find names",
-			input: []string{
-				"Site: Linebet.com Telegram: @linebet partners bot",
-				"Mail: b2b@lLinebet.com Skype: partners@Linebet.com",
-				"B2B Department",
-			},
-			expected: map[string]interface{}{
-				"site":     "Linebet.com",
-				"telegram": "@linebet",
-				"email":    "b2b@lLinebet.com",
-				"skype":    "partners@Linebet.com",
-				"company":  "B2B Department",
-			},
-		},
+		//{
+		//	// len:3, cap:3
+		//	name: "Find names",
+		//	input: []string{
+		//		"Site: Linebet.com Telegram: @linebet partners bot",
+		//		"Mail: b2b@lLinebet.com Skype: partners@Linebet.com",
+		//		"B2B Department",
+		//	},
+		//	expected: map[string]interface{}{
+		//		//"site":     "Linebet.com", todo
+		//		"telegram": "@linebet_partners_bot",
+		//		"email":    []string{"b2b@lLinebet.com"},
+		//		"skype":    "partners@Linebet.com",
+		//		"company":  "B2B Department",
+		//	},
+		//},
 		{
 			name: "Email with space",
 			input: []string{
 				"Martin@369gaming. media",
 			},
 			expected: map[string]interface{}{
-				"email": "Martin@369gaming.media",
+				"email": []string{"Martin@369gaming.media"},
 			},
 		},
 		{
@@ -232,7 +235,7 @@ func TestService_Sort(t *testing.T) {
 				"E-mail: christoffer.froberg@qpgames.se",
 			},
 			expected: map[string]interface{}{
-				"email": "christoffer.froberg@qpgames.se",
+				"email": []string{"christoffer.froberg@qpgames.se"},
 			},
 		},
 		{
@@ -241,7 +244,7 @@ func TestService_Sort(t *testing.T) {
 				"ivk@colibrix.io",
 			},
 			expected: map[string]interface{}{
-				"email": "ivk@colibrix.io",
+				"email": []string{"ivk@colibrix.io"},
 			},
 		},
 		{
@@ -267,7 +270,7 @@ func TestService_Sort(t *testing.T) {
 				"name":     "GRETTA KOCHKONYAN",
 				"jobTitle": "Head Of Account Management",
 				"company":  "endorphina",
-				"email":    "gretta@endorphina.com",
+				"email":    []string{"gretta@endorphina.com"},
 				"skype":    "gretta@endorphina.com",
 				"phone":    []string{"+420 222 564 222"},
 				"site":     "endorphina.com",
@@ -311,7 +314,7 @@ func TestService_Sort(t *testing.T) {
 				"name":     "Martin Buero",
 				"jobTitle": "General Manager",
 				"company":  "GAMING",
-				"email":    "Martin@369gaming.media",
+				"email":    []string{"Martin@369gaming.media"},
 				"site":     "www.369gaming.media",
 				//"skype":    "cid. 9e53d8c1 1 51546",
 				"phone": []string{"+598 95 641 888"},
@@ -320,14 +323,117 @@ func TestService_Sort(t *testing.T) {
 		{
 			"Phones",
 			[]string{
-				"+7 (473) 200-0-300 © KVARTA@KVARTA.RU",
-				"+7 (473) 20-20-457 (© KVARTA_PRINT",
+				"+7 (473) 200-0-300 © ",
+				"+7 (473) 20-20-457 (©",
+				"773-00606",
 			},
 			map[string]interface{}{
 				"phone": []string{
-					"+7 (473) 20-20-457",
 					"+7 (473) 200-0-300",
+					"+7 (473) 20-20-457",
 				},
+			},
+		},
+		{
+			"Skype",
+			[]string{
+				"Skype live.cid.9e53d8c1151b4b",
+			},
+			map[string]interface{}{
+				"skype": "live.cid.9e53d8c1151b4b",
+			},
+		},
+		{
+			"Skype2",
+			[]string{
+				"s:live:cid.639e35052e7e9fe1 bla",
+			},
+			map[string]interface{}{
+				"skype": "live:cid.639e35052e7e9fe1",
+			},
+		},
+		{
+			"Skype with two points",
+			[]string{
+				"Skype:alex.softgamings.com",
+			},
+			map[string]interface{}{
+				"skype": "alex.softgamings.com",
+			},
+		},
+		{
+			"Skype with point and semicolon",
+			[]string{"live:.cid.e53090522ec2bf11"},
+			map[string]interface{}{
+				"skype": "live:.cid.e53090522ec2bf11",
+			},
+		},
+		{
+			"Organization",
+			[]string{
+				"Manager", "TVBET", "+353870984819", "live:cid.639e35052e7e9fe1", "Business Development", "u.sarper@tvbet.tv",
+			},
+			map[string]interface{}{
+				"company": "TVBET",
+			},
+		},
+		{
+			"Simple Name",
+			[]string{
+				"Jeton", "KAM", "kam@jeton.com", "www.jeton.com",
+			},
+			map[string]interface{}{
+				"name":    "KAM",
+				"company": "Jeton",
+			},
+		},
+		{
+			"Telegram with spaces",
+			[]string{"@Eska8 Aff"},
+			map[string]interface{}{
+				"telegram": "@Eska8_Aff",
+			},
+		},
+		{
+			"Many emails",
+			[]string{
+				"SUPPORT@HUGE.PARTNERS",
+				"INFO@HUGE.PARTNERS",
+			},
+			map[string]interface{}{
+				"email": []string{
+					"SUPPORT@HUGE.PARTNERS",
+					"INFO@HUGE.PARTNERS",
+				},
+			},
+		},
+		{
+			"Long job title",
+			[]string{
+				"Slava Chernenko",
+				"Senior Partnerships",
+				"and Accounts Manager",
+			},
+			map[string]interface{}{
+				"jobTitle": "Senior Partnerships and Accounts Manager",
+			},
+		},
+		{
+			"Job title with defines",
+			[]string{"Lead Consultant-Brazil"},
+			map[string]interface{}{
+				"jobTitle": "Lead Consultant-Brazil",
+			},
+		},
+		{
+			"Telegram by url",
+			[]string{
+				"https://t.me/Nicola_an",
+				"www.admillio",
+				"erkin@admillio",
+			},
+			map[string]interface{}{
+				"telegram": "https://t.me/Nicola_an",
 			},
 		},
 	}

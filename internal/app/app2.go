@@ -1,7 +1,13 @@
 package app
 
 import (
-	"card_detector/internal/service/text_recognize/tesseract"
+	"card_detector/internal/controller/http/router"
+	"card_detector/internal/repo/inmemory"
+	"card_detector/internal/service"
+	"card_detector/internal/service/field_sort"
+	shistory "card_detector/internal/service/history"
+	"card_detector/internal/service/img_prepare"
+	"card_detector/internal/service/text_recognize/paddleocr"
 	"context"
 	"fmt"
 	"log"
@@ -10,27 +16,19 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-
-	"card_detector/internal/controller/http/router"
-	"card_detector/internal/repo/inmemory"
-	"card_detector/internal/service"
-	"card_detector/internal/service/field_sort"
-	shistory "card_detector/internal/service/history"
-	"card_detector/internal/service/img_prepare"
-	"card_detector/internal/service/text_find/onnx"
 )
 
-type app struct {
+type app2 struct {
 	config *AppConfig
 }
 
-func NewApp(config *AppConfig) *app {
-	return &app{
+func NewApp2(config *AppConfig) *app2 {
+	return &app2{
 		config: config,
 	}
 }
 
-func (a *app) Run() error {
+func (a *app2) Run() error {
 
 	// repo
 	cardRepo := inmemory.NewCardRepo()
@@ -39,12 +37,10 @@ func (a *app) Run() error {
 	imgPreparer := img_prepare.NewService(a.config.StorageFolder)
 
 	isLogTime := a.config.Log.Time
-	findTextService, err := onnx.NewService(a.config.Onnx.PathRuntime, a.config.Onnx.PathModel, isLogTime) //findTextService := remote.NewService()
+	textRecognizer, err := paddleocr.NewService(isLogTime, a.config.Paddleocr.RunPath)
 	if err != nil {
 		log.Fatal(err)
-		return err
 	}
-	textRecognizer := tesseract.NewService(isLogTime, "./config/tesseract/")
 	fieldSorter := field_sort.NewService(
 		a.config.PathProfessionList,
 		a.config.PathCompanyList,
@@ -53,9 +49,8 @@ func (a *app) Run() error {
 	getterService := shistory.NewService(cardRepo)
 
 	// detector
-	detectService := service.NewDetector(
+	detectService := service.NewDetector2(
 		imgPreparer,
-		findTextService,
 		textRecognizer,
 		fieldSorter,
 		cardRepo,

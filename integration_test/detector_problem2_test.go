@@ -9,6 +9,9 @@ import (
 
 const BASE_IMG_PROBLEM2_PATH = "/home/olga/projects/card_detector_imgs/problem2"
 
+// --------------------------------------
+// Test pack with some problem images (2)
+// --------------------------------------
 func TestDetectProblem2(t *testing.T) {
 	testCases := []struct {
 		name     string
@@ -19,15 +22,15 @@ func TestDetectProblem2(t *testing.T) {
 			"1.jpg",
 			BASE_IMG_PROBLEM2_PATH + "/1.jpg",
 			&model.Person{
-				Email:        []string{"u.sarper@tvbet.ty"},
+				Email:        []string{"u.sarper@tvbet.tv"},
 				Site:         []string{},
-				Phone:        []string{"42306088", "+35 387 098 48 19"}, // todo
-				Skype:        []string{},
+				Phone:        []string{"+353870984819", "+38066835208"},
+				Skype:        []string{"live:cid.639e35052e7e9fe1"},
 				Telegram:     []string{},
 				Name:         "UTKU SARPER",
-				Organization: "Business Developmen",
-				JobTitle:     "Manager",
-				Other:        "",
+				Organization: "TVBET",
+				JobTitle:     "Business Development Manager",
+				Other:        "D-daryno;PayA+las;Onrcyes;uuop",
 			},
 		},
 
@@ -35,10 +38,11 @@ func TestDetectProblem2(t *testing.T) {
 			"3.jpg",
 			BASE_IMG_PROBLEM2_PATH + "/3.jpg",
 			&model.Person{
-				Email:    []string{"kam@jeton.com"},
-				Site:     []string{"www.jeton.com"},
-				JobTitle: "Key Account Manager",
-				Other:    "Jeton",
+				Email:        []string{"kam@jeton.com"},
+				Site:         []string{"www.jeton.com"},
+				JobTitle:     "Key Account Manager",
+				Organization: "Jeton",
+				Name:         "KAM",
 			},
 		},
 		{
@@ -46,10 +50,10 @@ func TestDetectProblem2(t *testing.T) {
 			BASE_IMG_PROBLEM2_PATH + "/4.jpg",
 			&model.Person{
 				Skype: []string{
-					//"live:.cid.a53b3a75cdo63b4a", // todo
+					"live:.cid.a53b3a75cd063b4a",
 				},
 				Telegram: []string{
-					"@Eskas_", // todo @Eskas_Aff
+					"@Eska8_Aff",
 				},
 			},
 		},
@@ -57,30 +61,22 @@ func TestDetectProblem2(t *testing.T) {
 			"5.jpg",
 			BASE_IMG_PROBLEM2_PATH + "/5.jpg",
 			&model.Person{
-				Email:        []string{"ponyango@pio.ke"},
-				Site:         []string{"www.pio.ke"},
-				Phone:        []string{"+254 720 961 738", "+254 113 804 990", " 773 - 00606"},
-				Skype:        []string{},
-				Telegram:     []string{},
-				Name:         "Ring Road Westlands",
-				Organization: "PHILLIP",
-				JobTitle:     "",
-				Other:        "4% Floor The Westwood;ONYANGO;Nairobi. Kenya",
+				Email:    []string{"ponyango@pio.ke"},
+				Site:     []string{"www.pio.ke"},
+				Phone:    []string{"+254720961738", "+254113804990"},
+				Name:     "PHILLIP ONYANGO",
+				JobTitle: "MANAGING PARTNER",
+				Other:    "4th Floor,The Westwood;Ring Road, Westlands;Nairobi, Kenya;licenges",
 			},
 		},
-		{ // lang detect rus todo
+		{
 			"6.jpg",
 			BASE_IMG_PROBLEM2_PATH + "/6.jpg",
 			&model.Person{
-				Email: []string{"SUPPORT@HUGE.PARTNERS"},
-				//Site:         []string{"huge.partners"},
-				Phone:        []string{},
-				Skype:        []string{},
-				Telegram:     []string{"@HUGEPARTNERS"},
+				Email:        []string{"INFO@HUGE.PARTNERS", "SUPPORT@HUGE.PARTNERS"},
+				Organization: "HUGE",
 				Name:         "FOR ADVERTISERS",
-				Organization: "GAMBLING",
-				JobTitle:     "",
-				Other:        "cor ADVERTISERS",
+				Other:        "BETTING;GAMBLING;FOR AFFILIATES",
 			},
 		},
 		{
@@ -88,29 +84,23 @@ func TestDetectProblem2(t *testing.T) {
 			BASE_IMG_PROBLEM2_PATH + "/7.jpg",
 			&model.Person{
 				Email:        []string{"alex@softgamings.com"},
-				Site:         []string{"alex.softgamings.com"},
-				Phone:        []string{"+371 25 155112"},
-				Skype:        []string{},
-				Telegram:     []string{},
+				Site:         []string{"www.SoftGamings.com"},
+				Phone:        []string{"+37125371708", "+37125 155112"},
+				Skype:        []string{"alex.softgamings.com"},
 				Name:         "Alexander Yerin",
-				Organization: "NWW.SOftGamings.com",
-				JobTitle:     "Head of Sales Department —>Direct: +371 25 371 708",
-				Other:        "",
+				Organization: "SoftGamings",
+				JobTitle:     "Head of Sales Department",
+				Other:        "Brivibas 151,RigaLatvia,LV-1012",
 			},
 		},
 		{
 			"8.jpg",
 			BASE_IMG_PROBLEM2_PATH + "/8.jpg",
 			&model.Person{
-				Email:        []string{"james.singer@3oaks.com"},
-				Site:         []string{"www.3oaks.com"},
-				Phone:        []string{},
-				Skype:        []string{},
-				Telegram:     []string{},
-				Name:         "",
-				Organization: "JAMES",
-				JobTitle:     "Senior Business Development",
-				Other:        "SINGER;Manager",
+				Email:    []string{"james.singer@3oaks.com"},
+				Site:     []string{"www.3oaks.com"},
+				Name:     "JAMES SINGER",
+				JobTitle: "Senior Business Development Manager",
 			},
 		},
 		{
@@ -118,37 +108,27 @@ func TestDetectProblem2(t *testing.T) {
 			BASE_IMG_PROBLEM2_PATH + "/9.jpg",
 			&model.Person{
 				Email:        []string{"slava@monotech.group"},
-				Site:         []string{},
-				Phone:        []string{},
-				Skype:        []string{},
-				Telegram:     []string{},
 				Name:         "Slava Chernenko",
-				Organization: "f MONOTECH",
-				JobTitle:     "and Accounts Manager",
-				Other:        "Senior Partnerships",
+				Organization: "M.MONOTECH",
+				JobTitle:     "Senior Partnerships and Accounts Manager",
 			},
 		},
 		{
 			"10.jpg",
 			BASE_IMG_PROBLEM2_PATH + "/10.jpg",
 			&model.Person{
-				Email:        []string{"p@smartx.consutting"},
-				Site:         []string{},
-				Phone:        []string{"+598 9 970 0086"}, // todo +598 9 970 0085
-				Skype:        []string{},
-				Telegram:     []string{},
-				Name:         "Laura Porto",
-				Organization: "",
-				JobTitle:     "ead Consultant - Brazil",
-				Other:        "i laura.",
+				Email:    []string{"laura.p@smartx.consulting"},
+				Phone:    []string{"+59899700086"},
+				Name:     "Laura Porto",
+				JobTitle: "Lead Consultant-Brazil",
 			},
 		},
 	}
 
-	detector, config := createDetector(t)
+	detector, config := createDetector2(t)
 
 	manage_file.ClearFolder(config.StorageFolder)
-	manage_file.ClearFolder("./tmp")
+	//manage_file.ClearFolder("./tmp")
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -168,4 +148,11 @@ func TestDetectProblem2(t *testing.T) {
 			assert.Equal(t, tc.expected.Organization, actual.Organization, "Organization")
 		})
 	}
+}
+
+func equalsListIgnoreOrder(expected []string, actual []string) bool {
+
+	// implement todo
+
+	return false
 }

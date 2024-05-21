@@ -18,6 +18,10 @@ type AppConfig struct {
 	PathCompanyList    string `yaml:"path_company_list"`
 	PathNamesList      string `yaml:"path_names_list"`
 
+	Paddleocr struct {
+		RunPath string `yaml:"run_path"`
+	}
+
 	Log struct {
 		Level string `yaml:"level" default:"info"`
 		Time  bool   `yaml:"time" default:"true"`
@@ -48,14 +52,6 @@ func NewConfigFromYml() (*AppConfig, error) {
 		log.Printf("Error parsing YAML file: %s\n", err)
 		return nil, err
 	}
-
-	//if pgbouncer := os.Getenv("PGBOUNCER"); pgbouncer != "" {
-	//	config.DB.Pgbouncer = pgbouncer
-	//}
-	//
-	//if lomsGrpcBase := os.Getenv("LOMS_GRPC_BASE"); lomsGrpcBase != "" {
-	//	config.LomsPaths.GrpcBase = lomsGrpcBase
-	//}
 
 	return &config, nil
 }
