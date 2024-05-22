@@ -37,7 +37,7 @@ func NewDetector2(
 		cardRepo:             cardRepo,
 		storageFolder:        storageFolder,
 		isLogTime:            isLogTime,
-		isDebug:              true,
+		isDebug:              false,
 	}
 }
 
@@ -61,7 +61,6 @@ func (d *Detector2) Detect(imgPath string) (*model.Person, error) {
 
 	absPath, _ := filepath.Abs(currentPath)
 
-	log.Println(absPath)
 	detectWorlds, err := d.textRecognizeService.RecognizeAll(absPath)
 	if err != nil {
 		return nil, err
@@ -77,9 +76,10 @@ func (d *Detector2) Detect(imgPath string) (*model.Person, error) {
 	worlds := getOnlyWorlds(detectWorlds)
 
 	p := d.fieldSorterService.Sort(worlds)
-	person := model.NewPerson(p)
-	manage_file.ClearFolder("./tmp")
 
+	manage_file.ClearFolder(d.storageFolder)
+
+	person := model.NewPerson(p)
 	card := mapCard(*person, "")
 	if err := d.cardRepo.Save(card); err != nil {
 		log.Println("Error saving card:", err)

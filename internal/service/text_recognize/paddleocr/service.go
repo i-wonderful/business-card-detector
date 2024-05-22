@@ -40,7 +40,9 @@ func (s *TextRecognizeService) RecognizeAll(path string) ([]model.DetectWorld, e
 	}
 
 	//  paddleocr --image_dir ../testdata/16.JPG --lang=en --show_log=False --use_angle_cls=True
-	cmd := exec.Command("/home/olga/env/bin/python", s.pathToPythonRun, path, "stdout")
+	// "/home/olga/env/bin/python"
+	// "/app/venv/bin/python"
+	cmd := exec.Command("/app/venv/bin/python", s.pathToPythonRun, path, "stdout")
 
 	output, err := cmd.Output()
 	if err != nil {

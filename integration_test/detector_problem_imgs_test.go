@@ -85,7 +85,6 @@ func TestDetectProblem(t *testing.T) {
 	detector, config := createDetector2(t)
 
 	manage_file.ClearFolder(config.StorageFolder)
-	manage_file.ClearFolder("./tmp")
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {

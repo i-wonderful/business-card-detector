@@ -1,8 +1,16 @@
 from paddleocr import PaddleOCR, draw_ocr
 import sys
 
-ocr = PaddleOCR(use_angle_cls=True, lang='en', show_log=False) # need to run only once to download and load model into memory
-img_path = sys.argv[1]  #'/home/olga/projects/card_detector_imgs/16.JPG'
+img_path = sys.argv[1]
+
+ocr = PaddleOCR(use_angle_cls=True,
+                lang='en',
+                show_log=False,
+                # det_model_dir='./lib/paddleocr/det/en/en_PP-OCRv3_det_infer',
+                # rec_model_dir='./lib/paddleocr/rec/en/en_PP-OCRv3_rec_infer',
+                # cls_model_dir='./lib/paddleocr/cls/en/en_ppocr_mobile_v2.0_cls_infer'
+                ) # need to run only once to download and load model into memory
+
 result = ocr.ocr(img_path, cls=True) #det=False detection rec=False means no recognition
 for idx in range(len(result)):
     res = result[idx]

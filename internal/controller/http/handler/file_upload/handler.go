@@ -16,14 +16,16 @@ type Detector interface {
 }
 
 type FileUploadHandler struct {
-	name     string
-	detector Detector
+	name       string
+	detector   Detector
+	dirTmpPath string
 }
 
-func NewFileUploadHandler(detector Detector) *FileUploadHandler {
+func NewFileUploadHandler(detector Detector, dirTmpPath string) *FileUploadHandler {
 	return &FileUploadHandler{
-		name:     "FileUploadHandler",
-		detector: detector,
+		name:       "FileUploadHandler",
+		detector:   detector,
+		dirTmpPath: dirTmpPath,
 	}
 }
 
@@ -50,7 +52,7 @@ func (h *FileUploadHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	defer file.Close()
 
 	// Save the file to disk
-	fileName := "./tmp/" + handler.Filename
+	fileName := h.dirTmpPath + "/" + handler.Filename
 	f, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

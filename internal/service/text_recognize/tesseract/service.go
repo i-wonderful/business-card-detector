@@ -3,9 +3,7 @@ package tesseract
 import (
 	"log"
 	"regexp"
-	"time"
-
-	"github.com/otiai10/gosseract/v2"
+	//"github.com/otiai10/gosseract/v2"
 )
 
 // TextRecognizeService - recognize text from image
@@ -23,6 +21,7 @@ func NewService(isLogTime bool, pathSettings string) *TextRecognizeService {
 	}
 }
 
+/*
 func (s *TextRecognizeService) RecognizeBatch(contents [][]byte) ([]string, error) {
 	if s.isLogTime {
 		start := time.Now()
@@ -60,7 +59,7 @@ func (s *TextRecognizeService) RecognizeBatch(contents [][]byte) ([]string, erro
 
 	return results, nil
 }
-
+*/
 //func (s *TextRecognizeService) RecognizeByPath(paths []string) ([]string, error) {
 //	if s.isLogTime {
 //		start := time.Now()
@@ -97,42 +96,43 @@ func (s *TextRecognizeService) DetectLang(path string) {
 	}
 }
 
-func (s *TextRecognizeService) getClient() (*gosseract.Client, error) {
-	client := gosseract.NewClient()
-	client.SetLanguage(s.lang)
-	err := client.SetConfigFile(s.pathSettings + "base.config")
-	if err != nil {
-		return nil, err
+/*
+	func (s *TextRecognizeService) getClient() (*gosseract.Client, error) {
+		client := gosseract.NewClient()
+		client.SetLanguage(s.lang)
+		err := client.SetConfigFile(s.pathSettings + "base.config")
+		if err != nil {
+			return nil, err
+		}
+		return client, nil
 	}
-	return client, nil
-}
 
-func (s *TextRecognizeService) getClientForPhone() (*gosseract.Client, error) {
-	client := gosseract.NewClient()
-	client.SetLanguage("rus")
-	err := client.SetConfigFile(s.pathSettings + "detect-phone.config")
-	if err != nil {
-		return nil, err
+	func (s *TextRecognizeService) getClientForPhone() (*gosseract.Client, error) {
+		client := gosseract.NewClient()
+		client.SetLanguage("rus")
+		err := client.SetConfigFile(s.pathSettings + "detect-phone.config")
+		if err != nil {
+			return nil, err
+		}
+		return client, nil
 	}
-	return client, nil
-}
 
-func recognize(content []byte, cl *gosseract.Client) (string, error) {
-	err := cl.SetImageFromBytes(content)
-	if err != nil {
-		return "", err
+	func recognize(content []byte, cl *gosseract.Client) (string, error) {
+		err := cl.SetImageFromBytes(content)
+		if err != nil {
+			return "", err
+		}
+		return cl.Text()
 	}
-	return cl.Text()
-}
 
-func (s *TextRecognizeService) recognizeByPath(path string, cl *gosseract.Client) (string, error) {
-	err := cl.SetImage(path)
-	if err != nil {
-		return "", err
+	func (s *TextRecognizeService) recognizeByPath(path string, cl *gosseract.Client) (string, error) {
+		err := cl.SetImage(path)
+		if err != nil {
+			return "", err
+		}
+		return cl.Text()
 	}
-	return cl.Text()
-}
-
+*/
 func isPhone(val string) bool {
 	digitRegex := regexp.MustCompile(`\d+`)
 	letterRegex := regexp.MustCompile(`[a-zA-Z]+`)

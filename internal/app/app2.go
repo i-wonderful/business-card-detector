@@ -58,7 +58,7 @@ func (a *app2) Run() error {
 		isLogTime)
 
 	// handlers
-	h := router.NewRouter(detectService, getterService)
+	h := router.NewRouter(detectService, getterService, a.config.StorageFolder)
 
 	// start server
 	srv := &http.Server{

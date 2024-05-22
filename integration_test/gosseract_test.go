@@ -1,5 +1,6 @@
 package integration_test
 
+/*
 import (
 	"card_detector/internal/service/text_recognize/tesseract"
 	manage_file "card_detector/internal/util/file"
@@ -7,6 +8,8 @@ import (
 	"fmt"
 	"github.com/disintegration/imaging"
 	"github.com/otiai10/gosseract/v2"
+
+	//"github.com/otiai10/gosseract/v2"
 	"github.com/stretchr/testify/assert"
 	"reflect"
 
@@ -155,3 +158,4 @@ func TestDetectFromFile(t *testing.T) {
 
 	fmt.Println(text)
 }
+*/

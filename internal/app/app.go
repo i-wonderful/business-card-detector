@@ -1,7 +1,6 @@
 package app
 
 import (
-	"card_detector/internal/service/text_recognize/tesseract"
 	"context"
 	"fmt"
 	"log"
@@ -44,7 +43,7 @@ func (a *app) Run() error {
 		log.Fatal(err)
 		return err
 	}
-	textRecognizer := tesseract.NewService(isLogTime, "./config/tesseract/")
+	//textRecognizer := tesseract.NewService(isLogTime, "./config/tesseract/")
 	fieldSorter := field_sort.NewService(
 		a.config.PathProfessionList,
 		a.config.PathCompanyList,
@@ -56,14 +55,14 @@ func (a *app) Run() error {
 	detectService := service.NewDetector(
 		imgPreparer,
 		findTextService,
-		textRecognizer,
+		nil, //textRecognizer,
 		fieldSorter,
 		cardRepo,
 		a.config.StorageFolder,
 		isLogTime)
 
 	// handlers
-	h := router.NewRouter(detectService, getterService)
+	h := router.NewRouter(detectService, getterService, a.config.StorageFolder)
 
 	// start server
 	srv := &http.Server{

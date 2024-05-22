@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func NewRouter(detectService file_upload.Detector, getterService history.Getter) *http.ServeMux {
+func NewRouter(detectService file_upload.Detector, getterService history.Getter, tmpFilePath string) *http.ServeMux {
 	// Создаем файловый сервер, который будет использовать директорию "./template/static"
 	fs := http.FileServer(http.Dir("./template/static"))
 
@@ -20,7 +20,7 @@ func NewRouter(detectService file_upload.Detector, getterService history.Getter)
 	mux.Handle("/storage/", http.StripPrefix("/storage/", fsStorage))
 
 	indexHandler := index.NewIndexHandler()
-	detectHandler := file_upload.NewFileUploadHandler(detectService)
+	detectHandler := file_upload.NewFileUploadHandler(detectService, tmpFilePath)
 	historyHandler := history.NewHandler(getterService)
 
 	mux.HandleFunc("/", indexHandler.Handle)

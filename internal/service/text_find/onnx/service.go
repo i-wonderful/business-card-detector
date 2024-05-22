@@ -3,7 +3,7 @@ package onnx
 import (
 	"card_detector/internal/model"
 	"github.com/nfnt/resize"
-	ort "github.com/yalue/onnxruntime_go"
+	//ort "github.com/yalue/onnxruntime_go"
 	"image"
 	"log"
 	"sort"
@@ -30,11 +30,11 @@ type FindTextService struct {
 }
 
 func NewService(pathToOnnxRuntime string, pathToModel string, isLogTime bool) (*FindTextService, error) {
-	ort.SetSharedLibraryPath(pathToOnnxRuntime)
-	err := ort.InitializeEnvironment()
-	if err != nil {
-		return nil, err
-	}
+	//ort.SetSharedLibraryPath(pathToOnnxRuntime)
+	//err := ort.InitializeEnvironment()
+	//if err != nil {
+	//	return nil, err
+	//}
 
 	return &FindTextService{
 		pathToOnnxRuntime: pathToOnnxRuntime,
@@ -125,18 +125,20 @@ func prepare_input(img image.Image) ([]float32, int64, int64) {
 
 func runModel(pathToModel string, input []float32) []float32 {
 
-	inputShape := ort.NewShape(1, 3, IMG_SIZE, IMG_SIZE)
-	inputTensor, _ := ort.NewTensor(inputShape, input)
+	//inputShape := ort.NewShape(1, 3, IMG_SIZE, IMG_SIZE)
+	//inputTensor, _ := ort.NewTensor(inputShape, input)
+	//
+	//outputShape := ort.NewShape(1, 4+COUNT_CLASSES, 8400) // todo 84 ?
+	//outputTensor, _ := ort.NewEmptyTensor[float32](outputShape)
+	//
+	//model, _ := ort.NewSession[float32](pathToModel,
+	//	[]string{"images"}, []string{"output0"},
+	//	[]*ort.Tensor[float32]{inputTensor}, []*ort.Tensor[float32]{outputTensor})
+	//
+	//_ = model.Run()
+	//return outputTensor.GetData()
 
-	outputShape := ort.NewShape(1, 4+COUNT_CLASSES, 8400) // todo 84 ?
-	outputTensor, _ := ort.NewEmptyTensor[float32](outputShape)
-
-	model, _ := ort.NewSession[float32](pathToModel,
-		[]string{"images"}, []string{"output0"},
-		[]*ort.Tensor[float32]{inputTensor}, []*ort.Tensor[float32]{outputTensor})
-
-	_ = model.Run()
-	return outputTensor.GetData()
+	return []float32{}
 }
 
 // Returns Array of bounding boxes in format [[x1,y1,x2,y2,object_type,probability],..]

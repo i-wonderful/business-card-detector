@@ -7,9 +7,7 @@ import (
 	"card_detector/internal/service"
 	"card_detector/internal/service/field_sort"
 	"card_detector/internal/service/img_prepare"
-	"card_detector/internal/service/text_find/onnx"
 	"card_detector/internal/service/text_recognize/paddleocr"
-	"card_detector/internal/service/text_recognize/tesseract"
 	manage_file "card_detector/internal/util/file"
 	"github.com/stretchr/testify/assert"
 	"os"
@@ -400,6 +398,7 @@ func equalIgnoreCase(t *testing.T, expected, actual []string) {
 	}
 }
 
+/*
 func createDetector(t *testing.T) (*service.Detector, *app.AppConfig) {
 
 	os.Setenv("CONFIG_FILE", "./config/config.yml")
@@ -432,6 +431,8 @@ func createDetector(t *testing.T) (*service.Detector, *app.AppConfig) {
 
 	return testDetector, config
 }
+
+*/
 
 func createDetector2(t *testing.T) (*service.Detector2, *app.AppConfig) {
 

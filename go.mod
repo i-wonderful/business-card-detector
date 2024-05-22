@@ -10,18 +10,12 @@ require (
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 
 	// detect
-	//	github.com/otiai10/gosseract v2.2.1+incompatible
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd
 
 	// util
 	github.com/stretchr/testify v1.8.4
-	github.com/yalue/onnxruntime_go v1.6.0
-	gopkg.in/yaml.v3 v3.0.1
-)
-
-require (
-	github.com/otiai10/gosseract/v2 v2.4.1
 	golang.org/x/image v0.16.0
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
