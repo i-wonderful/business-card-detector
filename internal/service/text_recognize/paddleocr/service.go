@@ -39,10 +39,12 @@ func (s *TextRecognizeService) RecognizeAll(path string) ([]model.DetectWorld, e
 		}()
 	}
 
-	//  paddleocr --image_dir ../testdata/16.JPG --lang=en --show_log=False --use_angle_cls=True
+	//paddleocr --image_dir /app/storage/<some_img_name> --lang=en
+	// paddleocr --image_dir https://marketplace.canva.com/EAFUXb9i_OM/1/0/1600w/canva-green-and-white-modern-business-card-rU-gq1vTReM.jpg --lang=en --use_angle_cls=true
+	// paddleocr --image_dir ../testdata/16.JPG --lang=en --show_log=False --use_angle_cls=True
 	// "/home/olga/env/bin/python"
 	// "/app/venv/bin/python"
-	cmd := exec.Command("/app/venv/bin/python", s.pathToPythonRun, path, "stdout")
+	cmd := exec.Command("python", s.pathToPythonRun, path, "stdout")
 
 	output, err := cmd.Output()
 	if err != nil {

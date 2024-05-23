@@ -118,39 +118,41 @@ func TestDetect(t *testing.T) {
 				Other:        "INNOVATION;HEADOF CLIENT SUCCESS;CONTENT PRODUCTION",
 			},
 		},
-		//	{
-		//		"./data/IMG_2920.JPG",
-		//		&model.Person{
-		//			Email:    "partner@coins.game",
-		//			Telegram: "@cg_partners",
-		//			Site:     "coins.game",
-		//			Skype:    "coinsgame.partners",
-		//		},
-		//	},
-		//	{
-		//		"./data/IMG_2921.JPG",
-		//		&model.Person{
-		//			Name:     "DEAN RAYSON",
-		//			Email:    "dean@all-in.global",
-		//			Phone:    "+351 220 991 583",
-		//			JobTitle: "HEAD OF SALES",
-		//			Site:     "all-in.global",
-		//			Other:    "MT Office +356 770 408 06;UK Mobile +44 7921 239 788",
-		//		},
-		//	},
-		//	{
-		//		"./data/IMG_2922.JPG",
-		//		&model.Person{
-		//			Name:     "Russ Yershon",
-		//			Email:    "russell@connectingbrands.co.uk",
-		//			Phone:    "+44 (0) 7500828120",
-		//			JobTitle: "Director",
-		//			Site:     "Connectingbrands.co.uk",
-		//			Organization:  "CONNECTING", // todo CONNECTING BRANDS .co.ux
-		//			Skype:    "russ.yershon",
-		//			Telegram: "@connectingt",
-		//		},
-		//	},
+		{
+			"first IMG_2920.JPG",
+			BASE_IMG_PATH + "/first/IMG_2920.JPG",
+			&model.Person{
+				Email:    []string{"partner@coins.game"},
+				Telegram: []string{"@cg_partners"},
+				Site:     []string{"coinsgame.partners"},
+				Skype:    []string{"coins.game"},
+			},
+		},
+		{
+			"first IMG_2921.JPG",
+			BASE_IMG_PATH + "/first/IMG_2921.JPG",
+			&model.Person{
+				Name:     "DEAN RAYSON",
+				Email:    []string{"dean@all-in.global"},
+				Phone:    []string{"+351220 991 583", "+356 770408 06", "+447921 239 788"},
+				JobTitle: "HEAD OF SALES",
+				Site:     []string{"all-in.global"},
+			},
+		},
+		{
+			"first IMG_2922.JPG",
+			BASE_IMG_PATH + "/first/IMG_2922.JPG",
+			&model.Person{
+				Name:         "Russ Yershon",
+				Email:        []string{"russell@connectingbrands.co.uk"},
+				Phone:        []string{"+44 0)7500828120"},
+				JobTitle:     "Talent Manager to wide network of Football Legends Director",
+				Site:         []string{"Connectingbrands.co.uk"},
+				Organization: "CONNECTING", // todo CONNECTING BRANDS .co.ux
+				//Skype:        []string{"russ.yershon"}, todo
+				//Telegram:     []string{"@connectingt"},
+			},
+		},
 		//	{
 		//		"./data/IMG_2923.JPG",
 		//		&model.Person{
@@ -370,12 +372,12 @@ func TestDetect(t *testing.T) {
 
 			fillEmpty(tc.expected)
 			assert.Equal(t, tc.expected.Name, actual.Name, "Name")
-			equalIgnoreCase(t, tc.expected.Email, actual.Email)
+			equalIgnoreCase(t, tc.expected.Email, actual.Email, "Email")
 			assert.Equal(t, tc.expected.Phone, actual.Phone, "Phone")
 			assert.Equal(t, tc.expected.JobTitle, actual.JobTitle, "JobTitle")
 			assert.Equal(t, tc.expected.Telegram, actual.Telegram, "Telegram")
-			equalIgnoreCase(t, tc.expected.Site, actual.Site)
-			equalIgnoreCase(t, tc.expected.Skype, actual.Skype)
+			equalIgnoreCase(t, tc.expected.Site, actual.Site, "Site")
+			equalIgnoreCase(t, tc.expected.Skype, actual.Skype, "Skype")
 
 			assert.Equal(t, tc.expected.Organization, actual.Organization, "Organization")
 		})
@@ -384,7 +386,7 @@ func TestDetect(t *testing.T) {
 
 }
 
-func equalIgnoreCase(t *testing.T, expected, actual []string) {
+func equalIgnoreCase(t *testing.T, expected, actual []string, field string) {
 
 	for _, e := range expected {
 		found := false
@@ -394,7 +396,7 @@ func equalIgnoreCase(t *testing.T, expected, actual []string) {
 				break
 			}
 		}
-		assert.True(t, found, "expected: %s, actual: %s", e, actual)
+		assert.True(t, found, "%s: expected: %s, actual: %s", field, e, actual)
 	}
 }
 
