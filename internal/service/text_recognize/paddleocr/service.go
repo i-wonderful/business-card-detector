@@ -44,6 +44,7 @@ func (s *TextRecognizeService) RecognizeAll(path string) ([]model.DetectWorld, e
 	// paddleocr --image_dir ../testdata/16.JPG --lang=en --show_log=False --use_angle_cls=True
 	// "/home/olga/env/bin/python"
 	// "/app/venv/bin/python"
+	// "python"
 	cmd := exec.Command("python", s.pathToPythonRun, path, "stdout")
 
 	output, err := cmd.Output()
@@ -64,7 +65,7 @@ func (s *TextRecognizeService) RecognizeAll(path string) ([]model.DetectWorld, e
 }
 
 func parseString(input string) ([]model.DetectWorld, error) {
-	re := regexp.MustCompile(`\[\[\[(\d+\.\d+), (\d+\.\d+)\], \[(\d+\.\d+), (\d+\.\d+)\], \[(\d+\.\d+), (\d+\.\d+)\], \[(\d+\.\d+), (\d+\.\d+)\]\], \('(.+?)', (\d+\.\d+)\)\]`)
+	re := regexp.MustCompile(`\[\[\[(\d+\.\d+), (\d+\.\d+)\], \[(\d+\.\d+), (\d+\.\d+)\], \[(\d+\.\d+), (\d+\.\d+)\], \[(\d+\.\d+), (\d+\.\d+)\]\], '(.+?)', (\d+\.\d+)\]`)
 
 	matches := re.FindAllStringSubmatch(input, -1)
 	if matches == nil {

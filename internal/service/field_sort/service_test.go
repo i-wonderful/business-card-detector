@@ -368,6 +368,13 @@ func TestService_Sort(t *testing.T) {
 				"skype": "live:.cid.e53090522ec2bf11",
 			},
 		},
+		//{
+		//	"Skype with S:", todo
+		//	[]string{"S:russ.yershon"},
+		//	map[string]interface{}{
+		//		"skype": "russ.yershon",
+		//	},
+		//},
 		{
 			"Organization",
 			[]string{

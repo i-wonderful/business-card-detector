@@ -449,7 +449,7 @@ func createDetector2(t *testing.T) (*service.Detector2, *app.AppConfig) {
 	cardRepo := inmemory.NewCardRepo()
 	imgPreparer := img_prepare.NewService(config.StorageFolder)
 
-	textRecognizer, err := paddleocr.NewService(isLogTime, "../internal/service/text_recognize/paddleocr/run.py")
+	textRecognizer, err := paddleocr.NewService(isLogTime, config.Paddleocr.RunPath)
 	if err != nil {
 		t.Fatal(err)
 	}

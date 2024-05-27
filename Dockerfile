@@ -11,30 +11,44 @@ COPY ./template /app/template
 COPY ./go.mod /app/go.mod
 COPY ./go.sum /app/go.sum
 
-ENV GO111MODULE=on
 RUN go build -o main ./cmd
 
 # 2. Run paddle ocr ---------------------------
-FROM paddlepaddle/paddle:2.6.1
-#FROM paddlepaddle/paddle:2.6.1-jupyter
+FROM python:3.9-slim-buster
 
-RUN mkdir -p /root/.paddleocr/whl
-COPY ./lib/paddleocr/whl /root/.paddleocr/whl
-#RUN apt-get update && apt-get install libgomp1 libgl1-mesa-glx libgtk2.0-0
+# Install ONNX Runtime and RapidOCR ONNX Runtime
+RUN pip install onnxruntime rapidocr_onnxruntime
 
-RUN pip install "paddleocr>=2.0.1"
+# Install dependencies and clean up apt lists to reduce image size
+RUN apt-get update && apt-get install -y \
+    libgirepository1.0-dev \
+    gir1.2-gtk-3.0 \
+    libcairo2-dev \
+    pkg-config \
+    libavcodec-dev \
+    libavformat-dev \
+    libswscale-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libtiff-dev \
+    libavutil-dev \
+    libxvidcore-dev \
+    libx264-dev \
+    libgtk-3-dev \
+    libgstreamer-plugins-base1.0-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-#RUN python --version
-#RUN pip show paddleocr
-
-RUN mkdir -p /app/storage
+RUN mkdir /app
 WORKDIR /app
 
 # Copy the Golang binary
 COPY --from=go-build /app/main /app
 COPY --from=go-build /app/config /app/config
-COPY --from=go-build /app/internal/service/text_recognize/paddleocr/run.py /app/internal/service/text_recognize/paddleocr/run.py
-COPY  --from=go-build /app/template /app/template
+COPY --from=go-build /app/template /app/template
+COPY ./lib /app/lib
+COPY ./python /app/python
+COPY ./storage /app/storage
 
 EXPOSE 8080
 CMD ["/app/main"]
