@@ -2,7 +2,6 @@ package service
 
 import (
 	"card_detector/internal/model"
-	manage_file "card_detector/internal/util/file"
 	"log"
 	"os"
 	"path/filepath"
@@ -29,7 +28,7 @@ func NewDetector2(
 	fieldSortService FieldSorter,
 	cardRepo CardRepo,
 	storageFolder string,
-	isLogTime bool) *Detector2 {
+	isLogTime, isDebug bool) *Detector2 {
 	return &Detector2{
 		imgPreparer:          imgPreparer,
 		textRecognizeService: textRecognizeService,
@@ -37,7 +36,7 @@ func NewDetector2(
 		cardRepo:             cardRepo,
 		storageFolder:        storageFolder,
 		isLogTime:            isLogTime,
-		isDebug:              false,
+		isDebug:              isDebug,
 	}
 }
 
@@ -77,7 +76,7 @@ func (d *Detector2) Detect(imgPath string) (*model.Person, error) {
 
 	p := d.fieldSorterService.Sort(worlds)
 
-	manage_file.ClearFolder(d.storageFolder)
+	//manage_file.ClearFolder(d.storageFolder)
 
 	person := model.NewPerson(p)
 	card := mapCard(*person, "")

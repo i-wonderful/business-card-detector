@@ -9,10 +9,6 @@ path_profession_list: ./config/professions.txt
 path_company_list: ./config/companies.txt
 path_names_list: ./config/names.txt
 
-onnx:
-  path_runtime: ./lib/libonnxruntime.so
-  path_model: ./onnx/my-card-detector.onnx
-
 paddleocr:
 #  run_path: ./internal/service/text_recognize/paddleocr/run.py
   run_path: ./python/run_onnx_rapidocr.py
@@ -23,5 +19,5 @@ log:
   level: info
   time: true
 
-debug: true
+debug: false
 

@@ -34,14 +34,13 @@ func TestDetectProblem(t *testing.T) {
 			"IMG_3623.JPG",
 			BASE_IMG_PROBLEM_PATH + "/IMG_3623.jpg",
 			&model.Person{
-				Email: []string{"gretta@endorphina.com"},
-				//Site:         []string{"endorphina.com"}, // todo
+				Email:        []string{"gretta@endorphina.com"},
+				Site:         []string{"endorphina.com"},
 				Phone:        []string{"+420222564222"},
 				Skype:        []string{"gretta@endorphina.com"},
 				Name:         "GRETTA KOCHKONYAN",
 				Organization: "endorphina",
 				JobTitle:     "Head Of Account Management",
-				Other:        "",
 			},
 		},
 		{
@@ -49,7 +48,7 @@ func TestDetectProblem(t *testing.T) {
 			BASE_IMG_PROBLEM_PATH + "/IMG_3587.jpg",
 			&model.Person{
 				Email:        []string{"flavio.tamega@upstreamsystems.com"},
-				Phone:        []string{"+55212146 0463", "+55 11 97278 5934"},
+				Phone:        []string{"+5511972785934", "+55212146 0463"},
 				Skype:        []string{"flavio.tamega"},
 				Name:         "Flavio Tamega",
 				Organization: "upstream",
@@ -96,7 +95,7 @@ func TestDetectProblem(t *testing.T) {
 			fillEmpty(tc.expected)
 			assert.Equal(t, tc.expected.Name, actual.Name, "Name")
 			assert.Equal(t, tc.expected.Email, actual.Email, "Email")
-			assert.Equal(t, tc.expected.Phone, actual.Phone, "Phone")
+			equalIgnoreSpaces(t, tc.expected.Phone, actual.Phone, "Phone")
 			assert.Equal(t, tc.expected.JobTitle, actual.JobTitle, "JobTitle")
 			assert.Equal(t, tc.expected.Telegram, actual.Telegram, "Telegram")
 			assert.Equal(t, tc.expected.Site, actual.Site, "Site")

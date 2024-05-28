@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-type AppConfig struct {
+type Config struct {
 	Name    string `yaml:"name" default:"card_detector"`
 	Version string `yaml:"version" default:"1.0.0"`
 
@@ -20,6 +20,8 @@ type AppConfig struct {
 
 	Paddleocr struct {
 		RunPath string `yaml:"run_path"`
+		DetPath string `yaml:"model_det_path"`
+		RecPath string `yaml:"model_rec_path"`
 	}
 
 	Log struct {
@@ -27,20 +29,17 @@ type AppConfig struct {
 		Time  bool   `yaml:"time" default:"true"`
 	}
 
-	Onnx struct {
-		PathRuntime string `yaml:"path_runtime"`
-		PathModel   string `yaml:"path_model"`
-	}
+	IsDebug bool `yaml:"debug" default:"false"`
 }
 
 const defaultConfigPath = "./config/config.yml"
 
-func NewConfigFromYml() (*AppConfig, error) {
+func NewConfigFromYml() (*Config, error) {
 	configFilePath := os.Getenv("CONFIG_FILE")
 	if configFilePath == "" {
 		configFilePath = defaultConfigPath
 	}
-	var config AppConfig
+	var config Config
 	yamlFile, err := os.ReadFile(configFilePath)
 	if err != nil {
 		log.Printf("Error reading YAML file: %s\n", err)

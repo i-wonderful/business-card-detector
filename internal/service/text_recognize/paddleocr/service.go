@@ -17,16 +17,28 @@ const MIN_WORD_LEN = 3
 
 type TextRecognizeService struct {
 	pathToPythonRun string
+	pathRecOnnx     string
+	pathDetOnnx     string
 	isLog           bool
 }
 
-func NewService(isLog bool, pathToPythonRun string) (*TextRecognizeService, error) {
-	if !manage_file.FileExists(pathToPythonRun) {
-		return nil, fmt.Errorf("file not found: %s", pathToPythonRun)
+func NewService(isLog bool, pathToRun string, pathDetOnnx string, pathRecOnnx string) (*TextRecognizeService, error) {
+	if !manage_file.FileExists(pathToRun) {
+		return nil, fmt.Errorf("file not found: %s", pathToRun)
+	}
+
+	if !manage_file.FileExists(pathDetOnnx) {
+		return nil, fmt.Errorf("ONNX detection not found: %s", pathDetOnnx)
+	}
+
+	if !manage_file.FileExists(pathRecOnnx) {
+		return nil, fmt.Errorf("ONNX recognition not found: %s", pathRecOnnx)
 	}
 
 	return &TextRecognizeService{
-		pathToPythonRun: pathToPythonRun,
+		pathToPythonRun: pathToRun,
+		pathDetOnnx:     pathDetOnnx, // "./lib/paddleocr/onnx/en_PP-OCRv3_det_infer.onnx",
+		pathRecOnnx:     pathRecOnnx, // "./lib/paddleocr/onnx/en_PP-OCRv4_rec_infer.onnx",
 		isLog:           isLog,
 	}, nil
 }
@@ -39,11 +51,8 @@ func (s *TextRecognizeService) RecognizeAll(path string) ([]model.DetectWorld, e
 		}()
 	}
 
-	//paddleocr --image_dir /app/storage/<some_img_name> --lang=en
-	// paddleocr --image_dir https://marketplace.canva.com/EAFUXb9i_OM/1/0/1600w/canva-green-and-white-modern-business-card-rU-gq1vTReM.jpg --lang=en --use_angle_cls=true
-	// paddleocr --image_dir ../testdata/16.JPG --lang=en --show_log=False --use_angle_cls=True
 	// "/home/olga/env/bin/python"
-	// "/app/venv/bin/python"
+	//
 	// "python"
 	cmd := exec.Command("python", s.pathToPythonRun, path, "stdout")
 

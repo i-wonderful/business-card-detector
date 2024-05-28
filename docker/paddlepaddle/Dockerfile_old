@@ -22,6 +22,7 @@ RUN apt-get update && \
 
 # Create a virtual environment
 RUN python3 -m venv /app/venv
+# run python "/app/venv/bin/python"
 
 # Activate the virtual environment and install packages
 RUN /app/venv/bin/pip install paddlepaddle paddleocr
