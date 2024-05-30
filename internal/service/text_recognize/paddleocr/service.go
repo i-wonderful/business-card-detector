@@ -16,10 +16,11 @@ import (
 const MIN_WORD_LEN = 3
 
 type TextRecognizeService struct {
-	pathToPythonRun string
-	pathRecOnnx     string
-	pathDetOnnx     string
-	isLog           bool
+	pathToRun   string
+	pathRecOnnx string
+	pathDetOnnx string
+	pathPython  string
+	isLog       bool
 }
 
 func NewService(isLog bool, pathToRun string, pathDetOnnx string, pathRecOnnx string) (*TextRecognizeService, error) {
@@ -36,14 +37,15 @@ func NewService(isLog bool, pathToRun string, pathDetOnnx string, pathRecOnnx st
 	}
 
 	return &TextRecognizeService{
-		pathToPythonRun: pathToRun,
-		pathDetOnnx:     pathDetOnnx, // "./lib/paddleocr/onnx/en_PP-OCRv3_det_infer.onnx",
-		pathRecOnnx:     pathRecOnnx, // "./lib/paddleocr/onnx/en_PP-OCRv4_rec_infer.onnx",
-		isLog:           isLog,
+		pathToRun:   pathToRun,
+		pathDetOnnx: pathDetOnnx, // "./lib/paddleocr/onnx/en_PP-OCRv3_det_infer.onnx",
+		pathRecOnnx: pathRecOnnx, // "./lib/paddleocr/onnx/en_PP-OCRv4_rec_infer.onnx",
+		pathPython:  "python",    // "python"
+		isLog:       isLog,
 	}, nil
 }
 
-func (s *TextRecognizeService) RecognizeAll(path string) ([]model.DetectWorld, error) {
+func (s *TextRecognizeService) RecognizeAll(pathImg string) ([]model.DetectWorld, error) {
 	if s.isLog {
 		start := time.Now()
 		defer func() {
@@ -51,10 +53,7 @@ func (s *TextRecognizeService) RecognizeAll(path string) ([]model.DetectWorld, e
 		}()
 	}
 
-	// "/home/olga/env/bin/python"
-	//
-	// "python"
-	cmd := exec.Command("python", s.pathToPythonRun, path, "stdout")
+	cmd := exec.Command(s.pathPython, s.pathToRun, pathImg, s.pathDetOnnx, s.pathRecOnnx, "stdout")
 
 	output, err := cmd.Output()
 	if err != nil {
@@ -74,7 +73,7 @@ func (s *TextRecognizeService) RecognizeAll(path string) ([]model.DetectWorld, e
 }
 
 func parseString(input string) ([]model.DetectWorld, error) {
-	re := regexp.MustCompile(`\[\[\[(\d+\.\d+), (\d+\.\d+)\], \[(\d+\.\d+), (\d+\.\d+)\], \[(\d+\.\d+), (\d+\.\d+)\], \[(\d+\.\d+), (\d+\.\d+)\]\], '(.+?)', (\d+\.\d+)\]`)
+	re := regexp.MustCompile(`\[\[\[(\d+\.\d+), (\d+\.\d+)\], \[(\d+\.\d+), (\d+\.\d+)\], \[(\d+\.\d+), (\d+\.\d+)\], \[(\d+\.\d+), (\d+\.\d+)\]\], ["'](.+?)["'], (\d+\.\d+)\]`)
 
 	matches := re.FindAllStringSubmatch(input, -1)
 	if matches == nil {
@@ -119,6 +118,15 @@ func sortByProbAndY(worlds []model.DetectWorld) []model.DetectWorld {
 		if math.Abs(float64(w1.Prob-w2.Prob)) > 0.04 {
 			return w1.Prob > w2.Prob
 		}
+		return w1.Rect.PTop1.Y < w2.Rect.PTop1.Y
+	})
+	return worlds
+}
+
+func sortByHeight(worlds []model.DetectWorld) []model.DetectWorld {
+	sort.Slice(worlds, func(i, j int) bool {
+		w1 := worlds[i]
+		w2 := worlds[j]
 		return w1.Rect.PTop1.Y < w2.Rect.PTop1.Y
 	})
 	return worlds

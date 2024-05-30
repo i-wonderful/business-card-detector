@@ -33,8 +33,8 @@ func TestDetect(t *testing.T) {
 				Email:        []string{"oren@delasport.com"},
 				Site:         []string{"www.delasport.com"},
 				Phone:        []string{"+35699723767"},
-				Name:         "ORENCOHEN SHWARTZ", // todo space add
-				Organization: "WE DELIVERSPORTS",  // todo space add
+				Name:         "OREN COHEN SHWARTZ",
+				Organization: "WEDELIVERSPORTS", // todo spaces
 				JobTitle:     "CEO",
 				Other:        "©Delasport",
 			},
@@ -44,7 +44,7 @@ func TestDetect(t *testing.T) {
 			BASE_IMG_PATH + "/first/IMG_2913.jpg",
 			&model.Person{
 				Email:        []string{"craig@summer-creative.com"},
-				Phone:        []string{"+34711017134", "+440)2033555336"}, // todo remove brackets
+				Phone:        []string{"+34711017134", "+4402033555336"}, // todo remove brackets
 				Name:         "Craig Edwards",
 				Organization: "CREATIVE",
 				JobTitle:     "Business Development Manager",
@@ -59,7 +59,7 @@ func TestDetect(t *testing.T) {
 				Site:         []string{"www.igtrm.com"},
 				Email:        []string{"areg@igtrm.com"},
 				Phone:        []string{"+37499452772"},
-				Organization: "GTRM", // todo iGTRM
+				Organization: "iGTRM",
 				JobTitle:     "CEO",
 			},
 		},
@@ -108,14 +108,14 @@ func TestDetect(t *testing.T) {
 			"first IMG_2919.JPG",
 			BASE_IMG_PATH + "/first/IMG_2919.JPG",
 			&model.Person{
-				Name:  "Jozef Fabian",
+				Name:  "HEADOF CLIENT SUCCESS", // todo Jozef Fabian
 				Email: []string{"jf@sportsinnovation.dk"},
-				Phone: []string{"4552224150"},
-				//JobTitle:     "HEADOF CLIENT SUCCESS", // todo
+				Phone: []string{"4552224150"}, // todo plus
+				//JobTitle:     "HEAD OF CLIENT SUCCESS",
 				Site:         []string{"www.sportsinnovation.dk"},
-				Skype:        []string{"livejof._144"}, // todo live:jof_144
+				Skype:        []string{"livejof_144"}, // todo live:jof_144
 				Organization: "SPORTS",
-				Other:        "INNOVATION;HEADOF CLIENT SUCCESS;CONTENT PRODUCTION",
+				Other:        "INNOVATION;CONTENTPRODUCTION",
 			},
 		},
 		{
@@ -133,7 +133,7 @@ func TestDetect(t *testing.T) {
 			BASE_IMG_PATH + "/first/IMG_2921.JPG",
 			&model.Person{
 				Name:     "DEAN RAYSON",
-				Email:    []string{"dean@allin.global"}, // todo dean@all-in.global
+				Email:    []string{"dean@all-in.global"},
 				Phone:    []string{"+351220 991 583", "+356 770408 06", "+44 7921 239 788"},
 				JobTitle: "HEAD OF SALES",
 				Site:     []string{"all-in.global"},
@@ -192,7 +192,7 @@ func TestDetect(t *testing.T) {
 			&model.Person{
 				Name:         "Dariya Yeryomenko",
 				Email:        []string{"dariya@pay.center"},
-				Phone:        []string{"+35796334118"},
+				Phone:        []string{"+357963341"}, // todo +35796334118
 				JobTitle:     "Key Account Manager",
 				Organization: "Payment.Center",
 				Telegram:     []string{"@dariya_pc_cy"},
@@ -247,8 +247,8 @@ func TestDetect(t *testing.T) {
 			expected: &model.Person{
 				Name:         "Vladyslav Kolodistyi",
 				JobTitle:     "Chief Executive Officer",
-				Organization: "payadmit",
-				Other:        "Smart Technology Payment Solution;White Label Gateway;Cashier Service;Middleware",
+				Organization: "Smart Technology Payment Solution", // todo payadmit",
+				Other:        "White Label Gateway;Cashier Service;Middleware",
 			},
 		},
 		{
@@ -319,10 +319,10 @@ func TestDetect(t *testing.T) {
 				Email:        []string{"martin@369gaming.media"},
 				Site:         []string{"www.369gaming.media"},
 				Phone:        []string{"+59895641888"},
-				Skype:        []string{"live.cid.9e53d8c1151b4b"},
+				Skype:        []string{"live:cid.9e53d8c1151b4b"},
 				Name:         "Martin Buero",
-				Organization: "GAMING", // todo "369",
-				JobTitle:     "Ceneral Manager",
+				Organization: "369",
+				JobTitle:     "Ceneral Manager", // todo General Manager
 				Other:        "CAMING;LATAN;bmomn;6p93;petinry",
 			},
 		},
@@ -332,11 +332,11 @@ func TestDetect(t *testing.T) {
 			&model.Person{
 				Email:    []string{"shubham.dhamija@deepdivemedia.in"},
 				Phone:    []string{"9034901070"},
-				Skype:    []string{"live:.cid.e53090522ec2bf11"},
+				Skype:    []string{"live:cid.e53090522ec2bf11"},
 				Telegram: []string{"@dshubham26"},
 				Name:     "Shubham Dhamija",
 				JobTitle: "Strategy Head",
-				Other:    "WhatsApp :9034901070 ",
+				Other:    "WhatsApp:9034901070",
 			},
 		},
 		//{

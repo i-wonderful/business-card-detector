@@ -13,7 +13,7 @@ paddleocr:
   #  run_path: ./internal/service/text_recognize/paddleocr/run.py
   run_path: ../python/run_onnx_rapidocr.py
   model_rec_path: ../lib/paddleocr/onnx/en_PP-OCRv4_rec_infer.onnx
-  model_det_path: ../lib/paddleocr/onnx/en_PP-OCRv3_det_infer.onnx
+  model_det_path: ../lib/paddleocr/onnx/ch_PP-OCRv4_det_infer.onnx # detection good
 
 log:
   level: info

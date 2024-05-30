@@ -33,7 +33,8 @@ func TestTextRecognizeService_RecognizeAll(t *testing.T) {
 		},
 	}
 
-	service, err := NewService(true, "run.py")
+	// todo
+	service, err := NewService(true, "run.py", "det.onnx", "rec.onnx")
 	assert.NoError(t, err)
 
 	for _, tt := range tests {

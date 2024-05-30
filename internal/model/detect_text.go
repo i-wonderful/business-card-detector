@@ -13,6 +13,10 @@ type Rectangle struct {
 	PBot2 Point
 }
 
+func (r *Rectangle) GetHeight() int {
+	return r.PTop1.Y - r.PBot1.Y
+}
+
 type Point struct {
 	X int
 	Y int

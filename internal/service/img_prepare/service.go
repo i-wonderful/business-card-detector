@@ -3,12 +3,12 @@ package img_prepare
 import (
 	"card_detector/internal/util/img"
 	aa_imaging "github.com/aaronland/go-image/imaging"
+	"github.com/disintegration/imaging"
 	"github.com/google/uuid"
 	"github.com/rwcarlsen/goexif/exif"
 	"image"
 	"log"
 	"os"
-	"reflect"
 )
 
 // ------------------------
@@ -33,18 +33,22 @@ func (s *Service) Prepare(imgFile *os.File) (image.Image, string) {
 		log.Printf("Error decoding image: %v", err)
 		return nil, ""
 	}
-	log.Println("Image format:", format)
+	//log.Println("Image format:", format)
 
 	//im, _ = img.OpenJPEGAsNRGBA(imgFile.Name())
 	im, _ = RotateImageWithOrientation(im, orientation)
 
-	// вырезать центр // уберу, иногда картинки внизу фото (
-	// im = img.CropToSquare(im, 0.98)
+	// увеличить контраст
+	im = imaging.AdjustContrast(im, 20)
+	//fmt.Println("type subImage:", reflect.TypeOf(subImage))
+	// резкость (???)
+	im = imaging.Sharpen(im, 0.36)
+	// светлость
+	im = imaging.AdjustGamma(im, 1.6)
+	im = imaging.AdjustBrightness(im, -10)
+	//im = img.BinarizeImage(im, 80)
 
-	log.Println("Image type:", reflect.TypeOf(im))
-	//im = img.MakeRectMinZero(im) // to NRGBA
 	bytes := img.ToBytes(im)
-	//im, _ = img.ToImage(bytes) // save image type
 	currentFilePath := s.storageFolder + "/" + uuid.New().String() + "." + format
 	//img.SaveNRGBA(&im, currentFilePath)
 	if err = img.SaveImg(currentFilePath, bytes); err != nil {
@@ -84,7 +88,7 @@ func getOrientation(imgFile *os.File) string {
 	metaData, err := exif.Decode(imgFile)
 
 	if err != nil {
-		log.Printf("Error decoding image metadata: %v", err)
+		//log.Printf("Error decoding image metadata: %v", err)
 		imgFile.Seek(0, 0)
 		return ORIENTATION_NONE
 	}
@@ -96,7 +100,7 @@ func getOrientation(imgFile *os.File) string {
 
 	orientation, err := metaData.Get(exif.Orientation)
 	if err != nil {
-		log.Printf("Error getting orientation: %v", err)
+		//log.Printf("Error getting orientation: %v", err)
 		return ORIENTATION_NONE
 	} else {
 		return orientation.String()

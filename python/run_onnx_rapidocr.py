@@ -15,9 +15,16 @@ img_path = sys.argv[1]
 model_det_path = sys.argv[2]
 model_rec_path = sys.argv[3]
 
-engine = RapidOCR(rec_model_path=model_rec_path, det_model_path=model_det_path)
+rec_image_shape=[3, 48, 320]
 
-result, elapse = engine(img_path)
+engine = RapidOCR(rec_model_path=model_rec_path, det_model_path=model_det_path, rec_image_shape=rec_image_shape)
+
+box_thresh = 0.5
+unclip_ratio = 1.5
+text_score = 0.5
+
+
+result, elapse = engine(img_path, box_thresh=box_thresh, unclip_ratio=unclip_ratio, text_score=text_score)
 
 for idx in range(len(result)):
     res = result[idx]
