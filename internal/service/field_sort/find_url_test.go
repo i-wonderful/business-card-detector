@@ -21,6 +21,15 @@ func TestService_FindSite(t *testing.T) {
 				"site": "www.tornado-games.com",
 			},
 		},
+		//{ todo
+		//	"Concated",
+		//	[]string{
+		//		"slotscalendar.com|betbrain.com",
+		//	},
+		//	map[string]interface{}{
+		//		"site": "slotscalendar.com|betbrain.com",
+		//	},
+		//},
 	}
 	service := NewService(
 		"../../../config/professions.txt",

@@ -59,7 +59,8 @@ func (s *Service) Sort(data []string) map[string]interface{} {
 	//singleName := regexp.MustCompile("^[А-ЯA-Z][а-яa-z]{1,}$")
 	//telegramRegex := regexp.MustCompile(`(?:https?://t\.me/|@)[A-Za-z][A-Za-z0-9_]{4,31}`)
 	//	telegramRegex := regexp.MustCompile(`(?:https?://t\.me/|@)([A-Za-z][A-Za-z0-9_]{4,31}(?:\s[A-Za-z0-9_]+)*)`)
-	telegramRegex := regexp.MustCompile(`(?:https?://t\.me/|@)[A-Za-z][A-Za-z0-9_]{4,31}(?:\s[A-Za-z0-9_]+)*`)
+	//telegramRegex := regexp.MustCompile(`(?:https?://t\.me/|@)[A-Za-z][A-Za-z0-9_]{4,31}(?:\s[A-Za-z0-9_]+)*`)
+	telegramRegex := regexp.MustCompile(`(?:https?://)?(t\.me/|@)[A-Za-z][A-Za-z0-9_]{4,31}(?:\s[A-Za-z0-9_]+)*`)
 
 	var name, company, jobTitle, telegram, website, skype, address string
 	var mailName, domain, zone string

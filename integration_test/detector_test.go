@@ -353,6 +353,32 @@ func TestDetect(t *testing.T) {
 				Other:    "Sulithrth agarunl;PRIMERO;MEDIA;Official Email: siddhartheprimeromediagroup.com;Official Website:www.primeromediagroup.com;Skype: sidagarwal17;ST.2016;CROUP",
 			},
 		},
+		{
+			"4095.JPG",
+			BASE_IMG_PATH + "/IMG_4095.jpg",
+			&model.Person{
+				Email:        []string{"taras.kolesnikov@coinspaid.com"},
+				Telegram:     []string{"t.me/Taras_CoinsPaid"},
+				Phone:        []string{"+375445165298"},
+				Name:         "TARAS KOLESNIKOV",
+				Organization: "CoinsPaid",
+				JobTitle:     "Sales manager",
+			},
+		},
+		{
+			"69.JPG",
+			BASE_IMG_PATH + "/69.JPG",
+			&model.Person{
+				Email:        []string{"viorel.stan@gshmedia.com"},
+				Site:         []string{"slotscalendar.com", "betbrain.com"},
+				Skype:        []string{"viorel.stan87"},
+				Telegram:     []string{},
+				Name:         "",
+				Organization: "GSH",
+				JobTitle:     "CEO",
+				Other:        "ViorelStan",
+			},
+		},
 		//{
 		// todo russian text
 		//	"3606.JPG",

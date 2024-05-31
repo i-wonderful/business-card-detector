@@ -12,21 +12,21 @@ func TestService_FindTelegram(t *testing.T) {
 		expected map[string]interface{}
 	}{
 		{
-			"Telegram with spaces",
+			"With spaces",
 			[]string{"@Eska8 Aff"},
 			map[string]interface{}{
 				"telegram": "@Eska8_Aff",
 			},
 		},
 		{
-			"Telegram without @",
+			"Without @",
 			[]string{"TELEGRAM ADV_ADSCOMPASS"},
 			map[string]interface{}{
 				"telegram": "ADV_ADSCOMPASS",
 			},
 		},
 		{
-			"Telegram by url",
+			"By url",
 			[]string{
 				"https://t.me/Nicola_an",
 				"www.admillio",
@@ -34,6 +34,13 @@ func TestService_FindTelegram(t *testing.T) {
 			},
 			map[string]interface{}{
 				"telegram": "https://t.me/Nicola_an",
+			},
+		},
+		{
+			"Url without http",
+			[]string{"t.me/Taras_CoinsPaid"},
+			map[string]interface{}{
+				"telegram": "t.me/Taras_CoinsPaid",
 			},
 		},
 	}

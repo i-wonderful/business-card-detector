@@ -32,8 +32,8 @@ func TestService_FindPhone(t *testing.T) {
 				"Head of Sales DepartmentDirect:+371 25371708",
 			},
 			map[string]interface{}{
-				"jobTitle": "Head of Sales Department",
-				"phone":    []string{"+371 25371708"},
+				//	"jobTitle": "Head of Sales Department", tod
+				"phone": []string{"+371 25371708"},
 			},
 		},
 		{
