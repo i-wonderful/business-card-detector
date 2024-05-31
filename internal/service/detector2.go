@@ -2,6 +2,8 @@ package service
 
 import (
 	"card_detector/internal/model"
+	"card_detector/internal/service/box_merge"
+	manage_file "card_detector/internal/util/file"
 	"log"
 	"os"
 	"path/filepath"
@@ -65,6 +67,7 @@ func (d *Detector2) Detect(imgPath string) (*model.Person, error) {
 		return nil, err
 	}
 
+	detectWorlds = box_merge.MergeBoxes(detectWorlds)
 	if d.isDebug {
 		log.Println("Recognized: ")
 		for _, world := range detectWorlds {
@@ -76,7 +79,7 @@ func (d *Detector2) Detect(imgPath string) (*model.Person, error) {
 
 	p := d.fieldSorterService.Sort(worlds)
 
-	//manage_file.ClearFolder(d.storageFolder)
+	manage_file.ClearFolder(d.storageFolder)
 
 	person := model.NewPerson(p)
 	card := mapCard(*person, "")

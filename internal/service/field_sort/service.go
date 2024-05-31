@@ -61,7 +61,7 @@ func (s *Service) Sort(data []string) map[string]interface{} {
 	//	telegramRegex := regexp.MustCompile(`(?:https?://t\.me/|@)([A-Za-z][A-Za-z0-9_]{4,31}(?:\s[A-Za-z0-9_]+)*)`)
 	telegramRegex := regexp.MustCompile(`(?:https?://t\.me/|@)[A-Za-z][A-Za-z0-9_]{4,31}(?:\s[A-Za-z0-9_]+)*`)
 
-	var name, company, jobTitle, telegram, website, skype string
+	var name, company, jobTitle, telegram, website, skype, address string
 	var mailName, domain, zone string
 	phones := []string{}
 	emails := []string{}
@@ -107,6 +107,8 @@ func (s *Service) Sort(data []string) map[string]interface{} {
 			jobTitle += " " + line
 		} else if company == "" && isContains(line, s.companies) {
 			company = line
+		} else if address == "" && ContainsIgnoreCase(line, "address") {
+			address = line
 		} else {
 			notDetectItems = append(notDetectItems, line)
 		}
@@ -185,7 +187,7 @@ func (s *Service) Sort(data []string) map[string]interface{} {
 	person["telegram"] = telegram
 	person["site"] = website
 	person["jobTitle"] = strings.TrimSpace(jobTitle)
-	person["other"] = strings.Join(other, ";")
+	person["other"] = strings.Join(other, ";") + address
 
 	return person
 }

@@ -86,7 +86,7 @@ func ResizeImageByHeight(img image.Image, h int) image.Image {
 //		newW, newH := int(float64(w)*ratio), int(float64(h)*ratio)
 //
 //		// Создаем новое изображение с новыми размерами
-//		newImg := image.NewRGBA(image.Rect(0, 0, newW, newH))
+//		newImg := image.NewRGBA(image.Box(0, 0, newW, newH))
 //
 //		// Растягиваем исходное изображение
 //		for x := 0; x < newW; x++ {

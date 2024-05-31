@@ -5,10 +5,8 @@ import (
 	manage_file "card_detector/internal/util/file"
 	"fmt"
 	"log"
-	"math"
 	"os/exec"
 	"regexp"
-	"sort"
 	"strconv"
 	"time"
 )
@@ -68,7 +66,6 @@ func (s *TextRecognizeService) RecognizeAll(pathImg string) ([]model.DetectWorld
 		return nil, err
 	}
 
-	worlds = sortByProbAndY(worlds)
 	return worlds, nil
 }
 
@@ -97,37 +94,16 @@ func parseString(input string) ([]model.DetectWorld, error) {
 		prob, _ := strconv.ParseFloat(match[10], 64)
 		detectWorld := model.DetectWorld{
 			Text: text,
-			Rect: model.Rectangle{
-				PTop1: model.Point{X: int(p1X), Y: int(p1Y)},
-				PTop2: model.Point{X: int(p2X), Y: int(p2Y)},
-				PBot1: model.Point{X: int(p3X), Y: int(p3Y)},
-				PBot2: model.Point{X: int(p4X), Y: int(p4Y)},
-			},
+			Box: model.NewBoxFromPoints(
+				model.Point{X: int(p1X), Y: int(p1Y)},
+				model.Point{X: int(p2X), Y: int(p2Y)},
+				model.Point{X: int(p3X), Y: int(p3Y)},
+				model.Point{X: int(p4X), Y: int(p4Y)},
+			),
 			Prob: float32(prob),
 		}
 		results = append(results, detectWorld)
 	}
 
 	return results, nil
-}
-
-func sortByProbAndY(worlds []model.DetectWorld) []model.DetectWorld {
-	sort.Slice(worlds, func(i, j int) bool {
-		w1 := worlds[i]
-		w2 := worlds[j]
-		if math.Abs(float64(w1.Prob-w2.Prob)) > 0.04 {
-			return w1.Prob > w2.Prob
-		}
-		return w1.Rect.PTop1.Y < w2.Rect.PTop1.Y
-	})
-	return worlds
-}
-
-func sortByHeight(worlds []model.DetectWorld) []model.DetectWorld {
-	sort.Slice(worlds, func(i, j int) bool {
-		w1 := worlds[i]
-		w2 := worlds[j]
-		return w1.Rect.PTop1.Y < w2.Rect.PTop1.Y
-	})
-	return worlds
 }

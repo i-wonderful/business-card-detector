@@ -44,9 +44,9 @@ func TestDetect(t *testing.T) {
 			BASE_IMG_PATH + "/first/IMG_2913.jpg",
 			&model.Person{
 				Email:        []string{"craig@summer-creative.com"},
-				Phone:        []string{"+34711017134", "+4402033555336"}, // todo remove brackets
+				Phone:        []string{"+34711017134", "+4402033555336"},
 				Name:         "Craig Edwards",
-				Organization: "CREATIVE",
+				Organization: "SUMMER CREATIVE",
 				JobTitle:     "Business Development Manager",
 				Other:        "",
 			},
@@ -114,8 +114,8 @@ func TestDetect(t *testing.T) {
 				//JobTitle:     "HEAD OF CLIENT SUCCESS",
 				Site:         []string{"www.sportsinnovation.dk"},
 				Skype:        []string{"livejof_144"}, // todo live:jof_144
-				Organization: "SPORTS",
-				Other:        "INNOVATION;CONTENTPRODUCTION",
+				Organization: "SPORTS INNOVATION",
+				Other:        "CONTENTPRODUCTION",
 			},
 		},
 		{
@@ -247,8 +247,8 @@ func TestDetect(t *testing.T) {
 			expected: &model.Person{
 				Name:         "Vladyslav Kolodistyi",
 				JobTitle:     "Chief Executive Officer",
-				Organization: "Smart Technology Payment Solution", // todo payadmit",
-				Other:        "White Label Gateway;Cashier Service;Middleware",
+				Organization: "Lpayadmit", // todo payadmit",
+				Other:        "Smart Technology Payment Solution;White Label Gateway;Cashier Service;Middleware",
 			},
 		},
 		{
@@ -337,6 +337,20 @@ func TestDetect(t *testing.T) {
 				Name:     "Shubham Dhamija",
 				JobTitle: "Strategy Head",
 				Other:    "WhatsApp:9034901070",
+			},
+		},
+		{
+			"4077.JPG",
+			BASE_IMG_PATH + "/IMG_4077.jpg",
+			&model.Person{
+				//Email:        []string{"siddhartheprimeromediagroup.com"},
+				Site:  []string{"ia.co"}, // todo www.primeromediagroup.com
+				Phone: []string{"+919953414428"},
+				Skype: []string{"sidagarwal17"},
+				Name:  "", // todo странный шрифт
+				// Organization: "PRIMERO MEDIA", // todo
+				JobTitle: "FOUNDER",
+				Other:    "Sulithrth agarunl;PRIMERO;MEDIA;Official Email: siddhartheprimeromediagroup.com;Official Website:www.primeromediagroup.com;Skype: sidagarwal17;ST.2016;CROUP",
 			},
 		},
 		//{

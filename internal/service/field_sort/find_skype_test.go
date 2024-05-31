@@ -72,6 +72,16 @@ func TestService_FindSkype(t *testing.T) {
 				"skype": "live:rajyousp",
 			},
 		},
+		{
+			"Mix with other",
+			[]string{
+				"Office Address:Unit-No.C-617,I-Thum,Sector-62,Noida",
+				"Skype: sidagarwal17",
+			},
+			map[string]interface{}{
+				"skype": "sidagarwal17",
+			},
+		},
 	}
 
 	service := NewService(

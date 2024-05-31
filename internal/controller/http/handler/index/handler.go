@@ -8,8 +8,7 @@ import (
 
 // Создаем структуру данных для передачи в шаблон
 type MyData struct {
-	Title string
-	Name  string
+	Version string
 }
 
 type IndexHandler struct {
@@ -22,8 +21,7 @@ func NewIndexHandler() *IndexHandler {
 func (h *IndexHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	// Создаем объект данных для шаблона
 	data := MyData{
-		Title: "Пример веб-приложения",
-		Name:  "Вася",
+		Version: "2.1.0",
 	}
 
 	// Парсим шаблон из файла

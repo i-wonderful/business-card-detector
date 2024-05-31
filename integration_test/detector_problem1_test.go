@@ -51,7 +51,7 @@ func TestDetectProblem(t *testing.T) {
 				Phone:        []string{"+5511972785934", "+55212146 0463"},
 				Skype:        []string{"flavio.tamega"},
 				Name:         "Flavio Tamega",
-				Organization: "upstream",
+				Organization: "upstream ads",
 				JobTitle:     "Advertising Commercial Director",
 				Other:        "Sws Spy;Heuys",
 			},

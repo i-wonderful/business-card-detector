@@ -23,7 +23,7 @@ func TestDetectProblem3(t *testing.T) {
 			BASE_IMG_PROBLEM3_PATH + "/1.jpg",
 			&model.Person{
 				Email:        []string{"u.sarper@tvbet.tv"},
-				Phone:        []string{"+3538709848 19", "+380662352081"}, // todo +380662252081
+				Phone:        []string{"+3538709848 19", "+380662352081"}, // todo +38066 225 2081
 				Skype:        []string{"live:cid.639e35052e7e9fe1"},
 				Name:         "UTKU SARPER",
 				Organization: "TVBET",
@@ -74,11 +74,10 @@ func TestDetectProblem3(t *testing.T) {
 			BASE_IMG_PROBLEM3_PATH + "/5.jpg",
 			&model.Person{
 				Email:    []string{"marketing@myeventplanner.com.mt"},
-				Phone:    []string{"+356 9903 6659"}, // todo Telegram
-				Name:     "Anna",                     // todo Lubojatzka
+				Phone:    []string{"+356 9903 6659"},
+				Name:     "Anna Lubojatzka",
 				JobTitle: "head of marketing",
-				Other:    "Malta;Cyprus;Cyprus;UAE;Lubojatzka;Malta;60,The Offices;Gharghur,GH1602;6,Agias Marinas street;4044.Yermasogeia.Limossol;Mohanmed Abdulla Bin Demaithan;Blldg No;304.Damascus Street;ndustrial Areo2.Al Quasis.Dubai;Annad",
-			},
+				Other:    "Malta;60,The Offices;Triq Caravaggio;GharghurGHI602;Malta;Cyprus;6,Agias Marinas street;4044,Yermasogoia.Limossol;Cyprus;Mohammed Abdulla Bin Demaithan;Blldg No.ll;304.Damascus Street;Industrial Areo2 Al Quasis.Dubai;UAE"},
 		},
 	}
 
