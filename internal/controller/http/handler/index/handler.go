@@ -12,16 +12,19 @@ type MyData struct {
 }
 
 type IndexHandler struct {
+	version string
 }
 
-func NewIndexHandler() *IndexHandler {
-	return &IndexHandler{}
+func NewIndexHandler(version string) *IndexHandler {
+	return &IndexHandler{
+		version: version,
+	}
 }
 
 func (h *IndexHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	// Создаем объект данных для шаблона
 	data := MyData{
-		Version: "2.1.0",
+		Version: h.version,
 	}
 
 	// Парсим шаблон из файла

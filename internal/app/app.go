@@ -63,7 +63,7 @@ func (a *app2) Run() error {
 		a.config.IsDebug)
 
 	// handlers
-	h := router.NewRouter(detectService, getterService, a.config.StorageFolder)
+	h := router.NewRouter(detectService, getterService, a.config.StorageFolder, a.config.Version)
 
 	// start server
 	srv := &http.Server{
