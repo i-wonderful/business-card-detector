@@ -38,6 +38,19 @@ func TestService_FindEmail(t *testing.T) {
 				"email": []string{"ivk@colibrix.io"},
 			},
 		},
+		{
+			"Many emails",
+			[]string{
+				"SUPPORT@HUGE.PARTNERS",
+				"INFO@HUGE.PARTNERS",
+			},
+			map[string]interface{}{
+				"email": []string{
+					"SUPPORT@HUGE.PARTNERS",
+					"INFO@HUGE.PARTNERS",
+				},
+			},
+		},
 	}
 
 	service := NewService(

@@ -47,7 +47,7 @@ func NewPerson(fields map[string]interface{}) *Person {
 	}
 
 	if fields["site"] != "" {
-		p.Site = append(p.Site, fields["site"].(string))
+		p.Site = append(p.Site, fields["site"].([]string)...)
 	}
 
 	if fields["phone"] != "" {

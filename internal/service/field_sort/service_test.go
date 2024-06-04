@@ -115,16 +115,12 @@ func TestService_Sort(t *testing.T) {
 			},
 		},
 		{
-			"Many emails",
+			"Doubled name",
 			[]string{
-				"SUPPORT@HUGE.PARTNERS",
-				"INFO@HUGE.PARTNERS",
+				"Aiga Bunkse", "Aiga Bunkse",
 			},
 			map[string]interface{}{
-				"email": []string{
-					"SUPPORT@HUGE.PARTNERS",
-					"INFO@HUGE.PARTNERS",
-				},
+				"name": "Aiga Bunkse",
 			},
 		},
 		{

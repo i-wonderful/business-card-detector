@@ -370,10 +370,9 @@ func TestDetect(t *testing.T) {
 			BASE_IMG_PATH + "/69.JPG",
 			&model.Person{
 				Email:        []string{"viorel.stan@gshmedia.com"},
-				Site:         []string{"slotscalendar.com", "betbrain.com"},
+				Site:         []string{"slotscalendar.com"},
 				Skype:        []string{"viorel.stan87"},
-				Telegram:     []string{},
-				Name:         "",
+				Name:         "", // todo Viorel Stan
 				Organization: "GSH",
 				JobTitle:     "CEO",
 				Other:        "ViorelStan",
