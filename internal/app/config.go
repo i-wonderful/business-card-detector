@@ -24,6 +24,11 @@ type Config struct {
 		RecPath string `yaml:"model_rec_path"`
 	}
 
+	Onnx struct {
+		PathRuntime string `yaml:"path_runtime"`
+		PathModel   string `yaml:"path_model"`
+	}
+
 	Log struct {
 		Level string `yaml:"level" default:"info"`
 		Time  bool   `yaml:"time" default:"true"`

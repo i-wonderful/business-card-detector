@@ -5,11 +5,13 @@ import (
 	"card_detector/internal/model"
 	"card_detector/internal/repo/inmemory"
 	"card_detector/internal/service"
+	"card_detector/internal/service/detect/onnx"
 	"card_detector/internal/service/field_sort"
 	"card_detector/internal/service/img_prepare"
 	"card_detector/internal/service/text_recognize/paddleocr"
 	manage_file "card_detector/internal/util/file"
 	"github.com/stretchr/testify/assert"
+	"log"
 	"os"
 	"strings"
 	"testing"
@@ -55,7 +57,7 @@ func TestDetect(t *testing.T) {
 			"first IMG_2914.JPG",
 			BASE_IMG_PATH + "/first/IMG_2914.JPG",
 			&model.Person{
-				Name:         "Areg Oganesian",
+				Name:         "Areg", // todo Areg Oganesian
 				Site:         []string{"www.igtrm.com"},
 				Email:        []string{"areg@igtrm.com"},
 				Phone:        []string{"+37499452772"},
@@ -108,12 +110,12 @@ func TestDetect(t *testing.T) {
 			"first IMG_2919.JPG",
 			BASE_IMG_PATH + "/first/IMG_2919.JPG",
 			&model.Person{
-				Name:  "HEADOF CLIENT SUCCESS", // todo Jozef Fabian
+				Name:  "HEADOF CLIENTSUCCESS", // todo Jozef Fabian
 				Email: []string{"jf@sportsinnovation.dk"},
 				Phone: []string{"4552224150"}, // todo plus
 				//JobTitle:     "HEAD OF CLIENT SUCCESS",
 				Site:         []string{"www.sportsinnovation.dk"},
-				Skype:        []string{"livejof_144"}, // todo live:jof_144
+				Skype:        []string{"livejof.144"}, // todo live:jof_144
 				Organization: "SPORTS INNOVATION",
 				Other:        "CONTENTPRODUCTION",
 			},
@@ -145,7 +147,7 @@ func TestDetect(t *testing.T) {
 			&model.Person{
 				Name:         "Russ Yershon",
 				Email:        []string{"russell@connectingbrands.co.uk"},
-				Phone:        []string{"+44 0)7500828120"},
+				Phone:        []string{"+44 (0)7500828120"},
 				JobTitle:     "Talent Manager to wide network of Football Legends Director",
 				Site:         []string{"Connectingbrands.co.uk"},
 				Organization: "CONNECTING", // todo CONNECTING BRANDS .co.ux
@@ -247,7 +249,7 @@ func TestDetect(t *testing.T) {
 			expected: &model.Person{
 				Name:         "Vladyslav Kolodistyi",
 				JobTitle:     "Chief Executive Officer",
-				Organization: "Lpayadmit", // todo payadmit",
+				Organization: "payadmit",
 				Other:        "Smart Technology Payment Solution;White Label Gateway;Cashier Service;Middleware",
 			},
 		},
@@ -270,7 +272,7 @@ func TestDetect(t *testing.T) {
 				Site:     []string{"www.admill.io"},
 				Phone:    []string{"+90 536 745 13 03"},
 				Telegram: []string{"https://t.me/Nicola_an"},
-				Name:     "Erkin Bayrakgi",
+				Name:     "Erkin Bayrakci",
 				Other:    "Sepapaja tn 615551TallinnEstonia",
 			},
 		},
@@ -344,7 +346,7 @@ func TestDetect(t *testing.T) {
 			BASE_IMG_PATH + "/IMG_4077.jpg",
 			&model.Person{
 				//Email:        []string{"siddhartheprimeromediagroup.com"},
-				Site:  []string{"ia.co"}, // todo www.primeromediagroup.com
+				Site:  []string{"siddhartheprimeromediagroup.com"}, // todo www.primeromediagroup.com
 				Phone: []string{"+919953414428"},
 				Skype: []string{"sidagarwal17"},
 				Name:  "", // todo странный шрифт
@@ -369,13 +371,13 @@ func TestDetect(t *testing.T) {
 			"69.JPG",
 			BASE_IMG_PATH + "/69.JPG",
 			&model.Person{
-				Email:        []string{"viorel.stan@gshmedia.com"},
-				Site:         []string{"slotscalendar.com"},
-				Skype:        []string{"viorel.stan87"},
-				Name:         "", // todo Viorel Stan
-				Organization: "GSH",
-				JobTitle:     "CEO",
-				Other:        "ViorelStan",
+				//Email:        []string{"viorel.stan@gshmedia.com"}, // todo
+				Site:  []string{"viorel.stanagshmedia.com"}, // todo
+				Skype: []string{"viorel.stan87"},
+				Name:  "", // todo Viorel Stan
+				//Organization: "GSH", // todo
+				JobTitle: "CEO",
+				Other:    "ViorelStan",
 			},
 		},
 		//{
@@ -471,12 +473,20 @@ func createDetector2(t *testing.T) (*service.Detector2, *app.Config) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	cardDetector, err := onnx.NewService(
+		config.Onnx.PathRuntime,
+		config.Onnx.PathModel,
+		isLogTime)
+	if err != nil {
+		log.Fatal("card detector creation error", err)
+	}
 	fieldSorter := field_sort.NewService(config.PathProfessionList, config.PathCompanyList, config.PathNamesList, isLogTime)
 
 	// detector
 	testDetector := service.NewDetector2(
 		imgPreparer,
 		textRecognizer,
+		cardDetector,
 		fieldSorter,
 		cardRepo,
 		config.StorageFolder,

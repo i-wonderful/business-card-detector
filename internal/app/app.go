@@ -4,6 +4,7 @@ import (
 	"card_detector/internal/controller/http/router"
 	"card_detector/internal/repo/inmemory"
 	"card_detector/internal/service"
+	"card_detector/internal/service/detect/onnx"
 	"card_detector/internal/service/field_sort"
 	shistory "card_detector/internal/service/history"
 	"card_detector/internal/service/img_prepare"
@@ -44,6 +45,13 @@ func (a *app2) Run() error {
 	if err != nil {
 		log.Fatal("text recognizer creation error", err)
 	}
+	cardDetector, err := onnx.NewService(
+		a.config.Onnx.PathRuntime,
+		a.config.Onnx.PathModel,
+		isLogTime)
+	if err != nil {
+		log.Fatal("card detector creation error", err)
+	}
 
 	fieldSorter := field_sort.NewService(
 		a.config.PathProfessionList,
@@ -56,6 +64,7 @@ func (a *app2) Run() error {
 	detectService := service.NewDetector2(
 		imgPreparer,
 		textRecognizer,
+		cardDetector,
 		fieldSorter,
 		cardRepo,
 		a.config.StorageFolder,

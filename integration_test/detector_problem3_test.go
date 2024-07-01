@@ -23,7 +23,7 @@ func TestDetectProblem3(t *testing.T) {
 			BASE_IMG_PROBLEM3_PATH + "/1.jpg",
 			&model.Person{
 				Email:        []string{"u.sarper@tvbet.tv"},
-				Phone:        []string{"+3538709848 19", "+380662352081"}, // todo +38066 225 2081
+				Phone:        []string{"+353870984819", "+38066352081"}, // todo +38066 225 2081
 				Skype:        []string{"live:cid.639e35052e7e9fe1"},
 				Name:         "UTKU SARPER",
 				Organization: "TVBET",

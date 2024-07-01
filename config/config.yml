@@ -15,9 +15,13 @@ paddleocr:
   model_rec_path: ./lib/paddleocr/onnx/en_PP-OCRv4_rec_infer.onnx
   model_det_path: ./lib/paddleocr/onnx/ch_PP-OCRv4_det_infer.onnx
 
+onnx:
+  path_runtime: ./lib/onnx_18/libonnxruntime.so
+  path_model: ./lib/models/yolov8m-card-detect.onnx
+
 log:
   level: info
   time: true
 
-debug: false
+debug: true
 

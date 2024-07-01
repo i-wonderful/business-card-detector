@@ -4,19 +4,31 @@ import (
 	"card_detector/internal/model"
 	"card_detector/internal/service/box_merge"
 	manage_file "card_detector/internal/util/file"
+	"card_detector/internal/util/img"
+	"image"
 	"log"
 	"os"
 	"path/filepath"
 	"time"
 )
 
+type ImgPreparer interface {
+	Rotage(imgFile *os.File) (image.Image, string)
+	CropCard(img image.Image, boxes []model.TextArea) (image.Image, error)
+}
+
 type RecognizerFull interface {
 	RecognizeAll(path string) ([]model.DetectWorld, error)
+}
+
+type CardDetector interface {
+	Detect(img image.Image) ([]model.TextArea, error)
 }
 
 type Detector2 struct {
 	imgPreparer          ImgPreparer
 	textRecognizeService RecognizerFull
+	cardDetector         CardDetector
 	fieldSorterService   FieldSorter
 	cardRepo             CardRepo
 	storageFolder        string
@@ -27,6 +39,7 @@ type Detector2 struct {
 func NewDetector2(
 	imgPreparer ImgPreparer,
 	textRecognizeService RecognizerFull,
+	cardDetector CardDetector,
 	fieldSortService FieldSorter,
 	cardRepo CardRepo,
 	storageFolder string,
@@ -34,6 +47,7 @@ func NewDetector2(
 	return &Detector2{
 		imgPreparer:          imgPreparer,
 		textRecognizeService: textRecognizeService,
+		cardDetector:         cardDetector,
 		fieldSorterService:   fieldSortService,
 		cardRepo:             cardRepo,
 		storageFolder:        storageFolder,
@@ -58,9 +72,24 @@ func (d *Detector2) Detect(imgPath string) (*model.Person, error) {
 	defer file.Close()
 	// ----------------------
 
-	_, currentPath := d.imgPreparer.Prepare(file)
+	// 1. возможный поворот
+	im, _ := d.imgPreparer.Rotage(file)
 
-	absPath, _ := filepath.Abs(currentPath)
+	// 2. find card item
+	boxes, err := d.cardDetector.Detect(im)
+	if err != nil {
+		return nil, err
+	}
+	for _, box := range boxes {
+		log.Println(box)
+	}
+	img.DrawBoxes(im, boxes, d.storageFolder)
+	// 3.
+	im, _ = d.imgPreparer.CropCard(im, boxes)
+
+	filePAth := manage_file.GenerateFileName(d.storageFolder, "cropped", "jpg")
+	img.SaveJpeg(&im, filePAth)
+	absPath, _ := filepath.Abs(filePAth)
 
 	detectWorlds, err := d.textRecognizeService.RecognizeAll(absPath)
 	if err != nil {
@@ -79,7 +108,7 @@ func (d *Detector2) Detect(imgPath string) (*model.Person, error) {
 
 	p := d.fieldSorterService.Sort(worlds)
 
-	manage_file.ClearFolder(d.storageFolder)
+	//manage_file.ClearFolder(d.storageFolder)
 
 	person := model.NewPerson(p)
 	card := mapCard(*person, "")

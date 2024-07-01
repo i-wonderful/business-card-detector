@@ -1,8 +1,10 @@
 package img
 
 import (
+	"bytes"
 	"golang.org/x/image/tiff"
 	"image"
+	"image/jpeg"
 	"image/png"
 	"log"
 	"os"
@@ -37,6 +39,24 @@ func SaveNRGBA(img *image.Image, filename string) error {
 	}
 
 	return nil
+}
+
+func SaveRGBAJpeg(img *image.RGBA, outputFilePath string) error {
+	var buf bytes.Buffer
+	if err := jpeg.Encode(&buf, img, &jpeg.Options{Quality: 100}); err != nil {
+		log.Fatalf("Error encoding image: %v", err)
+	}
+
+	return SaveImg(outputFilePath, buf.Bytes())
+}
+
+func SaveJpeg(img *image.Image, outputFilePath string) error {
+	var buf bytes.Buffer
+	if err := jpeg.Encode(&buf, *img, &jpeg.Options{Quality: 100}); err != nil {
+		log.Fatalf("Error encoding image: %v", err)
+	}
+
+	return SaveImg(outputFilePath, buf.Bytes())
 }
 
 func SaveTiff(im image.Image, filename string) error {

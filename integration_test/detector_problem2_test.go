@@ -23,7 +23,7 @@ func TestDetectProblem2(t *testing.T) {
 			BASE_IMG_PROBLEM2_PATH + "/1.jpg",
 			&model.Person{
 				Email:        []string{"u.sarper@tvbet.tv"},
-				Phone:        []string{"+35 387 098 48 19", "18081889908"}, // todo "+380662252081"
+				Phone:        []string{"+353870984819", "+38066235208"}, // todo "+380662252081"
 				Skype:        []string{"live:cid.639e35052e7e9fe1"},
 				Name:         "UTKU SARPER",
 				Organization: "TVBET",
@@ -85,9 +85,9 @@ func TestDetectProblem2(t *testing.T) {
 				Phone:        []string{"+37125371708", "+37125 155 112"},
 				Skype:        []string{"alex.softgamings.com"},
 				Name:         "Alexander Yerin",
-				Organization: "SoftGamingse", // todo SoftGaming
-				//JobTitle:     "Head of Sales Department", todo
-				Other: "Brivibas 151,RigaLatvia,LV-1012",
+				Organization: "SoftGamings",
+				JobTitle:     "Head of Sales Department",
+				Other:        "Brivibas 151,RigaLatvia,LV-1012",
 			},
 		},
 		{
@@ -104,10 +104,10 @@ func TestDetectProblem2(t *testing.T) {
 			"9.jpg",
 			BASE_IMG_PROBLEM2_PATH + "/9.jpg",
 			&model.Person{
-				Email: []string{"slava@monotech.group"},
-				Name:  "Slava Chernenko",
-				//Organization: "MMONOTECH", // todo MONOTECH
-				JobTitle: "Senior Partnershipso and Accounts Manager", // todo Senior Partnerships and Accounts Manager
+				Email:        []string{"slava@monotech.group"},
+				Name:         "Slava Chernenko",
+				Organization: "MONOTECH",
+				JobTitle:     "Senior Partnerships and Accounts Manager",
 			},
 		},
 		{

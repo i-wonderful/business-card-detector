@@ -16,10 +16,6 @@ import (
 )
 
 type (
-	ImgPreparer interface {
-		Prepare(imgFile *os.File) (image.Image, string)
-	}
-
 	TextFinder interface {
 		PredictTextCoord(img image.Image) ([]model.TextArea, error)
 	}
@@ -86,8 +82,8 @@ func (d *Detector) Detect(imgPath string) (*model.Person, error) {
 	defer file.Close()
 	// ----------------------
 
-	// 1. Prepare image for text recognition
-	_, currentFilePath := d.imgPreparer.Prepare(file)
+	// 1. Rotage image for text recognition
+	_, currentFilePath := d.imgPreparer.Rotage(file)
 
 	// 2. Find text area fields
 	currentImg, _ := OpenImg(currentFilePath) // OpenJPEGAsNRGBA(currentFilePath) //

@@ -1,6 +1,8 @@
 package img_prepare
 
 import (
+	"card_detector/internal/model"
+	"card_detector/internal/service/detect/onnx"
 	"card_detector/internal/util/img"
 	aa_imaging "github.com/aaronland/go-image/imaging"
 	"github.com/disintegration/imaging"
@@ -12,7 +14,7 @@ import (
 )
 
 // ------------------------
-// Prepare image for OCR
+// Rotage image for OCR
 // ------------------------
 
 const ORIENTATION_NONE = "1"
@@ -25,7 +27,7 @@ func NewService(storageFolder string) *Service {
 	return &Service{storageFolder: storageFolder}
 }
 
-func (s *Service) Prepare(imgFile *os.File) (image.Image, string) {
+func (s *Service) Rotage(imgFile *os.File) (image.Image, string) {
 	orientation := getOrientation(imgFile)
 
 	im, format, err := image.Decode(imgFile)
@@ -40,7 +42,7 @@ func (s *Service) Prepare(imgFile *os.File) (image.Image, string) {
 
 	// увеличить контраст
 	im = imaging.AdjustContrast(im, 20)
-	//fmt.Println("type subImage:", reflect.TypeOf(subImage))
+
 	// резкость (???)
 	im = imaging.Sharpen(im, 0.36)
 	// светлость
@@ -57,6 +59,21 @@ func (s *Service) Prepare(imgFile *os.File) (image.Image, string) {
 	}
 
 	return im, currentFilePath
+}
+
+func (s *Service) CropCard(img image.Image, boxes []model.TextArea) (image.Image, error) {
+	// todo
+	for _, box := range boxes {
+		if box.Label == onnx.CARD_CLASS {
+
+			subImg := img.(interface {
+				SubImage(r image.Rectangle) image.Image
+			}).SubImage(image.Rect(box.X, box.Y, box.X+box.Width, box.Y+box.Height))
+
+			return subImg, nil
+		}
+	}
+	return img, nil
 }
 
 // RotateImageWithOrientation will rotate 'im' based on EXIF orientation value defined in 'orientation'.
