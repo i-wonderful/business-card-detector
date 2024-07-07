@@ -1,16 +1,18 @@
 package img_prepare
 
 import (
+	"image"
+	"log"
+	"os"
+
 	"card_detector/internal/model"
 	"card_detector/internal/service/detect/onnx"
+	boxes_util "card_detector/internal/util/boxes"
 	"card_detector/internal/util/img"
 	aa_imaging "github.com/aaronland/go-image/imaging"
 	"github.com/disintegration/imaging"
 	"github.com/google/uuid"
 	"github.com/rwcarlsen/goexif/exif"
-	"image"
-	"log"
-	"os"
 )
 
 // ------------------------
@@ -41,10 +43,10 @@ func (s *Service) Rotage(imgFile *os.File) (image.Image, string) {
 	im, _ = RotateImageWithOrientation(im, orientation)
 
 	// увеличить контраст
-	im = imaging.AdjustContrast(im, 20)
+	//im = imaging.AdjustContrast(im, 20)
 
 	// резкость (???)
-	im = imaging.Sharpen(im, 0.36)
+	//im = imaging.Sharpen(im, 0.36)
 	// светлость
 	im = imaging.AdjustGamma(im, 1.6)
 	im = imaging.AdjustBrightness(im, -10)
@@ -61,19 +63,16 @@ func (s *Service) Rotage(imgFile *os.File) (image.Image, string) {
 	return im, currentFilePath
 }
 
-func (s *Service) CropCard(img image.Image, boxes []model.TextArea) (image.Image, error) {
-	// todo
+// CropCard - crop card by square from image and transpose boxes
+func (s *Service) CropCard(im image.Image, boxes []model.TextArea) (image.Image, error) {
 	for _, box := range boxes {
 		if box.Label == onnx.CARD_CLASS {
-
-			subImg := img.(interface {
-				SubImage(r image.Rectangle) image.Image
-			}).SubImage(image.Rect(box.X, box.Y, box.X+box.Width, box.Y+box.Height))
-
+			subImg, offsetX, offsetY := img.CropSquare(im, box.X, box.Y, box.Width, box.Height)
+			boxes_util.Transpose(boxes, offsetX, offsetY)
 			return subImg, nil
 		}
 	}
-	return img, nil
+	return im, nil
 }
 
 // RotateImageWithOrientation will rotate 'im' based on EXIF orientation value defined in 'orientation'.

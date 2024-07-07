@@ -3,9 +3,12 @@ package paddleocr
 import (
 	"card_detector/internal/model"
 	manage_file "card_detector/internal/util/file"
+	"card_detector/internal/util/img"
 	"fmt"
+	"image"
 	"log"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"time"
@@ -19,9 +22,10 @@ type TextRecognizeService struct {
 	pathDetOnnx string
 	pathPython  string
 	isLog       bool
+	pathTmp     string
 }
 
-func NewService(isLog bool, pathToRun string, pathDetOnnx string, pathRecOnnx string) (*TextRecognizeService, error) {
+func NewService(isLog bool, pathToRun, pathDetOnnx, pathRecOnnx, pathTmp string) (*TextRecognizeService, error) {
 	if !manage_file.FileExists(pathToRun) {
 		return nil, fmt.Errorf("file not found: %s", pathToRun)
 	}
@@ -39,8 +43,24 @@ func NewService(isLog bool, pathToRun string, pathDetOnnx string, pathRecOnnx st
 		pathDetOnnx: pathDetOnnx, // "./lib/paddleocr/onnx/en_PP-OCRv3_det_infer.onnx",
 		pathRecOnnx: pathRecOnnx, // "./lib/paddleocr/onnx/en_PP-OCRv4_rec_infer.onnx",
 		pathPython:  "python",    // "python"
+		pathTmp:     pathTmp,
 		isLog:       isLog,
 	}, nil
+}
+
+func (s *TextRecognizeService) RecognizeImg(im *image.Image) ([]model.DetectWorld, error) {
+	if s.isLog {
+		start := time.Now()
+		defer func() {
+			log.Printf(">>> Time paddle recognize: %s", time.Since(start))
+		}()
+	}
+
+	filePath := manage_file.GenerateFileName(s.pathTmp, "for_paddle", "jpg")
+	img.SaveJpeg(im, filePath)
+	absPath, _ := filepath.Abs(filePath)
+
+	return s.RecognizeAll(absPath)
 }
 
 func (s *TextRecognizeService) RecognizeAll(pathImg string) ([]model.DetectWorld, error) {

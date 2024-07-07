@@ -1,5 +1,5 @@
 name: card_detector
-version: 2.2.0
+version: 3.0.0
 
 port: 8080
 
@@ -17,7 +17,7 @@ paddleocr:
 
 onnx:
   path_runtime: ./lib/onnx_18/libonnxruntime.so
-  path_model: ./lib/models/yolov8m-card-detect.onnx
+  path_model: ./lib/models/yolov9m-card-detect2.onnx
 
 log:
   level: info

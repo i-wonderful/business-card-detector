@@ -1,15 +1,15 @@
 package service
 
 import (
-	"card_detector/internal/model"
-	"card_detector/internal/service/box_merge"
-	manage_file "card_detector/internal/util/file"
-	"card_detector/internal/util/img"
 	"image"
 	"log"
 	"os"
-	"path/filepath"
 	"time"
+
+	"card_detector/internal/model"
+	"card_detector/internal/service/box_merge"
+	boxes_card "card_detector/internal/util/boxes"
+	"card_detector/internal/util/img"
 )
 
 type ImgPreparer interface {
@@ -18,7 +18,7 @@ type ImgPreparer interface {
 }
 
 type RecognizerFull interface {
-	RecognizeAll(path string) ([]model.DetectWorld, error)
+	RecognizeImg(img *image.Image) ([]model.DetectWorld, error)
 }
 
 type CardDetector interface {
@@ -56,7 +56,7 @@ func NewDetector2(
 	}
 }
 
-func (d *Detector2) Detect(imgPath string) (*model.Person, error) {
+func (d *Detector2) Detect(imgPath string) (*model.Person, string, error) {
 	if d.isLogTime {
 		start := time.Now()
 		defer func() {
@@ -67,7 +67,7 @@ func (d *Detector2) Detect(imgPath string) (*model.Person, error) {
 	// ----------------------
 	file, err := os.Open(imgPath)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 	defer file.Close()
 	// ----------------------
@@ -75,25 +75,26 @@ func (d *Detector2) Detect(imgPath string) (*model.Person, error) {
 	// 1. возможный поворот
 	im, _ := d.imgPreparer.Rotage(file)
 
-	// 2. find card item
+	// 2. find card items
 	boxes, err := d.cardDetector.Detect(im)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
-	for _, box := range boxes {
-		log.Println(box)
+	boxes = boxes_card.MergeCardBoxes(boxes)
+
+	if d.isDebug {
+		log.Println("Detected: ")
+		for _, box := range boxes {
+			log.Println(box)
+		}
 	}
-	img.DrawBoxes(im, boxes, d.storageFolder)
+
 	// 3.
 	im, _ = d.imgPreparer.CropCard(im, boxes)
 
-	filePAth := manage_file.GenerateFileName(d.storageFolder, "cropped", "jpg")
-	img.SaveJpeg(&im, filePAth)
-	absPath, _ := filepath.Abs(filePAth)
-
-	detectWorlds, err := d.textRecognizeService.RecognizeAll(absPath)
+	detectWorlds, err := d.textRecognizeService.RecognizeImg(&im)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	detectWorlds = box_merge.MergeBoxes(detectWorlds)
@@ -115,7 +116,11 @@ func (d *Detector2) Detect(imgPath string) (*model.Person, error) {
 	if err := d.cardRepo.Save(card); err != nil {
 		log.Println("Error saving card:", err)
 	}
-	return person, nil
+
+	//boxesPath := img.DrawBoxes(im, boxes, d.storageFolder)
+	boxesPath := img.DrawTextAndItemsBoxes(im, detectWorlds, boxes, d.storageFolder)
+
+	return person, boxesPath, nil
 }
 
 func getOnlyWorlds(detectWorlds []model.DetectWorld) []string {

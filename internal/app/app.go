@@ -41,7 +41,8 @@ func (a *app2) Run() error {
 	textRecognizer, err := paddleocr.NewService(isLogTime,
 		a.config.Paddleocr.RunPath,
 		a.config.Paddleocr.DetPath,
-		a.config.Paddleocr.RecPath)
+		a.config.Paddleocr.RecPath,
+		a.config.TmpFolder)
 	if err != nil {
 		log.Fatal("text recognizer creation error", err)
 	}

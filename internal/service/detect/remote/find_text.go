@@ -12,7 +12,7 @@ import (
 	"time"
 
 	model2 "card_detector/internal/model"
-	"card_detector/internal/service/text_find/remote/model"
+	"card_detector/internal/service/detect/remote/model"
 )
 
 type FindTextService struct {

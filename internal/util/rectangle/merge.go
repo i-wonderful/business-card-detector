@@ -80,7 +80,7 @@ func overlapArea(r1, r2 TextArea) int {
 	return (x2 - x1) * (y2 - y1)
 }
 
-//func isHorizontallyAdjacent(r1, r2 TextArea) bool {
+//func isHorizontallyAdjacent(r1, r2 Box) bool {
 //	return abs(r1.Y-r2.Y) <= maxYDiff && (r1.X+r1.Width+maxXGap >= r2.X || r2.X+r2.Width+maxXGap >= r1.X)
 //}
 

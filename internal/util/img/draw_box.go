@@ -13,6 +13,8 @@ import (
 	"time"
 )
 
+var greenColor = color.RGBA{G: 128, A: 255}
+
 // DrawBoxes - рисует боксы на изображении
 // @return путь к сохраненному изображению
 func DrawBoxes(im image.Image, boxes []model.TextArea, pathStorage string) string {
@@ -24,6 +26,55 @@ func DrawBoxes(im image.Image, boxes []model.TextArea, pathStorage string) strin
 	bounds := im.Bounds()
 	rgba := image.NewRGBA(bounds)
 	draw.Draw(rgba, bounds, im, bounds.Min, draw.Src)
+
+	for _, box := range boxes {
+		rect := image.Rect(box.X, box.Y, box.X+box.Width, box.Y+box.Height)
+		DrawBox(rgba, rect, color.RGBA{255, 0, 0, 255}, 2, box.Label)
+	}
+
+	outputFilePath := manage_file.GenerateFileName(pathStorage, "boxes", "jpg")
+	SaveRGBAJpeg(rgba, outputFilePath)
+	return outputFilePath
+}
+
+func DrawTextBoxes(im image.Image, worlds []model.DetectWorld, pathStorage string) string {
+	start := time.Now()
+	defer func() {
+		log.Printf(">>> Time DrawTextBoxes: %s", time.Since(start))
+	}()
+
+	bounds := im.Bounds()
+	rgba := image.NewRGBA(bounds)
+	draw.Draw(rgba, bounds, im, bounds.Min, draw.Src)
+
+	for _, w := range worlds {
+		boxTop := w.Box.PTop1
+		boxBottom := w.Box.PBot1
+		rect := image.Rect(boxTop.X, boxTop.Y, boxBottom.X, boxBottom.Y)
+		DrawBox(rgba, rect, greenColor, 2, "text")
+	}
+
+	outputFilePath := manage_file.GenerateFileName(pathStorage, "text_boxes", "jpg")
+	SaveRGBAJpeg(rgba, outputFilePath)
+	return outputFilePath
+}
+
+func DrawTextAndItemsBoxes(im image.Image, worlds []model.DetectWorld, boxes []model.TextArea, pathStorage string) string {
+	start := time.Now()
+	defer func() {
+		log.Printf(">>> Time DrawTextAndItemsBoxes: %s", time.Since(start))
+	}()
+
+	bounds := im.Bounds()
+	rgba := image.NewRGBA(bounds)
+	draw.Draw(rgba, bounds, im, bounds.Min, draw.Src)
+
+	for _, w := range worlds {
+		boxTop := w.Box.PTop1
+		boxBottom := w.Box.PBot1
+		rect := image.Rect(boxTop.X, boxTop.Y, boxBottom.X, boxBottom.Y)
+		DrawBox(rgba, rect, greenColor, 2, "text")
+	}
 
 	for _, box := range boxes {
 		rect := image.Rect(box.X, box.Y, box.X+box.Width, box.Y+box.Height)

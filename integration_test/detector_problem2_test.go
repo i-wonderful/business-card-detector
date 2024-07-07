@@ -129,7 +129,7 @@ func TestDetectProblem2(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 
-			actual, err := detector.Detect(tc.imgPath)
+			actual, _, err := detector.Detect(tc.imgPath)
 
 			assert.NoError(t, err, "could not detect person")
 

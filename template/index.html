@@ -124,7 +124,8 @@
                 if (request.readyState === XMLHttpRequest.DONE && request.status === 200) {
                     // Получение и отображение результата в формате JSON
                     var result = JSON.parse(request.responseText);
-                    showResult(result);
+                    showResult(result['person']);
+                    replaceImg(result['img_path'])
                 }
             };
             request.send(formData);
@@ -153,6 +154,12 @@
             }
             return '<span class="' + cls + '">' + match + '</span>';
         });
+    }
+
+    // Замена изображения
+    function replaceImg(imgPath) {
+        var img = document.getElementById('image-view');
+        img.setAttribute('src', imgPath);
     }
 </script>
 </body>

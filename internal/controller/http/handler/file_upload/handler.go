@@ -11,8 +11,13 @@ import (
 	"time"
 )
 
+type Response struct {
+	Person  *model.Person `json:"person"`
+	ImgPath string        `json:"img_path"`
+}
+
 type Detector interface {
-	Detect(pathImg string) (*model.Person, error)
+	Detect(pathImg string) (*model.Person, string, error)
 }
 
 type FileUploadHandler struct {
@@ -62,7 +67,7 @@ func (h *FileUploadHandler) Handle(w http.ResponseWriter, r *http.Request) {
 
 	io.Copy(f, file)
 
-	person, err := h.detector.Detect(fileName)
+	person, filePath, err := h.detector.Detect(fileName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -70,7 +75,7 @@ func (h *FileUploadHandler) Handle(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(person)
+	json.NewEncoder(w).Encode(&Response{person, filePath})
 
 	duration := time.Since(start)
 	fmt.Printf(">>> [Time] %s took %v\n", "Full detection", duration)

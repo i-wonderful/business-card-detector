@@ -406,7 +406,7 @@ func TestDetect(t *testing.T) {
 
 		t.Run(tc.name, func(t *testing.T) {
 
-			actual, err := testDetector.Detect(tc.imgPath)
+			actual, _, err := testDetector.Detect(tc.imgPath)
 
 			assert.NoError(t, err, "could not detect person")
 
@@ -469,7 +469,8 @@ func createDetector2(t *testing.T) (*service.Detector2, *app.Config) {
 	textRecognizer, err := paddleocr.NewService(isLogTime,
 		config.Paddleocr.RunPath,
 		config.Paddleocr.DetPath,
-		config.Paddleocr.RecPath)
+		config.Paddleocr.RecPath,
+		config.TmpFolder)
 	if err != nil {
 		t.Fatal(err)
 	}
