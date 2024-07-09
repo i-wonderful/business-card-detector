@@ -4,6 +4,7 @@ import (
 	"image"
 	"log"
 	"os"
+	"path/filepath"
 	"time"
 
 	"card_detector/internal/model"
@@ -32,6 +33,7 @@ type Detector2 struct {
 	fieldSorterService   FieldSorter
 	cardRepo             CardRepo
 	storageFolder        string
+	tmpFolder            string
 	isLogTime            bool
 	isDebug              bool
 }
@@ -43,6 +45,7 @@ func NewDetector2(
 	fieldSortService FieldSorter,
 	cardRepo CardRepo,
 	storageFolder string,
+	tmpFolder string,
 	isLogTime, isDebug bool) *Detector2 {
 	return &Detector2{
 		imgPreparer:          imgPreparer,
@@ -51,6 +54,7 @@ func NewDetector2(
 		fieldSorterService:   fieldSortService,
 		cardRepo:             cardRepo,
 		storageFolder:        storageFolder,
+		tmpFolder:            tmpFolder,
 		isLogTime:            isLogTime,
 		isDebug:              isDebug,
 	}
@@ -89,14 +93,16 @@ func (d *Detector2) Detect(imgPath string) (*model.Person, string, error) {
 		}
 	}
 
-	// 3.
+	// 3. crop card
 	im, _ = d.imgPreparer.CropCard(im, boxes)
 
+	// 4. recognize text
 	detectWorlds, err := d.textRecognizeService.RecognizeImg(&im)
 	if err != nil {
 		return nil, "", err
 	}
 
+	// 5. merge text blocks
 	detectWorlds = box_merge.MergeBoxes(detectWorlds)
 	if d.isDebug {
 		log.Println("Recognized: ")
@@ -105,20 +111,21 @@ func (d *Detector2) Detect(imgPath string) (*model.Person, string, error) {
 		}
 	}
 
+	// 6. sort text to person item
 	worlds := getOnlyWorlds(detectWorlds)
-
 	p := d.fieldSorterService.Sort(worlds)
 
-	//manage_file.ClearFolder(d.storageFolder)
-
+	// 6. save
 	person := model.NewPerson(p)
-	card := mapCard(*person, "")
+
+	boxesPath := img.DrawTextAndItemsBoxes(im, detectWorlds, boxes, d.storageFolder)
+	card := mapCard(*person, boxesPath, "", filepath.Base(file.Name()))
 	if err := d.cardRepo.Save(card); err != nil {
 		log.Println("Error saving card:", err)
 	}
 
-	//boxesPath := img.DrawBoxes(im, boxes, d.storageFolder)
-	boxesPath := img.DrawTextAndItemsBoxes(im, detectWorlds, boxes, d.storageFolder)
+	//manage_file.ClearFolder(d.storageFolder)
+	//manage_file.ClearFolder(d.tmpFolder)
 
 	return person, boxesPath, nil
 }

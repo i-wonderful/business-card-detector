@@ -11,7 +11,6 @@ import (
 	"card_detector/internal/util/img"
 	aa_imaging "github.com/aaronland/go-image/imaging"
 	"github.com/disintegration/imaging"
-	"github.com/google/uuid"
 	"github.com/rwcarlsen/goexif/exif"
 )
 
@@ -32,12 +31,11 @@ func NewService(storageFolder string) *Service {
 func (s *Service) Rotage(imgFile *os.File) (image.Image, string) {
 	orientation := getOrientation(imgFile)
 
-	im, format, err := image.Decode(imgFile)
+	im, _, err := image.Decode(imgFile)
 	if err != nil {
 		log.Printf("Error decoding image: %v", err)
 		return nil, ""
 	}
-	//log.Println("Image format:", format)
 
 	//im, _ = img.OpenJPEGAsNRGBA(imgFile.Name())
 	im, _ = RotateImageWithOrientation(im, orientation)
@@ -52,15 +50,17 @@ func (s *Service) Rotage(imgFile *os.File) (image.Image, string) {
 	im = imaging.AdjustBrightness(im, -10)
 	//im = img.BinarizeImage(im, 80)
 
-	bytes := img.ToBytes(im)
-	currentFilePath := s.storageFolder + "/" + uuid.New().String() + "." + format
-	//img.SaveNRGBA(&im, currentFilePath)
-	if err = img.SaveImg(currentFilePath, bytes); err != nil {
-		log.Printf("Error saving image: %v", err)
-		return nil, ""
-	}
+	//----- save rotated image
+	//bytes := img.ToBytes(im)
+	//currentFilePath := s.storageFolder + "/" + uuid.New().String() + "." + format
+	////img.SaveNRGBA(&im, currentFilePath)
+	//if err = img.SaveImg(currentFilePath, bytes); err != nil {
+	//	log.Printf("Error saving image: %v", err)
+	//	return nil, ""
+	//}
+	// -----
 
-	return im, currentFilePath
+	return im, ""
 }
 
 // CropCard - crop card by square from image and transpose boxes
@@ -68,6 +68,7 @@ func (s *Service) CropCard(im image.Image, boxes []model.TextArea) (image.Image,
 	for _, box := range boxes {
 		if box.Label == onnx.CARD_CLASS {
 			subImg, offsetX, offsetY := img.CropSquare(im, box.X, box.Y, box.Width, box.Height)
+
 			boxes_util.Transpose(boxes, offsetX, offsetY)
 			return subImg, nil
 		}

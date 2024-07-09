@@ -3,10 +3,12 @@ package model
 import "time"
 
 type Card struct {
-	Id         int64
-	Owner      string // todo
-	UploadedAt time.Time
-	PhotoUrl   string
+	Id           int64
+	Owner        string // todo
+	UploadedAt   time.Time
+	PhotoUrl     string
+	LogoUrl      string
+	OriginalName string
 
 	// --- Fields --- //
 	Email    []string

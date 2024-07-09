@@ -36,7 +36,7 @@ func TestDetect(t *testing.T) {
 				Site:         []string{"www.delasport.com"},
 				Phone:        []string{"+35699723767"},
 				Name:         "OREN COHEN SHWARTZ",
-				Organization: "WEDELIVERSPORTS", // todo spaces
+				Organization: "WE DELIVERSPORTS",
 				JobTitle:     "CEO",
 				Other:        "©Delasport",
 			},
@@ -46,7 +46,7 @@ func TestDetect(t *testing.T) {
 			BASE_IMG_PATH + "/first/IMG_2913.jpg",
 			&model.Person{
 				Email:        []string{"craig@summer-creative.com"},
-				Phone:        []string{"+34711017134", "+4402033555336"},
+				Phone:        []string{"+34711017134", "+440)2033555336"},
 				Name:         "Craig Edwards",
 				Organization: "SUMMER CREATIVE",
 				JobTitle:     "Business Development Manager",
@@ -57,7 +57,7 @@ func TestDetect(t *testing.T) {
 			"first IMG_2914.JPG",
 			BASE_IMG_PATH + "/first/IMG_2914.JPG",
 			&model.Person{
-				Name:         "Areg", // todo Areg Oganesian
+				Name:         "Areg Oganesian",
 				Site:         []string{"www.igtrm.com"},
 				Email:        []string{"areg@igtrm.com"},
 				Phone:        []string{"+37499452772"},
@@ -91,7 +91,7 @@ func TestDetect(t *testing.T) {
 				Skype:        []string{"partners@linebet.com"},
 				Telegram:     []string{"@linebet_partners_bot"},
 				Site:         []string{"linebet.com"},
-				Organization: "B2B Department",
+				Organization: "B2BDepartment",
 			},
 		},
 		{
@@ -110,12 +110,12 @@ func TestDetect(t *testing.T) {
 			"first IMG_2919.JPG",
 			BASE_IMG_PATH + "/first/IMG_2919.JPG",
 			&model.Person{
-				Name:  "HEADOF CLIENTSUCCESS", // todo Jozef Fabian
+				Name:  "HEADOF CLIENT SUCCESS", // todo Jozef Fabian
 				Email: []string{"jf@sportsinnovation.dk"},
 				Phone: []string{"4552224150"}, // todo plus
 				//JobTitle:     "HEAD OF CLIENT SUCCESS",
 				Site:         []string{"www.sportsinnovation.dk"},
-				Skype:        []string{"livejof.144"}, // todo live:jof_144
+				Skype:        []string{"live:jof.144"}, // todo live:jof_144
 				Organization: "SPORTS INNOVATION",
 				Other:        "CONTENTPRODUCTION",
 			},
@@ -147,7 +147,7 @@ func TestDetect(t *testing.T) {
 			&model.Person{
 				Name:         "Russ Yershon",
 				Email:        []string{"russell@connectingbrands.co.uk"},
-				Phone:        []string{"+44 (0)7500828120"},
+				Phone:        []string{"+44 0)7500828120"},
 				JobTitle:     "Talent Manager to wide network of Football Legends Director",
 				Site:         []string{"Connectingbrands.co.uk"},
 				Organization: "CONNECTING", // todo CONNECTING BRANDS .co.ux
@@ -194,7 +194,7 @@ func TestDetect(t *testing.T) {
 			&model.Person{
 				Name:         "Dariya Yeryomenko",
 				Email:        []string{"dariya@pay.center"},
-				Phone:        []string{"+357963341"}, // todo +35796334118
+				Phone:        []string{"+35796334118"},
 				JobTitle:     "Key Account Manager",
 				Organization: "Payment.Center",
 				Telegram:     []string{"@dariya_pc_cy"},
@@ -272,7 +272,7 @@ func TestDetect(t *testing.T) {
 				Site:     []string{"www.admill.io"},
 				Phone:    []string{"+90 536 745 13 03"},
 				Telegram: []string{"https://t.me/Nicola_an"},
-				Name:     "Erkin Bayrakci",
+				Name:     "Erkin Bayrakgi",
 				Other:    "Sepapaja tn 615551TallinnEstonia",
 			},
 		},
@@ -374,7 +374,7 @@ func TestDetect(t *testing.T) {
 				//Email:        []string{"viorel.stan@gshmedia.com"}, // todo
 				Site:  []string{"viorel.stanagshmedia.com"}, // todo
 				Skype: []string{"viorel.stan87"},
-				Name:  "", // todo Viorel Stan
+				Name:  "Viorel Stan",
 				//Organization: "GSH", // todo
 				JobTitle: "CEO",
 				Other:    "ViorelStan",
@@ -491,6 +491,7 @@ func createDetector2(t *testing.T) (*service.Detector2, *app.Config) {
 		fieldSorter,
 		cardRepo,
 		config.StorageFolder,
+		config.TmpFolder,
 		isLogTime,
 		config.IsDebug)
 

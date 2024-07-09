@@ -51,8 +51,12 @@ func SaveRGBAJpeg(img *image.RGBA, outputFilePath string) error {
 }
 
 func SaveJpeg(img *image.Image, outputFilePath string) error {
+	return SaveJpegWithQality(img, outputFilePath, 100)
+}
+
+func SaveJpegWithQality(img *image.Image, outputFilePath string, quality int) error {
 	var buf bytes.Buffer
-	if err := jpeg.Encode(&buf, *img, &jpeg.Options{Quality: 100}); err != nil {
+	if err := jpeg.Encode(&buf, *img, &jpeg.Options{Quality: quality}); err != nil {
 		log.Fatalf("Error encoding image: %v", err)
 	}
 

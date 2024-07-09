@@ -69,11 +69,12 @@ func (a *app2) Run() error {
 		fieldSorter,
 		cardRepo,
 		a.config.StorageFolder,
+		a.config.TmpFolder,
 		isLogTime,
 		a.config.IsDebug)
 
 	// handlers
-	h := router.NewRouter(detectService, getterService, a.config.StorageFolder, a.config.Version)
+	h := router.NewRouter(detectService, getterService, a.config.TmpFolder, a.config.Version)
 
 	// start server
 	srv := &http.Server{

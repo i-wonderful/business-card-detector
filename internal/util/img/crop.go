@@ -43,17 +43,25 @@ func CropSquare(img image.Image, x, y, width, height int) (image.Image, int, int
 	if yCrop+squareSize > img.Bounds().Dy() {
 		yCrop = img.Bounds().Dy() - squareSizeY
 	}
+	//return getSubImageWithZeroOrigin(img, xCrop, yCrop, squareSizeX, squareSizeY), xCrop, yCrop
 	return getSubImageWithZeroOrigin(img, xCrop, yCrop, squareSizeX, squareSizeY), xCrop, yCrop
 }
 
-func getSubImageWithZeroOrigin(img image.Image, x, y, width, height int) *image.NRGBA {
+func getSubImageWithZeroOrigin(img image.Image, x, y, width, height int) *image.RGBA {
 	// Создаем новое изображение с нулевыми координатами и нужными размерами
-	dst := image.NewNRGBA(image.Rect(0, 0, width, height))
+	dst := image.NewRGBA(image.Rect(0, 0, width, height))
 
 	// Копируем нужную часть исходного изображения прямо в новое изображение
 	draw.Draw(dst, dst.Bounds(), img, image.Point{X: x, Y: y}, draw.Src)
 
 	return dst
+}
+
+func getSubImage(img image.Image, x, y, width, height int) image.Image {
+	rect := image.Rect(x, y, x+width, y+height)
+	subImg := image.NewRGBA(rect)
+	draw.Draw(subImg, rect, img, image.Point{X: x, Y: y}, draw.Src)
+	return subImg
 }
 
 // CropToSquareCenter crops image to center square

@@ -1,81 +1,279 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Card Detector</title>
+    <link rel="stylesheet" type="text/css" href="/static/pico.min-2.css">
+    <link rel="stylesheet" type="text/css" href="/static/main.css">
+    <link rel="icon" href="/static/icon.png" sizes="32x32" type="image/png">
     <style>
-        :root {
-            --primary: #df99f5;
+        fieldset, [role=group] {
+            margin-bottom: 0px;
         }
-    </style>
-    <!-- Подключение стилей PicoCSS -->
-    <link rel="stylesheet" type="text/css" href="/static/pico.css">
 
+        /*.card-table tbody tr:last-of-type {*/
+        /*    border-bottom: 2px solid var(--pico-primary);*/
+        /*}*/
+
+        .card-table th img {
+            border-radius: 5px;
+            transition: transform 0.2s;
+        }
+
+        .card-table th img:hover {
+            transform: scale(1.1);
+            cursor: pointer;
+        }
+
+        .card-table td ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .left-align {
+            text-align: left;
+        }
+
+        /* todo */
+        .field-name {
+            display: inline-block;
+            width: 100px;
+        }
+
+    </style>
 </head>
 <body>
-<div>
-    <nav class="container-fluid">
-        <ul>
-
-        </ul>
+<header class="container">
+    <div class="card-detector-title">
+        <img src="./static/lettters/c.png" alt="C" class="title-letter">
+        <img src="./static/lettters/a.png" alt="A" class="title-letter">
+        <img src="./static/lettters/r.png" alt="R" class="title-letter">
+        <img src="./static/lettters/d.png" alt="D" class="title-letter">
+        <span class="word-spacer"></span>
+        <img src="./static/lettters/d-4.png" alt="D" class="title-letter">
+        <img src="./static/lettters/e.png" alt="E" class="title-letter">
+        <img src="./static/lettters/t.png" alt="T" class="title-letter">
+        <img src="./static/lettters/e.png" alt="E" class="title-letter">
+        <img src="./static/lettters/c.png" alt="C" class="title-letter">
+        <img src="./static/lettters/t.png" alt="T" class="title-letter">
+        <img src="./static/lettters/o.png" alt="O" class="title-letter">
+        <img src="./static/lettters/r.png" alt="R" class="title-letter">
+    </div>
+    <nav>
+        <ul></ul>
         <ul>
             <li><a href="/">Загрузить</a></li>
             <li><a href="/history" class="secondary">История</a></li>
-            <li><a href="/about">Что тут?</a></li>
+            <li><a href="/about">О проекте</a></li>
         </ul>
     </nav>
+</header>
 
-    <header class="container">
-        <hgroup>
-            <a href="/">
-                <h1>
+<!--<hr class="separator">-->
 
-                </h1>
-            </a>
-            <h2>Card Detector</h2>
-        </hgroup>
-    </header>
-</div>
+<main class="container">
+    <table class="card-table">
+        <thead>
+        <tr>
+            <th scope="col">Фото</th>
+            <th scope="col">Данные</th>
+            <th scope="col">О файле</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{ if . }}
 
-<div class="container">
-    <main>
-        <table class="pico-table">
-            <thead>
-            <tr>
-                <th></th>
-                <th>Данные</th>
-                <th>О файле</th>
-            </tr>
-            </thead>
-            <tbody>
-            {{ range . }}
-            <tr>
-                <td>
-                    <a href="{{ .PhotoUrl }}" target="_blank">
-                        <img src="{{ .PhotoUrl }}" width="100">
-                    </a>
-                </td>
-                <td>
-                    <ul>
-                        <li><b>Email</b> {{ .Email }}</li>
-                        <li><b>Name</b> {{ .Name }}</li>
-                        <li><b>Phone</b> {{ .Phone }}</li>
-                        <li><b>Site</b> {{ .Site }}</li>
-                    </ul>
-                </td>
-                <td>
-                    <ul>
-                        <li><b>UploadedAt</b> {{ .UploadedAt | formatDate }}</li>
-                        <li><b>Owner</b> {{ .Owner }}</li>
-                    </ul>
-                </td>
-            </tr>
-            {{ end }}
-            </tbody>
-        </table>
-    </main>
-</div>
+        {{ range . }}
+        <tr>
+            <th scope="row">
+                <div data-target="modal-example" onclick="showModal(event, '{{.PhotoUrl }}', '{{.OriginalName}}')">
+                    <img src="{{.PhotoUrl }}" width="150">
+                </div>
+            </th>
+            <td>
+                <ul>
+                    <li>
+                        <b>Name</b> {{ .Name }}
+                    </li>
 
+                    {{if .Company}}
+                    <li>
+                        <b>Company</b> {{ .Company }}
+                    </li>
+                    {{end}}
+
+                    {{if .JobTitle}}
+                    <li>
+                        <b>JobTitle</b> {{ .JobTitle }}
+                    </li>
+                    {{end}}
+
+                    {{if .Email}}
+                    <li>
+                        <fieldset role="group">
+                            <b class="field-name">Email</b>
+                            <ul class="left-align">
+                                {{range .Email}}
+                                <li>
+                                    <a href="mailto:{{.}}">{{.}}</a>
+                                </li>
+                                {{end}}
+                            </ul>
+                        </fieldset>
+                    </li>
+                    {{end}}
+
+                    {{if .Phone}}
+                    <li>
+                        <fieldset role="group">
+                            <b class="field-name">Phone</b>
+                            <ul class="left-align">
+                                {{ range .Phone}}
+                                <li><a href="tel:{{.}}">{{.}}</a></li>
+                                {{end}}
+                            </ul>
+                        </fieldset>
+                    </li>
+                    {{end}}
+
+                    {{if .Site}}
+                    <li>
+                        <fieldset role="group">
+                            <b class="field-name">Site</b>
+                            <ul class="left-align">
+                                {{ range .Site }}
+                                <li><a href="https://{{.}}" target="_blank">{{.}}</a></li>
+                                {{ end }}
+                            </ul>
+
+                        </fieldset>
+                    </li>
+                    {{end}}
+
+                    {{if .Skype}}
+                    <li>
+                        <fieldset role="group">
+                            <b class="field-name">Skype</b>
+                            <ul class="left-align">
+                                {{ range .Skype}}
+                                <li><a href="skype:{{.}}?call">{{.}}</a></li>
+                                {{ end }}
+                            </ul>
+                        </fieldset>
+                    </li>
+                    {{end}}
+
+                    {{if .Telegram}}
+                    <li>
+                        <fieldset role="group">
+                            <b class="field-name">Telegram</b>
+                            <ul class="left-align">
+                                {{ range .Telegram }}
+                                <li><a href="javascript:void(0);" onclick="openTelegram('{{ . }}')">{{ . }}</a></li>
+                                {{ end }}
+                            </ul>
+                        </fieldset>
+                    </li>
+                    {{end}}
+
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li><b>UploadedAt</b> {{ .UploadedAt | formatDate }}</li>
+                    <li><b>Owner</b> {{ .Owner }}</li>
+                    <li><b>OriginalName</b> {{ .OriginalName }}</li>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+        {{ end }}
+        {{ else }}
+        <tr>
+            <td colspan="3">Ничего не найдено. Загрузите фото.</td>
+        </tr>
+        {{ end }}
+        </tbody>
+    </table>
+</main>
+
+<footer class="container-fluid">
+    <div class="container">
+        <div class="grid">
+            <hgroup>
+                <h5>Card Detector</h5>
+                <p>Распознавание визиток с помощью ИИ</p>
+            </hgroup>
+            <div>
+                <h5>Ссылки</h5>
+                <ul>
+                    <li><a href="/">Главная</a></li>
+                    <li><a href="/about">О проекте</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5>Контакт</h5>
+                <p><a href="mailto:dvl.java@gmail.com">dvl.java@gmail.com</a></p>
+            </div>
+        </div>
+        <p class="text-center">&copy; 2024 Card Detector | Версия 3.0.0</p>
+    </div>
+</footer>
+
+<!-- Modal example -->
+<dialog id="modal-example">
+    <article>
+        <header>
+            <button aria-label="Close"
+                    rel="prev"
+                    data-target="modal-example"
+                    onclick="toggleModal(event)"></button>
+            <h3>Фото визитки</h3>
+        </header>
+        <p>
+        <figure>
+            <img id="modal-image" src="" alt="card photo"/>
+            <figcaption>
+                <cite id="modal-image-name"></cite>
+            </figcaption>
+        </figure>
+        </p>
+        <footer>
+            <button autofocus data-target="modal-example" onclick="toggleModal(event)">
+                Хорошо
+            </button>
+        </footer>
+    </article>
+</dialog>
+<!-- ./ Modal example -->
+
+<script src="/static/modal.js"></script>
+
+<script>
+    const showModal = (event, url, imgName) => {
+        console.log(url)
+        const image = document.getElementById('modal-image');
+        image.src = url;
+        if (imgName) {
+            const image_name = document.getElementById('modal-image-name');
+            image_name.innerText = imgName;
+        }
+        toggleModal(event)
+    }
+
+    function trimPrefix(tg) {
+        if (typeof tg !== 'string') {
+            return tg;
+        }
+        return tg.startsWith('@') ? tg.slice(1) : tg;
+    }
+
+    function openTelegram(username) {
+        var cleanedUsername = trimPrefix(username);
+        var url = 'https://t.me/' + cleanedUsername;
+        window.open(url, '_blank');
+    }
+</script>
 </body>
 </html>

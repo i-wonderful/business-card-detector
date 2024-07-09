@@ -48,6 +48,9 @@ func NewService(isLog bool, pathToRun, pathDetOnnx, pathRecOnnx, pathTmp string)
 	}, nil
 }
 
+// RecognizeImg - recognize text from image, save image in tmp folder
+// @param im - image
+// @return - list of words
 func (s *TextRecognizeService) RecognizeImg(im *image.Image) ([]model.DetectWorld, error) {
 	if s.isLog {
 		start := time.Now()
@@ -56,8 +59,9 @@ func (s *TextRecognizeService) RecognizeImg(im *image.Image) ([]model.DetectWorl
 		}()
 	}
 
+	resized := img.ResizeImageByHeight(*im, 1800)
 	filePath := manage_file.GenerateFileName(s.pathTmp, "for_paddle", "jpg")
-	img.SaveJpeg(im, filePath)
+	img.SaveJpegWithQality(&resized, filePath, 87)
 	absPath, _ := filepath.Abs(filePath)
 
 	return s.RecognizeAll(absPath)

@@ -31,14 +31,16 @@ func (h *Handler) Handle(w http.ResponseWriter, r *http.Request) {
 		Funcs(funcMap).
 		ParseFiles("./template/history.html")
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
-	data := h.getter.GetAll()
+	cards := h.getter.GetAll()
+	//data := []interface{}{cards}
+
 	// Генерируем вывод на основе шаблона и данных
-	err = tmpl.Execute(w, data)
+	err = tmpl.Execute(w, cards)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 }
 

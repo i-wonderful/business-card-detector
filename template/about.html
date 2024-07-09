@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Card Detector</title>
+    <link rel="stylesheet" type="text/css" href="/static/pico.min-2.css">
+    <link rel="stylesheet" type="text/css" href="/static/main.css">
+    <link rel="icon" href="/static/icon.png" sizes="32x32" type="image/png">
+    <style>
+        main ul li {
+            list-style: square;
+        }
+    </style>
+</head>
+
+<body>
+<header class="container">
+    <div class="card-detector-title">
+        <img src="./static/lettters/c.png" alt="C" class="title-letter">
+        <img src="./static/lettters/a.png" alt="A" class="title-letter">
+        <img src="./static/lettters/r.png" alt="R" class="title-letter">
+        <img src="./static/lettters/d.png" alt="D" class="title-letter">
+        <span class="word-spacer"></span>
+        <img src="./static/lettters/d-4.png" alt="D" class="title-letter">
+        <img src="./static/lettters/e.png" alt="E" class="title-letter">
+        <img src="./static/lettters/t.png" alt="T" class="title-letter">
+        <img src="./static/lettters/e.png" alt="E" class="title-letter">
+        <img src="./static/lettters/c.png" alt="C" class="title-letter">
+        <img src="./static/lettters/t.png" alt="T" class="title-letter">
+        <img src="./static/lettters/o.png" alt="O" class="title-letter">
+        <img src="./static/lettters/r.png" alt="R" class="title-letter">
+    </div>
+    <nav>
+        <ul>
+        </ul>
+        <ul>
+            <li><a href="/">Загрузить</a></li>
+            <li><a href="/history">История</a></li>
+            <li><a href="/about" class="secondary">О проекте</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main class="container">
+    <hgroup>
+        <h2>О Проекте</h2>
+        <blockquote>
+            “Визитка - это не просто кусочек картона, а концентрированная сущность
+            человека в мире деловых отношений.”
+        </blockquote>
+    </hgroup>
+    <p>
+        Добро пожаловать на страницу уникального проекта,
+        посвященного
+        <mark>распознаванию текста на визитных карточках</mark>
+        с помощью искусственного интеллекта.
+        Этот сервис предоставляет удобный и точный способ извлечения информации с визиток, избавляя вас
+        от ручного ввода данных.
+    </p>
+
+    <h2>Как это работает</h2>
+    <p>Сервис позволяет пользователю загрузить фотографию визитной карточки и
+        получить автоматически распознанные поля, такие как:
+    <ul>
+        <li>
+            <mark>Имя</mark>
+        </li>
+        <li>
+            <mark>Телефонный номер</mark>
+        </li>
+        <li>
+            <mark>Электронная почта</mark>
+        </li>
+        <li>
+            Организация
+        </li>
+        <li>Телеграм и другие важные данные</li>
+    </ul>
+    </p>
+
+    <h2>Особенности</h2>
+    <p>
+    <ul>
+        <li><b>Точность и Надежность</b>: Алгоритмы обеспечивают высокую точность распознавания текста, минимизируя
+            количество ошибок.
+        </li>
+        <li><b>Удобство использования</b>: Просто загрузите фотографию визитки, и сервис сделает остальное.</li>
+        <li><b>История загрузок</b>: Вся загруженная информация хранится в истории, что позволяет легко вернуться к
+            предыдущим визиткам в любое время.
+        </li>
+        <li><b>Интеграция через API</b>: Сервис предоставляет API, позволяющее легко интегрировать его возможности в
+            вашу собственную систему.
+        </li>
+    </ul>
+    </p>
+
+    <h2>Начните Прямо Сейчас</h2>
+    <p>
+        Испытайте удобство и эффективность сервиса.
+        Загружайте фотографии визитных карточек и получайте структурированные данные мгновенно.
+        Сэкономьте время и усилия с этим решением на основе искусственного интеллекта!
+    </p>
+</main>
+
+<footer class="container-fluid">
+    <div class="container">
+        <div class="grid">
+            <hgroup>
+                <h5>Card Detector</h5>
+                <p>Распознавание визиток с помощью ИИ</p>
+            </hgroup>
+            <div>
+                <h5>Ссылки</h5>
+                <ul class="no-bullets">
+                    <li><a href="/">Главная</a></li>
+                    <li><a href="/about">О проекте</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5>Контакт</h5>
+                <p>info@carddetector.com</p>
+            </div>
+        </div>
+        <p class="text-center">&copy; 2024 Card Detector | Версия {{ .Version }}</p>
+    </div>
+</footer>
+</body>
+</html>

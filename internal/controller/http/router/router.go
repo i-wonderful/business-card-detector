@@ -1,6 +1,7 @@
 package router
 
 import (
+	"card_detector/internal/controller/http/handler/about"
 	"card_detector/internal/controller/http/handler/file_upload"
 	"card_detector/internal/controller/http/handler/history"
 	"card_detector/internal/controller/http/handler/index"
@@ -22,10 +23,12 @@ func NewRouter(detectService file_upload.Detector, getterService history.Getter,
 	indexHandler := index.NewIndexHandler(version)
 	detectHandler := file_upload.NewFileUploadHandler(detectService, tmpFilePath)
 	historyHandler := history.NewHandler(getterService)
+	aboutHandler := about.NewAboutHandler(version)
 
 	mux.HandleFunc("/", indexHandler.Handle)
 	mux.HandleFunc("/detect", detectHandler.Handle)
 	mux.HandleFunc("/history", historyHandler.Handle)
+	mux.HandleFunc("/about", aboutHandler.Handle)
 
 	return mux
 }

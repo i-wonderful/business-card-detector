@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Card Detector</title>
-    <!-- Подключение стилей PicoCSS -->
-    <link rel="stylesheet" type="text/css" href="/static/pico.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/pico.min-2.css">
+    <link rel="stylesheet" type="text/css" href="/static/main.css">
+    <link rel="icon" href="/static/icon.png" sizes="32x32" type="image/png">
     <style>
-        :root {
-            --primary: #8e24aa;
-        }
         /*.container {*/
         /*    max-width: 800px;*/
         /*    margin-top: 50px;*/
@@ -61,35 +58,47 @@
 </head>
 
 <body>
-<div>
-    <nav class="container-fluid">
-        <ul>
-<!--            <li><strong></strong></li>-->
-        </ul>
-        <ul>
-            <li><a href="/" class="secondary">Загрузить</a></li>
-            <li><a href="/history">История</a></li>
-        </ul>
-    </nav>
+<header class="container-fluid">
+    <div class="container">
+        <!--            <h1></h1>-->
+        <!--            <h2>Card Detector v{{ .Version }}</h2>-->
+        <div class="card-detector-title">
+            <img src="./static/lettters/c.png" alt="C" class="title-letter">
+            <img src="./static/lettters/a.png" alt="A" class="title-letter">
+            <img src="./static/lettters/r.png" alt="R" class="title-letter">
+            <img src="./static/lettters/d.png" alt="D" class="title-letter">
+            <span class="word-spacer"></span>
+            <img src="./static/lettters/d-4.png" alt="D" class="title-letter">
+            <img src="./static/lettters/e.png" alt="E" class="title-letter">
+            <img src="./static/lettters/t.png" alt="T" class="title-letter">
+            <img src="./static/lettters/e.png" alt="E" class="title-letter">
+            <img src="./static/lettters/c.png" alt="C" class="title-letter">
+            <img src="./static/lettters/t.png" alt="T" class="title-letter">
+            <img src="./static/lettters/o.png" alt="O" class="title-letter">
+            <img src="./static/lettters/r.png" alt="R" class="title-letter">
+        </div>
 
-    <header class="container">
-        <hgroup>
-            <h1></h1>
-            <h2>Card Detector v{{ .Version }}</h2>
-        </hgroup>
-    </header>
-</div>
+        <nav>
+            <ul>
+                <!--                <li>Varsion: {{ .Version }}</li>-->
+                <!--            <li><strong></strong></li>-->
+            </ul>
+            <ul>
+                <li><a href="/" class="secondary">Загрузить</a></li>
+                <li><a href="/history">История</a></li>
+                <li><a href="/about">О проекте</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
 
 <main class="container">
-
-
-    <div class="image-result-container">
+    <div class="image-result-container" data-tooltip="Загрузите фото визитки">
         <div class="image-container">
             <img id="image-view" class="img-fluid rounded img-placeholder"
                  src="./static/photo.png"
                  alt="Предварительный просмотр">
         </div>
-
 
         <div class="result-container">
             <pre id="result"></pre>
@@ -101,8 +110,30 @@
     <label for="image-upload">
         <input type="file" id="image-upload" name="file" accept="image/*">
     </label>
-
 </main>
+
+<footer class="container-fluid">
+    <div class="container">
+        <div class="grid">
+            <hgroup>
+                <h5>Card Detector</h5>
+                <p>Распознавание визиток с помощью ИИ</p>
+            </hgroup>
+            <div>
+                <h5>Ссылки</h5>
+                <ul>
+                    <li><a href="/">Главная</a></li>
+                    <li><a href="/about">О проекте</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5>Контакт</h5>
+                <p><a href="mailto:dvl.java@gmail.com">dvl.java@gmail.com</a></p>
+            </div>
+        </div>
+        <p class="text-center">&copy; 2024 Card Detector | Версия {{ .Version }}</p>
+    </div>
+</footer>
 
 <script>
     // Обработчик события выбора изображения
@@ -110,7 +141,7 @@
         var reader = new FileReader();
 
         reader.onload = function (event) {
-            showResult('Loading...');
+            showLoading()
             var img = document.getElementById('image-view');
             img.setAttribute('src', event.target.result);
 
@@ -138,6 +169,11 @@
     function showResult(result) {
         var resultDiv = document.getElementById('result');
         resultDiv.innerHTML = syntaxHighlight(JSON.stringify(result, null, 2));
+    }
+
+    function showLoading() {
+        var resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = '<span aria-busy="true">Loading...</span>';
     }
 
     // Функция для подсветки синтаксиса JSON

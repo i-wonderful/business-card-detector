@@ -1,0 +1,77 @@
+
+[data-theme=light],
+:root:not([data-theme=dark]) {
+    --pico-text-selection-color: rgba(237, 125, 49, 0.25);
+    --pico-primary: #ED7D31;
+    --pico-primary-background: #C55A26;
+    --pico-primary-underline: rgba(197, 90, 38, 0.5);
+    --pico-primary-hover: #A0491B;
+    --pico-primary-hover-background: #B55722;
+    --pico-primary-focus: rgba(237, 125, 49, 0.5);
+    --pico-primary-inverse: #fff;
+}
+
+ul li {
+    list-style: none;
+}
+/* ------------------------ Header ---------------------------- */
+header {
+    /*background: linear-gradient(to top, #f2f2f2, #ffffff);*/
+    /*padding-top: 1rem;*/
+    /*padding-bottom: 1rem;*/
+    /*border-bottom: 1px solid #ccc;*/
+    /*!*background: linear-gradient(to top, #f2f2f2, #ffffff); !* Градиент от светло-серого к белому *!*!*/
+    /*box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1); !* Тень с размытием *!*/
+
+}
+
+.card-detector-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 0 0 15px 0;
+}
+
+.title-letter {
+    height: 97px;
+    margin: 0 0px;
+    transition: transform 0.3s ease;
+}
+
+.title-letter:hover {
+    transform: scale(1.2);
+}
+
+.word-spacer {
+    width: 30px;
+}
+
+/* ---------------------------- Footer --------------------------- */
+
+footer {
+    background-color: #f1f1f1;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    margin-top: 2rem;
+}
+
+footer .grid {
+    --grid-spacing-vertical: 0.5rem;
+    --grid-spacing-horizontal: 1rem;
+}
+
+footer ul {
+    padding-left: 0;
+    list-style: none;
+    margin: 0;
+}
+
+footer li {
+    margin-bottom: 0.25rem;
+}
+
+footer p {
+    margin-bottom: 0.25rem;
+}
+

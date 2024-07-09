@@ -2,7 +2,6 @@ package service
 
 import (
 	"card_detector/internal/model"
-	manage_file "card_detector/internal/util/file"
 	. "card_detector/internal/util/img"
 	"card_detector/internal/util/rectangle"
 	manage_str2 "card_detector/internal/util/str"
@@ -42,6 +41,7 @@ type Detector struct {
 	fieldSorterService   FieldSorter
 	cardRepo             CardRepo
 	storageFolder        string
+	tmpFolder            string
 	isLogTime            bool
 	isDebug              bool
 }
@@ -53,6 +53,7 @@ func NewDetector(
 	fieldSortService FieldSorter,
 	cardRepo CardRepo,
 	storageFolder string,
+	tmpFolder string,
 	isLogTime bool) *Detector {
 	return &Detector{
 		imgPreparer:          imgPreparer,
@@ -61,6 +62,7 @@ func NewDetector(
 		fieldSorterService:   fieldSortService,
 		cardRepo:             cardRepo,
 		storageFolder:        storageFolder,
+		tmpFolder:            tmpFolder,
 		isLogTime:            isLogTime,
 		isDebug:              false,
 	}
@@ -151,29 +153,31 @@ func (d *Detector) Detect(imgPath string) (*model.Person, error) {
 	p := d.fieldSorterService.Sort(worlds)
 	person := model.NewPerson(p)
 
-	manage_file.ClearFolder("./tmp")
-	manage_file.ClearFolder(d.storageFolder)
+	//manage_file.ClearFolder(d.tmpFolder)
+	//manage_file.ClearFolder(d.storageFolder)
 
-	card := mapCard(*person, "")
+	card := mapCard(*person, "", "", "")
 	if err := d.cardRepo.Save(card); err != nil {
 		fmt.Println("Error saving card:", err)
 	}
 	return person, nil
 }
 
-func mapCard(p model.Person, photoUrl string) model.Card {
+func mapCard(p model.Person, photoUrl, logoUrl, originalName string) model.Card {
 	return model.Card{
-		Owner:      "admin",
-		UploadedAt: time.Now(),
-		PhotoUrl:   photoUrl,
-		Email:      p.Email,
-		Site:       p.Site,
-		Phone:      p.Phone,
-		Name:       p.Name,
-		JobTitle:   p.JobTitle,
-		Company:    p.Organization,
-		Telegram:   p.Telegram,
-		Skype:      p.Skype,
-		Other:      p.Other,
+		Owner:        "admin",
+		UploadedAt:   time.Now(),
+		PhotoUrl:     photoUrl,
+		LogoUrl:      logoUrl,
+		OriginalName: originalName,
+		Email:        p.Email,
+		Site:         p.Site,
+		Phone:        p.Phone,
+		Name:         p.Name,
+		JobTitle:     p.JobTitle,
+		Company:      p.Organization,
+		Telegram:     p.Telegram,
+		Skype:        p.Skype,
+		Other:        p.Other,
 	}
 }

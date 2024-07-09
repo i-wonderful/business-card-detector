@@ -14,6 +14,7 @@ import (
 )
 
 var greenColor = color.RGBA{G: 128, A: 255}
+var redColor = color.RGBA{R: 255, A: 255}
 
 // DrawBoxes - рисует боксы на изображении
 // @return путь к сохраненному изображению
@@ -51,7 +52,7 @@ func DrawTextBoxes(im image.Image, worlds []model.DetectWorld, pathStorage strin
 		boxTop := w.Box.PTop1
 		boxBottom := w.Box.PBot1
 		rect := image.Rect(boxTop.X, boxTop.Y, boxBottom.X, boxBottom.Y)
-		DrawBox(rgba, rect, greenColor, 2, "text")
+		DrawBox(rgba, rect, greenColor, 2, w.Text)
 	}
 
 	outputFilePath := manage_file.GenerateFileName(pathStorage, "text_boxes", "jpg")
@@ -66,19 +67,21 @@ func DrawTextAndItemsBoxes(im image.Image, worlds []model.DetectWorld, boxes []m
 	}()
 
 	bounds := im.Bounds()
+
 	rgba := image.NewRGBA(bounds)
 	draw.Draw(rgba, bounds, im, bounds.Min, draw.Src)
 
+	thickness := 4
 	for _, w := range worlds {
 		boxTop := w.Box.PTop1
 		boxBottom := w.Box.PBot1
 		rect := image.Rect(boxTop.X, boxTop.Y, boxBottom.X, boxBottom.Y)
-		DrawBox(rgba, rect, greenColor, 2, "text")
+		DrawBox(rgba, rect, greenColor, thickness, w.Text)
 	}
 
 	for _, box := range boxes {
 		rect := image.Rect(box.X, box.Y, box.X+box.Width, box.Y+box.Height)
-		DrawBox(rgba, rect, color.RGBA{255, 0, 0, 255}, 2, box.Label)
+		DrawBox(rgba, rect, redColor, thickness, box.Label)
 	}
 
 	outputFilePath := manage_file.GenerateFileName(pathStorage, "boxes", "jpg")
@@ -110,4 +113,8 @@ func DrawBox(img *image.RGBA, rect image.Rectangle, c color.Color, thickness int
 		Dot:  point,
 	}
 	d.DrawString(label)
+}
+
+func calculatePercentageOfValue(value int) int {
+	return (value*100 + 1) / 2 // Умножаем значение на 0.005, чтобы получить 0,5 процент от него
 }
