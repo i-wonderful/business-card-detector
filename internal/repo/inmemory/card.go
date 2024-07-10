@@ -2,6 +2,7 @@ package inmemory
 
 import (
 	"card_detector/internal/model"
+	"sort"
 	"sync"
 )
 
@@ -44,6 +45,10 @@ func (r *CardRepo) GetAll() []model.Card {
 	for _, c := range r.store {
 		cards = append(cards, c)
 	}
+
+	sort.Slice(cards, func(i, j int) bool {
+		return cards[j].UploadedAt.Before(cards[i].UploadedAt)
+	})
 
 	return cards
 }

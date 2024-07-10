@@ -34,7 +34,7 @@ package paddleocr
 //	for _, tt := range tests {
 //		t.Run(tt.name, func(t *testing.T) {
 //
-//			got, _ := service.RecognizeAll(tt.path)
+//			got, _ := service.RecognizeImgByPath(tt.path)
 //
 //			for i, world := range tt.want {
 //				assert.Equal(t, world.Text, got[i].Text)

@@ -1,9 +1,11 @@
 package img_prepare
 
 import (
+	manage_file "card_detector/internal/util/file"
 	"image"
 	"log"
 	"os"
+	"path/filepath"
 
 	"card_detector/internal/model"
 	"card_detector/internal/service/detect/onnx"
@@ -22,10 +24,14 @@ const ORIENTATION_NONE = "1"
 
 type Service struct {
 	storageFolder string
+	tmpFolder     string
 }
 
-func NewService(storageFolder string) *Service {
-	return &Service{storageFolder: storageFolder}
+func NewService(storageFolder string, tmpFolder string) *Service {
+	return &Service{
+		storageFolder: storageFolder,
+		tmpFolder:     tmpFolder,
+	}
 }
 
 func (s *Service) Rotage(imgFile *os.File) (image.Image, string) {
@@ -64,16 +70,33 @@ func (s *Service) Rotage(imgFile *os.File) (image.Image, string) {
 }
 
 // CropCard - crop card by square from image and transpose boxes
-func (s *Service) CropCard(im image.Image, boxes []model.TextArea) (image.Image, error) {
+func (s *Service) CropCard(im image.Image, boxes []model.TextArea) image.Image {
 	for _, box := range boxes {
 		if box.Label == onnx.CARD_CLASS {
 			subImg, offsetX, offsetY := img.CropSquare(im, box.X, box.Y, box.Width, box.Height)
-
 			boxes_util.Transpose(boxes, offsetX, offsetY)
-			return subImg, nil
+			return subImg
 		}
 	}
-	return im, nil
+	return im
+}
+
+func (s *Service) ResizeAndSaveForPaddle(im *image.Image, boxes []model.TextArea) (image.Image, string, error) {
+	oldWidth := (*im).Bounds().Max.X
+	oldHeight := (*im).Bounds().Max.Y
+	resized := img.ResizeImageByHeight(*im, 1800)
+
+	// Масштабирование
+	scaleX := float64(1800) / float64(oldWidth)
+	scaleY := float64(1800) / float64(oldHeight)
+
+	boxes_util.Scaling(boxes, scaleX, scaleY)
+
+	filePath := manage_file.GenerateFileName(s.tmpFolder, "for_paddle", "jpg")
+	img.SaveJpegWithQality(&resized, filePath, 87)
+	absPath, _ := filepath.Abs(filePath)
+
+	return resized, absPath, nil
 }
 
 // RotateImageWithOrientation will rotate 'im' based on EXIF orientation value defined in 'orientation'.

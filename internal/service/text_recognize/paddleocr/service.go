@@ -64,10 +64,10 @@ func (s *TextRecognizeService) RecognizeImg(im *image.Image) ([]model.DetectWorl
 	img.SaveJpegWithQality(&resized, filePath, 87)
 	absPath, _ := filepath.Abs(filePath)
 
-	return s.RecognizeAll(absPath)
+	return s.RecognizeImgByPath(absPath)
 }
 
-func (s *TextRecognizeService) RecognizeAll(pathImg string) ([]model.DetectWorld, error) {
+func (s *TextRecognizeService) RecognizeImgByPath(pathImg string) ([]model.DetectWorld, error) {
 	if s.isLog {
 		start := time.Now()
 		defer func() {

@@ -15,11 +15,13 @@ import (
 
 type ImgPreparer interface {
 	Rotage(imgFile *os.File) (image.Image, string)
-	CropCard(img image.Image, boxes []model.TextArea) (image.Image, error)
+	CropCard(img image.Image, boxes []model.TextArea) image.Image
+	ResizeAndSaveForPaddle(im *image.Image, boxes []model.TextArea) (image.Image, string, error)
 }
 
 type RecognizerFull interface {
 	RecognizeImg(img *image.Image) ([]model.DetectWorld, error)
+	RecognizeImgByPath(pathImg string) ([]model.DetectWorld, error)
 }
 
 type CardDetector interface {
@@ -93,17 +95,19 @@ func (d *Detector2) Detect(imgPath string) (*model.Person, string, error) {
 		}
 	}
 
-	// 3. crop card
-	im, _ = d.imgPreparer.CropCard(im, boxes)
+	// 3. Prepare image for recognize text: crop card and resize to optimal square for paddle
+	im = d.imgPreparer.CropCard(im, boxes)
+	im, absPath, _ := d.imgPreparer.ResizeAndSaveForPaddle(&im, boxes)
 
 	// 4. recognize text
-	detectWorlds, err := d.textRecognizeService.RecognizeImg(&im)
+	detectWorlds, err := d.textRecognizeService.RecognizeImgByPath(absPath)
 	if err != nil {
 		return nil, "", err
 	}
 
 	// 5. merge text blocks
 	detectWorlds = box_merge.MergeBoxes(detectWorlds)
+
 	if d.isDebug {
 		log.Println("Recognized: ")
 		for _, world := range detectWorlds {

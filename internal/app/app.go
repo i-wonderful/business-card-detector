@@ -35,7 +35,7 @@ func (a *app2) Run() error {
 	cardRepo := inmemory.NewCardRepo()
 
 	// service
-	imgPreparer := img_prepare.NewService(a.config.StorageFolder)
+	imgPreparer := img_prepare.NewService(a.config.StorageFolder, a.config.TmpFolder)
 
 	isLogTime := a.config.Log.Time
 	textRecognizer, err := paddleocr.NewService(isLogTime,
