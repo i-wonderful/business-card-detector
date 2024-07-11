@@ -1,5 +1,8 @@
 # 1. Build backend
-FROM golang:1.20-alpine AS go-build
+FROM golang:1.20-buster AS go-build
+
+# Установка зависимостей для CGO
+RUN apt-get update && apt-get install -y gcc
 
 RUN mkdir /app
 WORKDIR /app
@@ -11,7 +14,7 @@ COPY ./template /app/template
 COPY ./go.mod /app/go.mod
 COPY ./go.sum /app/go.sum
 
-RUN go build -o main ./cmd
+RUN GOOS=linux go build -o main ./cmd
 
 # 2. Run paddle ocr ---------------------------
 FROM python:3.9-slim-buster
@@ -35,7 +38,9 @@ RUN apt-get update && apt-get install -y \
     libxvidcore-dev \
     libx264-dev \
     libgtk-3-dev \
-    libgstreamer-plugins-base1.0-dev && \
+    libgstreamer-plugins-base1.0-dev \
+    libc6 \
+    gcc && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

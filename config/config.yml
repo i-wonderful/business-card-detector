@@ -22,7 +22,7 @@ img:
 
 onnx:
   path_runtime: ./lib/onnx_18/libonnxruntime.so
-  path_model: ./lib/models/yolo9m-card-detect-60.onnx
+  path_model: ./lib/models/yolov8m-card-detect-60.onnx
 
 log:
   level: info
