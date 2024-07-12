@@ -55,5 +55,7 @@ COPY ./lib /app/lib
 COPY ./python /app/python
 COPY ./storage /app/storage
 
+RUN mkdir tmp
+
 EXPOSE 8080
 CMD ["/app/main"]
