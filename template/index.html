@@ -135,6 +135,35 @@
     </div>
 </footer>
 
+<!-- Modal example -->
+<dialog id="modal-example">
+    <article>
+        <header>
+            <button aria-label="Close"
+                    rel="prev"
+                    data-target="modal-example"
+                    onclick="toggleModal(event)"></button>
+            <h3>Фото визитки</h3>
+        </header>
+        <p>
+        <figure>
+            <img id="modal-image" src="" alt="card photo"/>
+            <figcaption>
+                <cite id="modal-image-name"></cite>
+            </figcaption>
+        </figure>
+        </p>
+        <footer>
+            <button autofocus data-target="modal-example" onclick="toggleModal(event)">
+                Хорошо
+            </button>
+        </footer>
+    </article>
+</dialog>
+<!-- ./ Modal example -->
+
+<script src="/static/modal.js"></script>
+
 <script>
     // Обработчик события выбора изображения
     document.getElementById('image-upload').addEventListener('change', function (e) {
@@ -196,6 +225,20 @@
     function replaceImg(imgPath) {
         var img = document.getElementById('image-view');
         img.setAttribute('src', imgPath);
+        img.removeEventListener('click', showModal)
+        img.addEventListener('click', (event) => showModal(event, imgPath));
+    }
+
+    const showModal = (event, url, imgName) => {
+        console.log(url)
+        const image = document.getElementById('modal-image');
+        image.src = url;
+        if (imgName) {
+            const image_name = document.getElementById('modal-image-name');
+            image_name.innerText = imgName;
+        }
+        modal = document.getElementById('modal-example')
+        openModal(modal)
     }
 </script>
 </body>

@@ -82,16 +82,19 @@ func (s *Service) CropCard(im image.Image, boxes []model.TextArea) image.Image {
 }
 
 func (s *Service) ResizeAndSaveForPaddle(im *image.Image, boxes []model.TextArea) (image.Image, string, error) {
+	paddleSize := 1800
 	oldWidth := (*im).Bounds().Max.X
 	oldHeight := (*im).Bounds().Max.Y
-	resized := img.ResizeImageByHeight(*im, 1800)
+	resized := img.ResizeImageByHeight(*im, paddleSize)
 
 	// Масштабирование
-	scaleX := float64(1800) / float64(oldWidth)
-	scaleY := float64(1800) / float64(oldHeight)
+	if oldWidth > paddleSize {
+		scaleX := float64(paddleSize) / float64(oldWidth)
+		scaleY := float64(paddleSize) / float64(oldHeight)
+		boxes_util.Scaling(boxes, scaleX, scaleY)
+	}
 
-	boxes_util.Scaling(boxes, scaleX, scaleY)
-
+	// Сохранение
 	filePath := manage_file.GenerateFileName(s.tmpFolder, "for_paddle", "jpg")
 	img.SaveJpegWithQality(&resized, filePath, 87)
 	absPath, _ := filepath.Abs(filePath)
