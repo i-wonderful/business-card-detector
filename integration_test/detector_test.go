@@ -405,6 +405,7 @@ func TestDetect(t *testing.T) {
 	for _, tc := range testCases {
 
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 
 			actual, _, err := testDetector.Detect(tc.imgPath)
 
@@ -464,7 +465,7 @@ func createDetector2(t *testing.T) (*service.Detector2, *app.Config) {
 	}
 
 	cardRepo := inmemory.NewCardRepo()
-	imgPreparer := img_prepare.NewService(config.StorageFolder)
+	imgPreparer := img_prepare.NewService(config.StorageFolder, config.TmpFolder)
 
 	textRecognizer, err := paddleocr.NewService(isLogTime,
 		config.Paddleocr.RunPath,

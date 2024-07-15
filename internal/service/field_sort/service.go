@@ -52,8 +52,9 @@ func (s *Service) Sort(data []string) map[string]interface{} {
 	emails := []string{}
 	websites := []string{}
 
-	person := map[string]interface{}{}
 	notDetectItems := []string{}
+
+	recognized, data := s.evidentSort(data)
 
 	for _, line := range data {
 		line = clearTrashSymbols(line)
@@ -80,13 +81,10 @@ func (s *Service) Sort(data []string) map[string]interface{} {
 			websites = w
 		} else if name == "" && isContainsWithSpace(line, s.names) {
 			name = line
-		} else if len(phones) == 0 && phoneRegex.MatchString(line) && notContainsLetters(line) {
-			p := phoneRegex.FindString(line)
-			phones = append(phones, p)
-			//line = strings.ReplaceAll(line, p, "")
-			//if len(line) > 5 {
-			//	data = append(data, line)
-			//}
+			/* else if len(phones) == 0 && phoneRegex.MatchString(line) && notContainsLetters(line) {
+				p := phoneRegex.FindString(line)
+				phones = append(phones, p)
+			} */
 		} else if sk := s.extractSimpleSkype(skype, line); sk != "" {
 			skype = sk
 		} else if isContainsWithSpace(line, s.professions) {
@@ -165,8 +163,9 @@ func (s *Service) Sort(data []string) map[string]interface{} {
 		other = append(other, item)
 	}
 
+	person := recognized
 	person["email"] = emails
-	person["phone"] = clearPhones(phones)
+	person["phone"] = append(person["phone"].([]string), clearPhones(phones)...)
 	person["name"] = strings.TrimSpace(name)
 	person["skype"] = skype
 	person["company"] = strings.TrimSpace(company)

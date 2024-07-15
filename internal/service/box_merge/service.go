@@ -1,30 +1,32 @@
 package box_merge
 
 import (
-	"card_detector/internal/model"
+	. "card_detector/internal/model"
+	. "card_detector/internal/util/calc"
 	"math"
 	"sort"
 	"unicode"
 )
 
 // MergeBoxes - merge boxes with close values
-func MergeBoxes(boxes []model.DetectWorld) []model.DetectWorld {
+func MergeBoxes(boxes []DetectWorld) []DetectWorld {
 	sortByHeight(boxes)
 
-	rez := []model.DetectWorld{}
+	rez := []DetectWorld{}
 	prev := &boxes[0]
 	for i := 1; i < len(boxes); i++ {
-		if isCloser25Values(prev.Box.H, boxes[i].Box.H) &&
-			isCloser2Values(prev.Box.PTop1.X, boxes[i].Box.PTop1.X) &&
+		isCloser25Percent := isCloser25Values(prev.Box.H, boxes[i].Box.H)
+		isCloser2Percent := isCloser2Values(prev.Box.PTop1.X, boxes[i].Box.PTop1.X)
+		if isCloser25Percent && isCloser2Percent &&
 			isOnlyLetters(prev.Text) && isOnlyLetters(boxes[i].Text) {
 			// merge items
-			rez = append(rez, model.DetectWorld{
+			rez = append(rez, DetectWorld{
 				Text: prev.Text + " " + boxes[i].Text,
-				Box: model.NewBoxFromPoints(
-					prev.Box.PTop1,
-					prev.Box.PBot1,
-					boxes[i].Box.PTop2,
-					boxes[i].Box.PBot2,
+				Box: NewBoxFromPoints(
+					mergeTopLeftPoints(prev.Box.PTop1, boxes[i].Box.PTop1),
+					mergeTopRightPoints(prev.Box.PTop2, boxes[i].Box.PTop2),
+					mergeBottomRightPoints(prev.Box.PBot1, boxes[i].Box.PBot1),
+					mergeBottomLeftPoints(prev.Box.PBot2, boxes[i].Box.PBot2),
 				),
 				Prob: (prev.Prob + boxes[i].Prob) / 2,
 			})
@@ -48,7 +50,7 @@ func MergeBoxes(boxes []model.DetectWorld) []model.DetectWorld {
 	return rez
 }
 
-func sortByHeight(worlds []model.DetectWorld) []model.DetectWorld {
+func sortByHeight(worlds []DetectWorld) []DetectWorld {
 	sort.Slice(worlds, func(i, j int) bool {
 		w1 := worlds[i]
 		w2 := worlds[j]
@@ -70,16 +72,15 @@ func isContainsDigits(val string) bool {
 }
 
 func isOnlyLetters(val string) bool {
-
 	for _, r := range val {
-		if !unicode.IsLetter(r) {
+		if !unicode.IsLetter(r) /*&& r != ' ' && r != '-' && r != ',' && r != '.'*/ { // todo ???
 			return false
 		}
 	}
 	return true
 }
 
-func sortByProbAndY(worlds []model.DetectWorld) []model.DetectWorld {
+func sortByProbAndY(worlds []DetectWorld) []DetectWorld {
 	sort.Slice(worlds, func(i, j int) bool {
 		w1 := worlds[i]
 		w2 := worlds[j]
@@ -91,30 +92,43 @@ func sortByProbAndY(worlds []model.DetectWorld) []model.DetectWorld {
 	return worlds
 }
 
-func Abs(x int) int {
-	if x < 0 {
-		return -x
-	}
-	return x
-
-}
-
 // Числа отличаются не более чем на 25%
 func isCloser25Values(a, b int) bool {
 	diff := math.Abs(float64(a - b))
-	limitPercent := 0.25 * float64(max(a, b))
+	limitPercent := 0.25 * float64(Max(a, b))
 	return diff <= limitPercent
 }
 
 func isCloser2Values(a, b int) bool {
 	diff := math.Abs(float64(a - b))
-	limitPercent := 0.02 * float64(max(a, b))
+	limitPercent := 0.02 * float64(Max(a, b)) // todo 0.03 (?)
 	return diff <= limitPercent
 }
 
-func max(a, b int) int {
-	if a > b {
-		return a
+func mergeTopLeftPoints(a, b Point) Point {
+	return Point{
+		X: Min(a.X, b.X),
+		Y: Min(a.Y, b.Y),
 	}
-	return b
+}
+
+func mergeTopRightPoints(a, b Point) Point {
+	return Point{
+		X: Max(a.X, b.X),
+		Y: Min(a.Y, b.Y),
+	}
+}
+
+func mergeBottomRightPoints(a, b Point) Point {
+	return Point{
+		X: Max(a.X, b.X),
+		Y: Max(a.Y, b.Y),
+	}
+}
+
+func mergeBottomLeftPoints(a, b Point) Point {
+	return Point{
+		X: Min(a.X, b.X),
+		Y: Max(a.Y, b.Y),
+	}
 }

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"card_detector/internal/service/box_merge"
 	"image"
 	"log"
 	"os"
@@ -8,7 +9,6 @@ import (
 	"time"
 
 	"card_detector/internal/model"
-	"card_detector/internal/service/box_merge"
 	boxes_card "card_detector/internal/util/boxes"
 	"card_detector/internal/util/img"
 )
@@ -107,11 +107,12 @@ func (d *Detector2) Detect(imgPath string) (*model.Person, string, error) {
 
 	// 5. merge text blocks
 	detectWorlds = box_merge.MergeBoxes(detectWorlds)
+	//detectWorlds = box_merge.MergeBoxes(detectWorlds)
 
 	if d.isDebug {
-		log.Println("Recognized: ")
+		log.Println("Recognized worlds: ")
 		for _, world := range detectWorlds {
-			log.Printf("%s - %f", world.Text, world.Prob)
+			log.Println(world)
 		}
 	}
 

@@ -6,6 +6,7 @@ Head
 CEO
 CFO
 COO
+CCO
 Sales Representative
 Engineer
 Designer
@@ -128,3 +129,5 @@ Founder
 PARTNER
 Senior
 CSBDO
+Banker
+komercijas departaments
