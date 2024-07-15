@@ -2,7 +2,6 @@ package field_sort
 
 import (
 	manage_file "card_detector/internal/util/file"
-	manage_str2 "card_detector/internal/util/str"
 	"log"
 	"regexp"
 	"strings"
@@ -16,18 +15,6 @@ type Service struct {
 	names       []string
 	isLogTime   bool
 }
-
-var emailRegex = regexp.MustCompile(`(?i)(?:Mail:\s*)?([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})`)
-var phoneRegex = regexp.MustCompile(`\+?[\d\s\(\)-]{6,16}\d`)
-var phoneRegexExtract = regexp.MustCompile(`[\+\(]?[0-9 .\(\)-]{7,}`)
-var nameRegex = regexp.MustCompile(`^[A-ZА-Я][A-ZА-Яa-zа-я-]+ [A-ZА-Я][A-ZА-Яa-zа-я-]+([ \-][A-ZА-Я][A-ZА-Яa-zа-я-]+)?$`)
-var telegramRegex = regexp.MustCompile(`(?:https?://)?(t\.me/|@)[A-Za-z][A-Za-z0-9_]{4,31}(?:\s[A-Za-z0-9_]+)*`)
-var urlRegex = regexp.MustCompile(`(?:https?://)?([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?`)
-var skypeRegex = regexp.MustCompile(`^[a-z]{4,31}\.[a-z]{4,31}`)
-var skypeRegexLive = regexp.MustCompile(`(?i)live\s*[:.]{0,2}\s*cid\.([\da-f]+)`)
-var skypeRegexLiveUser = regexp.MustCompile(`(?i)live:([\w\-\.]+)`)
-var emailCheckRegex = regexp.MustCompile(`\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b`)
-var emailExtractRegex = regexp.MustCompile(`[\S\s]+@[\S\s]+\.[\S\s]+`)
 
 func NewService(pathProfessions, pathCompanies, pathNames string, isLogTime bool) *Service {
 	return &Service{
@@ -46,7 +33,7 @@ func (s *Service) Sort(data []string) map[string]interface{} {
 		}()
 	}
 
-	var name, company, jobTitle, telegram, skype, address string
+	var name, company, jobTitle, skype, telegram, address string
 	var mailName, domain, zone string
 	phones := []string{}
 	emails := []string{}
@@ -54,38 +41,30 @@ func (s *Service) Sort(data []string) map[string]interface{} {
 
 	notDetectItems := []string{}
 
-	recognized, data := s.evidentSort(data)
+	recognized, data := s.categorizeEvidentFields(data)
+	if _, ok := recognized[FIELD_TELEGRAM]; ok {
+		telegram = recognized[FIELD_TELEGRAM].(string)
+	}
+	if _, ok := recognized[FIELD_EMAIL]; ok {
+		emails = recognized[FIELD_EMAIL].([]string)
+		if len(emails) > 0 {
+			mailName, domain, zone = extractMainNameDomainAndZone(emails[0])
+		}
+	}
+	if _, ok := recognized[FIELD_SKYPE]; ok {
+		skype = recognized[FIELD_SKYPE].(string)
+	}
+
+	if _, ok := recognized[FIELD_URLS]; ok {
+		websites = recognized[FIELD_URLS].([]string)
+	}
 
 	for _, line := range data {
 		line = clearTrashSymbols(line)
 
-		if match := emailRegex.FindStringSubmatch(line); len(match) > 1 {
-			findEmail := strings.Replace(match[1], " ", "", -1)
-			if !isContains(findEmail, emails) && !ContainsIgnoreCase(line, "skype") {
-				emails = append(emails, findEmail)
-			} else if skype == "" { // скайп может совпадать с email
-				skype = findEmail
-			}
-
-			// domain may be company
-			// mailName may be Name
-			mailName, domain, zone = extractMainNameDomainAndZone(findEmail)
-
-			line = strings.ReplaceAll(line, match[1], "")
-			if len(line) > 5 {
-				notDetectItems = append(notDetectItems, line)
-			}
-		} else if match := telegramRegex.FindString(line); match != "" && telegram == "" {
-			telegram = strings.ReplaceAll(match, " ", "_")
-		} else if w := extractURL(line); len(w) > 0 && len(websites) == 0 {
-			websites = w
-		} else if name == "" && isContainsWithSpace(line, s.names) {
+		if name == "" && isContainsWithSpace(line, s.names) {
 			name = line
-			/* else if len(phones) == 0 && phoneRegex.MatchString(line) && notContainsLetters(line) {
-				p := phoneRegex.FindString(line)
-				phones = append(phones, p)
-			} */
-		} else if sk := s.extractSimpleSkype(skype, line); sk != "" {
+		} else if sk := extractSimpleSkype(skype, line); sk != "" {
 			skype = sk
 		} else if isContainsWithSpace(line, s.professions) {
 			jobTitle += " " + line
@@ -111,12 +90,6 @@ func (s *Service) Sort(data []string) map[string]interface{} {
 		if len(websites) == 0 {
 			if s := extractBrokenUrl(item, domain, zone); s != "" {
 				websites = append(websites, s)
-				continue
-			}
-		}
-		if skype == "" {
-			if s := extractSkype(item); s != "" {
-				skype = s
 				continue
 			}
 		}
@@ -164,45 +137,17 @@ func (s *Service) Sort(data []string) map[string]interface{} {
 	}
 
 	person := recognized
-	person["email"] = emails
-	person["phone"] = append(person["phone"].([]string), clearPhones(phones)...)
+	person[FIELD_EMAIL] = emails
+	person[FIELD_PHONE] = append(person[FIELD_PHONE].([]string), clearPhones(phones)...)
 	person["name"] = strings.TrimSpace(name)
-	person["skype"] = skype
+	person[FIELD_SKYPE] = skype
 	person["company"] = strings.TrimSpace(company)
-	person["telegram"] = telegram
-	person["site"] = websites
+	person[FIELD_TELEGRAM] = telegram
+	person[FIELD_URLS] = websites
 	person["jobTitle"] = strings.TrimSpace(jobTitle)
 	person["other"] = strings.Join(other, ";") + address
 
 	return person
-}
-
-func (s *Service) extractSimpleSkype(skype string, line string) string {
-	if skype != "" {
-		return ""
-	}
-
-	if skypeRegex.MatchString(line) {
-		return line
-	}
-
-	matches := skypeRegexLive.FindStringSubmatch(line)
-	if len(matches) > 1 {
-		return "live:cid." + matches[1]
-	}
-	matches = skypeRegexLiveUser.FindStringSubmatch(line)
-	if len(matches) > 1 {
-		return matches[0]
-	}
-	return ""
-}
-
-func extractEmail(item string) string {
-	match := emailExtractRegex.FindStringSubmatch(item)
-	if len(match) > 0 {
-		return strings.ReplaceAll(match[0], " ", "")
-	}
-	return ""
 }
 
 func isContains(s string, list []string) bool {
@@ -233,31 +178,6 @@ func isContainsWithSpace(s string, list []string) bool {
 	return false
 }
 
-func extractURL(text string) []string {
-	// Проверяем, содержит ли строка email
-
-	if emailCheckRegex.MatchString(text) {
-		return nil
-	}
-	if ContainsIgnoreCase(text, "skype") {
-		return nil
-	}
-
-	// Если email не найден, извлекаем URL
-	return simpleGetUrls(text)
-}
-
-func simpleGetUrls(val string) []string {
-	match := urlRegex.FindAllString(val, -1)
-	rez := make([]string, 0)
-	for _, m := range match {
-		if manage_str2.IsValidURL(m) {
-			rez = append(rez, m)
-		}
-	}
-	return rez
-}
-
 func extractBrokenUrl(text string, domain, zone string) string {
 	//url := extractURL(text)
 	//if url != "" {
@@ -279,28 +199,6 @@ func extractBrokenUrl(text string, domain, zone string) string {
 		return "www." + domain + "." + zone
 	}
 	return domain + "." + zone
-}
-
-func extractSkype(text string) string {
-	// Определяем шаблон регулярного выражения
-	pattern := `(?i)(skype\s*[:\.]?\s*|s:)([a-zA-Z0-9\.\-_]+(?:@\w+\.[\w.]+)?)`
-
-	re := regexp.MustCompile(pattern)
-	subs := re.FindStringSubmatch(text)
-	if len(subs) > 2 {
-		return subs[2]
-	}
-	return ""
-}
-func extractTelegram(text string) string {
-	pattern := `(?i)(telegram\s*:?\s*)(\w+)`
-	regex := regexp.MustCompile(pattern)
-
-	matches := regex.FindStringSubmatch(text)
-	if len(matches) > 2 {
-		return matches[2]
-	}
-	return ""
 }
 
 func extractMainNameDomainAndZone(email string) (string, string, string) {

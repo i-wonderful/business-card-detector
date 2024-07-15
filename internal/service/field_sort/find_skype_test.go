@@ -153,7 +153,7 @@ func TestExtractSkype(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			result := extractSkype(test.input)
+			result := extractSkypeSkype(test.input)
 			if result != test.expected {
 				t.Errorf("Expected %q, but got %q", test.expected, result)
 			}

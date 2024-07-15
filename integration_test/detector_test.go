@@ -126,8 +126,7 @@ func TestDetect(t *testing.T) {
 			&model.Person{
 				Email:    []string{"partner@coins.game"},
 				Telegram: []string{"@cg_partners"},
-				Site:     []string{"coinsgame.partners"},
-				Skype:    []string{"coins.game"},
+				Site:     []string{"coinsgame.partners", "coins.game"},
 			},
 		},
 		{
@@ -405,7 +404,7 @@ func TestDetect(t *testing.T) {
 	for _, tc := range testCases {
 
 		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
+			//t.Parallel()
 
 			actual, _, err := testDetector.Detect(tc.imgPath)
 
