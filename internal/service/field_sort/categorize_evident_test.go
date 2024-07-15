@@ -61,7 +61,7 @@ var testCases = []testCase{
 		expected: map[string]interface{}{
 			FIELD_PHONE:    []string{"+1 (123) 456-7890"},
 			FIELD_EMAIL:    []string{"user@example.com"},
-			FIELD_TELEGRAM: "@telegram_user",
+			FIELD_TELEGRAM: []string{"@telegram_user"},
 			FIELD_SKYPE:    "live:skype_user",
 		},
 		expectedNotDetected: []string{"Some unrecognized text"},
@@ -100,7 +100,7 @@ var testCases = []testCase{
 		name:  "Valid Telegram",
 		input: []string{"contact me @telegram_handle"},
 		expected: map[string]interface{}{
-			FIELD_TELEGRAM: "@telegram_handle",
+			FIELD_TELEGRAM: []string{"@telegram_handle"},
 		},
 		expectedNotDetected: []string{},
 	},

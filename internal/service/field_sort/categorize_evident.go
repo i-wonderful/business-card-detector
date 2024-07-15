@@ -18,7 +18,7 @@ func (s *Service) categorizeEvidentFields(data []string) (map[string]interface{}
 	phones := []string{}
 	emails := []string{}
 	urls := []string{}
-	telegram := ""
+	telegram := []string{}
 	skype := ""
 
 	for _, line := range data {
@@ -79,9 +79,10 @@ func (s *Service) processEmail(line string, emails *[]string, skype *string) boo
 	return false
 }
 
-func (s *Service) processTelegram(line string, telegram *string) bool {
-	if match := telegramRegex.FindString(line); match != "" && *telegram == "" {
-		*telegram = strings.ReplaceAll(match, " ", "_")
+func (s *Service) processTelegram(line string, telegram *[]string) bool {
+	if match := telegramRegex.FindString(line); match != "" {
+		tg := strings.ReplaceAll(match, " ", "_")
+		*telegram = append(*telegram, tg)
 		return true
 	}
 	return false

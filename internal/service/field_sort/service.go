@@ -33,17 +33,18 @@ func (s *Service) Sort(data []string) map[string]interface{} {
 		}()
 	}
 
-	var name, company, jobTitle, skype, telegram, address string
+	var name, company, jobTitle, skype, address string
 	var mailName, domain, zone string
 	phones := []string{}
 	emails := []string{}
 	websites := []string{}
+	telegram := []string{}
 
 	notDetectItems := []string{}
 
 	recognized, data := s.categorizeEvidentFields(data)
 	if _, ok := recognized[FIELD_TELEGRAM]; ok {
-		telegram = recognized[FIELD_TELEGRAM].(string)
+		telegram = recognized[FIELD_TELEGRAM].([]string)
 	}
 	if _, ok := recognized[FIELD_EMAIL]; ok {
 		emails = recognized[FIELD_EMAIL].([]string)
@@ -88,6 +89,10 @@ func (s *Service) Sort(data []string) map[string]interface{} {
 			}
 		}
 		if len(websites) == 0 {
+			if isSimpleUrl(item) {
+				websites = append(websites, item)
+				continue
+			}
 			if s := extractBrokenUrl(item, domain, zone); s != "" {
 				websites = append(websites, s)
 				continue
@@ -109,9 +114,9 @@ func (s *Service) Sort(data []string) map[string]interface{} {
 		//}
 		//}
 
-		if telegram == "" {
+		if len(telegram) == 0 {
 			if s := extractTelegram(item); s != "" {
-				telegram = s
+				telegram = append(telegram, s)
 				continue
 			}
 		}

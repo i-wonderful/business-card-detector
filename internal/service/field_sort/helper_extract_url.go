@@ -30,3 +30,13 @@ func simpleGetUrls(val string) []string {
 	}
 	return rez
 }
+
+// PAYFINANS.COM
+var simpleUrlRegex = regexp.MustCompile(`^[a-zA-Z0-9]+([\-\.]{1}[a-zA-Z0-9]+)*\.[a-zA-Z]{2,}$`)
+
+func isSimpleUrl(line string) bool {
+	if simpleUrlRegex.MatchString(line) && manage_str2.IsValidURL(line) {
+		return true
+	}
+	return false
+}

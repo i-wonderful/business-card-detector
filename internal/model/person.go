@@ -1,6 +1,9 @@
 package model
 
-import "fmt"
+import (
+	"card_detector/internal/service/field_sort"
+	"fmt"
+)
 
 type Person struct {
 	Email []string `json:"Emails"`
@@ -54,7 +57,7 @@ func NewPerson(fields map[string]interface{}) *Person {
 		p.Phone = append(p.Phone, fields["phone"].([]string)...)
 	}
 	if fields["telegram"] != "" {
-		p.Telegram = append(p.Telegram, fields["telegram"].(string))
+		p.Telegram = append(p.Telegram, fields[field_sort.FIELD_TELEGRAM].([]string)...)
 	}
 	if fields["skype"] != "" {
 		p.Skype = append(p.Skype, fields["skype"].(string))

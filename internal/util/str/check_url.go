@@ -73,6 +73,7 @@ func IsValidURL(u string) bool {
 func isValidDomain(domain string) bool {
 	parts := strings.Split(domain, ".")
 	tld := parts[len(parts)-1]
+	tld = strings.ToLower(tld)
 
 	for _, validTld := range tlds {
 		if tld == validTld {

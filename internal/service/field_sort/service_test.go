@@ -47,7 +47,7 @@ func TestService_Sort(t *testing.T) {
 				"email":    []string{"gretta@endorphina.com"},
 				"skype":    "gretta@endorphina.com",
 				"phone":    []string{"+420 222 564 222"},
-				"site":     "endorphina.com",
+				"site":     []string{"endorphina.com"},
 			},
 		},
 		{
@@ -59,7 +59,7 @@ func TestService_Sort(t *testing.T) {
 			},
 			map[string]interface{}{
 				"name":  "Areg Oganesian",
-				"site":  "www.igtrm.com",
+				"site":  []string{"www.igtrm.com"},
 				"phone": []string{"+374 99 452772"},
 			},
 		},
@@ -89,7 +89,7 @@ func TestService_Sort(t *testing.T) {
 				"jobTitle": "General Manager",
 				"company":  "GAMING",
 				"email":    []string{"Martin@369gaming.media"},
-				"site":     "www.369gaming.media",
+				"site":     []string{"www.369gaming.media"},
 				//"skype":    "cid. 9e53d8c1 1 51546",
 				"phone": []string{"+598 95 641 888"},
 			},

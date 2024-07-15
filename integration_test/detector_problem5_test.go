@@ -48,11 +48,22 @@ func TestDetectProblem5(t *testing.T) {
 			&model.Person{
 				Email:        []string{"arkadijs.narcuks@lpb.lv"},
 				Site:         []string{"www.lpb.lv"},
-				Phone:        []string{"+371)67772962", "+371)22352883"},
+				Phone:        []string{"+371)67772962", "+37122352883"},
 				Name:         "Arkadijs Narcuks",
 				Organization: "LPB",
 				JobTitle:     "E-komercijas departaments",
 				Other:        "Klientu vaditajs;Brivibas iela 54.Riga.LV-1011",
+			},
+		},
+		{
+			"0_14. paytiqo.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/0_14. paytiqo.jpg",
+			&model.Person{
+				Email:    []string{"PAYTIQO@GMAIL.COM"},
+				Phone:    []string{"+34628770939"},
+				Site:     []string{"PAYFINANS.COM"},
+				Name:     "PAYTIQO",
+				Telegram: []string{"@DMYTRO1112", "@A_WSD"},
 			},
 		},
 	}
