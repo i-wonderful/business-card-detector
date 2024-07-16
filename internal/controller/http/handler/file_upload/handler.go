@@ -67,7 +67,7 @@ func (h *FileUploadHandler) Handle(w http.ResponseWriter, r *http.Request) {
 
 	io.Copy(f, file)
 
-	person, filePath, err := h.detector.Detect(fileName)
+	person, _, err := h.detector.Detect(fileName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -75,7 +75,8 @@ func (h *FileUploadHandler) Handle(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(&Response{person, filePath})
+	//json.NewEncoder(w).Encode(&Response{person, filePath})
+	json.NewEncoder(w).Encode(person)
 
 	duration := time.Since(start)
 	fmt.Printf(">>> [Time] %s took %v\n", "Full detection", duration)

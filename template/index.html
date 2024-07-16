@@ -184,8 +184,9 @@
                 if (request.readyState === XMLHttpRequest.DONE && request.status === 200) {
                     // Получение и отображение результата в формате JSON
                     var result = JSON.parse(request.responseText);
-                    showResult(result['person']);
-                    replaceImg(result['img_path'])
+                    showResult(result)
+                    // showResult(result['person']);
+                    // replaceImg(result['img_path'])
                 }
             };
             request.send(formData);
