@@ -1,4 +1,4 @@
-package file_upload
+package file_upload_ui
 
 import (
 	"card_detector/internal/model"
@@ -11,25 +11,30 @@ import (
 	"time"
 )
 
+type Response struct {
+	Person  *model.Person `json:"person"`
+	ImgPath string        `json:"img_path"`
+}
+
 type Detector interface {
 	Detect(pathImg string) (*model.Person, string, error)
 }
 
-type FileUploadHandler struct {
+type Handler struct {
 	name       string
 	detector   Detector
 	dirTmpPath string
 }
 
-func NewFileUploadHandler(detector Detector, dirTmpPath string) *FileUploadHandler {
-	return &FileUploadHandler{
+func NewHandler(detector Detector, dirTmpPath string) *Handler {
+	return &Handler{
 		name:       "FileUploadHandler",
 		detector:   detector,
 		dirTmpPath: dirTmpPath,
 	}
 }
 
-func (h *FileUploadHandler) Handle(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Handle(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 
 	if r.Method != "POST" {
@@ -62,7 +67,7 @@ func (h *FileUploadHandler) Handle(w http.ResponseWriter, r *http.Request) {
 
 	io.Copy(f, file)
 
-	person, _, err := h.detector.Detect(fileName)
+	person, filePath, err := h.detector.Detect(fileName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -70,7 +75,7 @@ func (h *FileUploadHandler) Handle(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(person)
+	json.NewEncoder(w).Encode(&Response{person, filePath})
 
 	duration := time.Since(start)
 	fmt.Printf(">>> [Time] %s took %v\n", "Full detection", duration)

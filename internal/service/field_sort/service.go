@@ -67,7 +67,7 @@ func (s *Service) Sort(data []string) map[string]interface{} {
 			name = line
 		} else if sk := extractSimpleSkype(skype, line); sk != "" {
 			skype = sk
-		} else if isContainsWithSpace(line, s.professions) {
+		} else if isContains(line, s.professions) {
 			jobTitle += " " + line
 		} else if company == "" && isContains(line, s.companies) {
 			company = line
