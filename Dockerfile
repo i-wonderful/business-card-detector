@@ -53,8 +53,8 @@ COPY --from=go-build /app/config /app/config
 COPY --from=go-build /app/template /app/template
 COPY ./lib /app/lib
 COPY ./python /app/python
-COPY ./storage /app/storage
 
+RUN mkdir storage
 RUN mkdir tmp
 
 EXPOSE 8080
