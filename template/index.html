@@ -86,7 +86,7 @@
             <ul>
                 <li><a href="/" class="secondary">Загрузить</a></li>
                 <li><a href="/history">История</a></li>
-<!--                <li><a href="/about">О проекте</a></li>-->
+                <!--                <li><a href="/about">О проекте</a></li>-->
             </ul>
         </nav>
     </div>
@@ -179,14 +179,13 @@
             formData.append('image', e.target.files[0]);
 
             var request = new XMLHttpRequest();
-            request.open('POST', '/detect', true);
+            request.open('POST', '/detect_ui', true);
             request.onreadystatechange = function () {
                 if (request.readyState === XMLHttpRequest.DONE && request.status === 200) {
                     // Получение и отображение результата в формате JSON
                     var result = JSON.parse(request.responseText);
-                    showResult(result)
-                    // showResult(result['person']);
-                    // replaceImg(result['img_path'])
+                    showResult(result['person']);
+                    replaceImg(result['img_path'])
                 }
             };
             request.send(formData);
