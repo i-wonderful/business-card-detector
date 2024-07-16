@@ -131,3 +131,5 @@ Senior
 CSBDO
 Banker
 komercijas departaments
+BDM
+Business Developer

@@ -1,6 +1,8 @@
 package manage_str
 
 import (
+	"fmt"
+	"net/http"
 	"net/url"
 	"regexp"
 	"strings"
@@ -8,7 +10,7 @@ import (
 
 var tlds = []string{
 	"com", "org", "net", "edu", "gov", "mil",
-	"ac", "ad", "ae", "af", "ag", "ai", "al", "am", "ao", "aq", "ar", "as", "at", "au", "aw", "ax", "az",
+	"ac", "ad", "ae", "af", "ag", "ai" /*"al",*/, "am", "ao", "aq", "ar", "as", "at", "au", "aw", "ax", "az",
 	"ba", "bb", "bd", "be", "bf", "bg", "bh", "bi", "bj", "bm", "bn", "bo", "bq", "br", "bs", "bt", "bv", "bw", "by", "bz",
 	"ca", "cc", "cd", "cf", "cg", "ch", "ci", "ck", "cl", "cm", "cn", "co", "consulting", "cr", "cu", "cv", "cw", "cx", "cy", "cz",
 	"de", "dj", "dk", "dm", "do", "dz",
@@ -20,7 +22,7 @@ var tlds = []string{
 	"je", "jm", "jo", "jp",
 	"ke", "kg", "kh", "ki", "km", "kn", "kp", "kr", "kw", "ky", "kz",
 	"la", "lb", "lc", "li", "lk", "lr", "ls", "lt", "lu", "lv", "ly",
-	"ma", "mc", "md", "me", "mf", "mg", "mh", "mk", "ml", "mm", "mn", "mo", "mp", "mq", "mr", "ms", "mt", "mu", "mv", "mw", "mx", "my", "mz", "media",
+	"ma" /*"mc",*/, "md" /*"me",*/, "mf", "mg", "mh", "mk", "ml", "mm", "mn", "mo", "mp", "mq", "mr", "ms", "mt", "mu", "mv", "mw", "mx", "my", "mz", "media",
 	"na", "nc", "ne", "nf", "ng", "ni", "nl", "no", "np", "nr", "nu", "nz",
 	"om",
 	"pa", "partners", "pe", "pf", "pg", "ph", "pk", "pl", "pm", "pn", "pr", "ps", "pt", "pw", "py",
@@ -31,7 +33,7 @@ var tlds = []string{
 	"ua", "ug", "uk", "us", "uy", "uz",
 	"va", "vc", "ve", "vg", "vi", "vn", "vu",
 	"wf", "ws",
-	"ye", "yt",
+	"ye", //"yt",
 	"za", "zm", "zw",
 	"arpa",
 }
@@ -82,6 +84,23 @@ func isValidDomain(domain string) bool {
 	}
 
 	return false
+}
+
+func CheckURLAvailability(url string) bool {
+	resp, err := http.Get(url)
+	if err != nil {
+		fmt.Printf("Ошибка при попытке подключиться к %s: %v\n", url, err)
+		return false
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == http.StatusOK {
+		fmt.Println("URL доступен")
+		return true
+	} else {
+		fmt.Printf("URL %s недоступен (код статуса: %d)\n", url, resp.StatusCode)
+		return false
+	}
 }
 
 // Check doest string is domain

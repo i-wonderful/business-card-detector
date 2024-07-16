@@ -63,6 +63,14 @@ func SaveJpegWithQality(img *image.Image, outputFilePath string, quality int) er
 	return SaveImg(outputFilePath, buf.Bytes())
 }
 
+func SavePng(img *image.Image, outputFilePath string) error {
+	var buf bytes.Buffer
+	if err := png.Encode(&buf, *img); err != nil {
+		log.Printf("Error encoding image: %v", err)
+	}
+	return SaveImg(outputFilePath, buf.Bytes())
+}
+
 func SaveTiff(im image.Image, filename string) error {
 	outFile, err := os.Create(filename)
 	if err != nil {

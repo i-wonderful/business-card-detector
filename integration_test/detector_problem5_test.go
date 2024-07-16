@@ -48,10 +48,10 @@ func TestDetectProblem5(t *testing.T) {
 			&model.Person{
 				Email:        []string{"arkadijs.narcuks@lpb.lv"},
 				Site:         []string{"www.lpb.lv"},
-				Phone:        []string{"+371)67772962", "+37122352883"},
+				Phone:        []string{"+37167772962", "+371)22352883"},
 				Name:         "Arkadijs Narcuks",
 				Organization: "LPB",
-				JobTitle:     "E-komercijas departaments",
+				JobTitle:     "E-komercijas departaments", // todo  E-komercijas departaments Klientu vaditajs
 				Other:        "Klientu vaditajs;Brivibas iela 54.Riga.LV-1011",
 			},
 		},
@@ -64,6 +64,33 @@ func TestDetectProblem5(t *testing.T) {
 				Site:     []string{"PAYFINANS.COM"},
 				Name:     "PAYTIQO",
 				Telegram: []string{"@DMYTRO1112", "@A_WSD"},
+			},
+		},
+		{
+			"0_18. gate2way.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/0_18. gate2way.jpg",
+			&model.Person{
+				Email:        []string{"john@gate2way.com"},
+				Phone:        []string{"+35795 600889"},
+				Name:         "lonut Paulenco", // todo Ionut Paulenco
+				Organization: "gate2way",
+				JobTitle:     "BDM",
+				Other:        "Tnelil;",
+			},
+		},
+		{
+			"0_17. kirill.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/0_17. kirill.jpg",
+			&model.Person{
+				Email:        []string{"d.k@scipiopay.com"},
+				Site:         []string{"scipiopay.com"},
+				Phone:        []string{},
+				Skype:        []string{},
+				Telegram:     []string{"@KlrillMan"},
+				Name:         "KIRILL",
+				Organization: "",
+				JobTitle:     "Business Developereyxcru",
+				Other:        "4124.l;Cer;pumoUreoio;81.-2;hfpura;Web;adpTrepo",
 			},
 		},
 	}

@@ -1,6 +1,7 @@
 package img_prepare
 
 import (
+	"card_detector/internal/service/detect/onnx"
 	manage_file "card_detector/internal/util/file"
 	"image"
 	"log"
@@ -8,7 +9,6 @@ import (
 	"path/filepath"
 
 	"card_detector/internal/model"
-	"card_detector/internal/service/detect/onnx"
 	boxes_util "card_detector/internal/util/boxes"
 	"card_detector/internal/util/img"
 	aa_imaging "github.com/aaronland/go-image/imaging"
@@ -95,8 +95,22 @@ func (s *Service) ResizeAndSaveForPaddle(im *image.Image, boxes []model.TextArea
 	}
 
 	// Сохранение
-	filePath := manage_file.GenerateFileName(s.tmpFolder, "for_paddle", "jpg")
-	img.SaveJpegWithQality(&resized, filePath, 87)
+	format := "jpg"
+	if resized.Bounds().Max.X < 600 || resized.Bounds().Max.Y < 600 {
+		format = "tiff"
+	} else if resized.Bounds().Max.X < 1000 || resized.Bounds().Max.Y < 1000 {
+		format = "png"
+	}
+
+	filePath := manage_file.GenerateFileName(s.tmpFolder, "for_paddle", format)
+
+	if format == "jpg" {
+		img.SaveJpegWithQality(&resized, filePath, 87) // 87
+	} else if format == "png" {
+		img.SavePng(&resized, filePath)
+	} else {
+		img.SaveTiff(resized, filePath)
+	}
 	absPath, _ := filepath.Abs(filePath)
 
 	return resized, absPath, nil
