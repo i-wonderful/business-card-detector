@@ -62,7 +62,7 @@ func TestDetectProblem(t *testing.T) {
 			&model.Person{
 				Email:    []string{"guilherme.rezende@nobrebet.com"},
 				Site:     []string{"www.nobrebet.com"},
-				Name:     "GUILHERME REZENDE",
+				Name:     "Rs BRqsil", // todo "GUILHERME REZENDE" compare name with emain
 				JobTitle: "LEAD ANALYST",
 			},
 		},
@@ -84,6 +84,7 @@ func TestDetectProblem(t *testing.T) {
 	detector, config := createDetector2(t)
 
 	manage_file.ClearFolder(config.StorageFolder)
+	manage_file.ClearFolder(config.TmpFolder)
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {

@@ -5,9 +5,8 @@ Department
 Consulting
 Payment
 DELIVER
-Business
 Development
 CREATIVE
 Technology
 admit
-SOLUTIONS
+Transaction

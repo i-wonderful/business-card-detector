@@ -20,7 +20,7 @@ func TestMerge(t *testing.T) {
 			Prob: 0.9732199,
 		},
 		{
-			Text: "E-komercijas departaments",
+			Text: "Ekomercijas departaments",
 			Box: model.NewBoxFromPoints(
 				model.NewPoint(111, 276),
 				model.NewPoint(397, 276),
@@ -32,8 +32,8 @@ func TestMerge(t *testing.T) {
 
 	merged := MergeBoxes(boxes)
 
-	assert.Equal(t, len(merged), 1)
-	assert.Equal(t, "Klientu vaditajs E-komercijas departaments", merged[0].Text)
+	assert.Equal(t, 1, len(merged))
+	assert.Equal(t, "Klientu vaditajs Ekomercijas departaments", merged[0].Text)
 	assert.Equal(t, model.NewPoint(108, 255), merged[0].Box.PTop1)
 	assert.Equal(t, model.NewPoint(397, 255), merged[0].Box.PTop2)
 	assert.Equal(t, model.NewPoint(108, 300), merged[0].Box.PBot2)

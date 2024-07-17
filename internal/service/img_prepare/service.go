@@ -82,7 +82,7 @@ func (s *Service) CropCard(im image.Image, boxes []model.TextArea) image.Image {
 }
 
 func (s *Service) ResizeAndSaveForPaddle(im *image.Image, boxes []model.TextArea) (image.Image, string, error) {
-	paddleSize := 1800
+	paddleSize := 940 //1800
 	oldWidth := (*im).Bounds().Max.X
 	oldHeight := (*im).Bounds().Max.Y
 	resized := img.ResizeImageByHeight(*im, paddleSize)

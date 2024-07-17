@@ -21,7 +21,7 @@ engine = RapidOCR(rec_model_path=model_rec_path, det_model_path=model_det_path, 
 
 box_thresh = 0.4
 unclip_ratio = 1.5
-text_score = 0.5
+text_score = 0.6
 
 
 result, elapse = engine(img_path, box_thresh=box_thresh, unclip_ratio=unclip_ratio, text_score=text_score)

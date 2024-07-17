@@ -13,40 +13,59 @@ func MergeBoxes(boxes []DetectWorld) []DetectWorld {
 	sortByHeight(boxes)
 
 	rez := []DetectWorld{}
-	prev := &boxes[0]
-	for i := 1; i < len(boxes); i++ {
-		isCloser25Percent := isCloser25Values(prev.Box.H, boxes[i].Box.H)
-		isCloser2Percent := isCloser2Values(prev.Box.PTop1.X, boxes[i].Box.PTop1.X)
-		if isCloser25Percent && isCloser2Percent &&
-			isOnlyLetters(prev.Text) && isOnlyLetters(boxes[i].Text) {
-			// merge items
-			rez = append(rez, DetectWorld{
-				Text: prev.Text + " " + boxes[i].Text,
-				Box: NewBoxFromPoints(
-					mergeTopLeftPoints(prev.Box.PTop1, boxes[i].Box.PTop1),
-					mergeTopRightPoints(prev.Box.PTop2, boxes[i].Box.PTop2),
-					mergeBottomRightPoints(prev.Box.PBot1, boxes[i].Box.PBot1),
-					mergeBottomLeftPoints(prev.Box.PBot2, boxes[i].Box.PBot2),
-				),
-				Prob: (prev.Prob + boxes[i].Prob) / 2,
-			})
-			rez = append(rez, boxes[i+1:]...)
-			prev = nil
-			//if i+1 == len(boxes) {
-			break
-			//rez = append(rez, boxes[i])
-			//}
-			//prev = boxes[i+1]
-			//i++
+	i := 0
+
+	for i < len(boxes) {
+		prev := &boxes[i]
+		if i+1 < len(boxes) {
+			next := &boxes[i+1]
+			isCloser25Percent := isCloser25Values(prev.Box.H, next.Box.H)
+			isCloser2Percent := isCloser2Values(prev.Box.PTop1.X, next.Box.PTop1.X)
+			if isCloser25Percent && isCloser2Percent &&
+				isOnlyLetters(prev.Text) && isOnlyLetters(next.Text) {
+
+				if i+2 < len(boxes) {
+					next2 := &boxes[i+2]
+					isCloser25Percent2 := isCloser25Values(next.Box.H, next2.Box.H)
+					isCloser2Percent2 := isCloser2Values(next.Box.PTop1.X, next2.Box.PTop1.X)
+					if isCloser25Percent2 && isCloser2Percent2 &&
+						isOnlyLetters(next.Text) && isOnlyLetters(next2.Text) {
+
+						rez = append(rez, DetectWorld{
+							Text: prev.Text + " " + next.Text + " " + next2.Text,
+							Box: NewBoxFromPoints(
+								mergeTopLeftPoints(prev.Box.PTop1, next2.Box.PTop1),
+								mergeTopRightPoints(prev.Box.PTop2, next2.Box.PTop2),
+								mergeBottomRightPoints(prev.Box.PBot1, next2.Box.PBot1),
+								mergeBottomLeftPoints(prev.Box.PBot2, next2.Box.PBot2),
+							),
+							Prob: (prev.Prob + next.Prob + next2.Prob) / 3,
+						})
+						i += 3
+						continue
+					}
+				}
+
+				rez = append(rez, DetectWorld{
+					Text: prev.Text + " " + next.Text,
+					Box: NewBoxFromPoints(
+						mergeTopLeftPoints(prev.Box.PTop1, next.Box.PTop1),
+						mergeTopRightPoints(prev.Box.PTop2, next.Box.PTop2),
+						mergeBottomRightPoints(prev.Box.PBot1, next.Box.PBot1),
+						mergeBottomLeftPoints(prev.Box.PBot2, next.Box.PBot2),
+					),
+					Prob: (prev.Prob + next.Prob) / 2,
+				})
+				i += 2
+			} else {
+				rez = append(rez, *prev)
+				i++
+			}
 		} else {
 			rez = append(rez, *prev)
-			prev = &boxes[i]
+			i++
 		}
 	}
-	if prev != nil {
-		rez = append(rez, *prev)
-	}
-
 	return rez
 }
 

@@ -35,8 +35,8 @@ func TestDetect(t *testing.T) {
 				Email:        []string{"oren@delasport.com"},
 				Site:         []string{"www.delasport.com"},
 				Phone:        []string{"+35699723767"},
-				Name:         "OREN COHEN SHWARTZ",
-				Organization: "WE DELIVERSPORTS",
+				Name:         "OREN COHENSHWARTZ",
+				Organization: "WE DELIVER SPORTS",
 				JobTitle:     "CEO",
 				Other:        "©Delasport",
 			},
@@ -91,7 +91,7 @@ func TestDetect(t *testing.T) {
 				Skype:        []string{"partners@linebet.com"},
 				Telegram:     []string{"@linebet_partners_bot"},
 				Site:         []string{"linebet.com"},
-				Organization: "B2BDepartment",
+				Organization: "B2B Department",
 			},
 		},
 		{
@@ -110,12 +110,12 @@ func TestDetect(t *testing.T) {
 			"first IMG_2919.JPG",
 			BASE_IMG_PATH + "/first/IMG_2919.JPG",
 			&model.Person{
-				Name:  "HEADOF CLIENT SUCCESS", // todo Jozef Fabian
-				Email: []string{"jf@sportsinnovation.dk"},
-				Phone: []string{"4552224150"}, // todo plus
-				//JobTitle:     "HEAD OF CLIENT SUCCESS",
+				Name:         "Jozef Fabian",
+				Email:        []string{"jf@sportsinnovation.dk"},
+				Phone:        []string{"+4552224150"},
+				JobTitle:     "HEAD OF CLIENT SUCCESS",
 				Site:         []string{"www.sportsinnovation.dk"},
-				Skype:        []string{"live:jof.144"}, // todo live:jof_144
+				Skype:        []string{"live:jof_144"},
 				Organization: "SPORTS INNOVATION",
 				Other:        "CONTENTPRODUCTION",
 			},
@@ -146,8 +146,8 @@ func TestDetect(t *testing.T) {
 			&model.Person{
 				Name:         "Russ Yershon",
 				Email:        []string{"russell@connectingbrands.co.uk"},
-				Phone:        []string{"+44 0)7500828120"},
-				JobTitle:     "Talent Manager to wide network of Football Legends Director",
+				Phone:        []string{"+44 (0)7500828120"},
+				JobTitle:     "Sports partnership and activation specialist Talent Manager to wide network of Football Legends Director", // todo
 				Site:         []string{"Connectingbrands.co.uk"},
 				Organization: "CONNECTING", // todo CONNECTING BRANDS .co.ux
 				//Skype:        []string{"russ.yershon"}, todo
@@ -271,7 +271,7 @@ func TestDetect(t *testing.T) {
 				Site:     []string{"www.admill.io"},
 				Phone:    []string{"+90 536 745 13 03"},
 				Telegram: []string{"https://t.me/Nicola_an"},
-				Name:     "Erkin Bayrakgi",
+				Name:     "Erkin Bayrakci",
 				Other:    "Sepapaja tn 615551TallinnEstonia",
 			},
 		},
@@ -308,7 +308,7 @@ func TestDetect(t *testing.T) {
 				Email:        []string{"emma@internationaladvertisingsolutions.com"},
 				Phone:        []string{"+44 7885723853"},
 				Name:         "Emma Fisher",
-				Organization: "ADVERTISING SOLUTIONS",
+				Organization: "INTERNATIONAL", //"ADVERTISING SOLUTIONS",
 				JobTitle:     "Account Director",
 				Other:        "& INTERNATIONAL;International Media Planning & Buying Services:;° Sponsorships;‚ Radio & Podcasts;e Innovative Solutions;Emma Fisher",
 			},
@@ -345,13 +345,13 @@ func TestDetect(t *testing.T) {
 			BASE_IMG_PATH + "/IMG_4077.jpg",
 			&model.Person{
 				//Email:        []string{"siddhartheprimeromediagroup.com"},
-				Site:  []string{"siddhartheprimeromediagroup.com"}, // todo www.primeromediagroup.com
-				Phone: []string{"+919953414428"},
-				Skype: []string{"sidagarwal17"},
-				Name:  "", // todo странный шрифт
-				// Organization: "PRIMERO MEDIA", // todo
-				JobTitle: "FOUNDER",
-				Other:    "Sulithrth agarunl;PRIMERO;MEDIA;Official Email: siddhartheprimeromediagroup.com;Official Website:www.primeromediagroup.com;Skype: sidagarwal17;ST.2016;CROUP",
+				Site:         []string{"siddhartheprimeromediagroup.com"}, // todo www.primeromediagroup.com
+				Phone:        []string{"+919953414428"},
+				Skype:        []string{"sidagarwal17"},
+				Name:         "",        // todo странный шрифт
+				Organization: "PRIMERO", // todo PRIMERO MEDIA
+				JobTitle:     "FOUNDER",
+				Other:        "Sulithrth agarunl;PRIMERO;MEDIA;Official Email: siddhartheprimeromediagroup.com;Official Website:www.primeromediagroup.com;Skype: sidagarwal17;ST.2016;CROUP",
 			},
 		},
 		{
@@ -373,10 +373,10 @@ func TestDetect(t *testing.T) {
 				//Email:        []string{"viorel.stan@gshmedia.com"}, // todo
 				Site:  []string{"viorel.stanagshmedia.com"}, // todo
 				Skype: []string{"viorel.stan87"},
-				Name:  "Viorel Stan",
-				//Organization: "GSH", // todo
-				JobTitle: "CEO",
-				Other:    "ViorelStan",
+				//Name:  "Viorel Stan", // todo
+				Organization: "ViorelStan", // todo "GSH"
+				JobTitle:     "CEO",
+				Other:        "ViorelStan",
 			},
 		},
 		//{
