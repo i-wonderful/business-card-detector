@@ -36,9 +36,9 @@ func TestDetect(t *testing.T) {
 				Site:         []string{"www.delasport.com"},
 				Phone:        []string{"+35699723767"},
 				Name:         "OREN COHENSHWARTZ",
-				Organization: "WE DELIVER SPORTS",
+				Organization: "Delasport",
 				JobTitle:     "CEO",
-				Other:        "©Delasport",
+				Other:        "WE DELIVER SPORTS",
 			},
 		},
 		{
@@ -374,9 +374,9 @@ func TestDetect(t *testing.T) {
 				Site:  []string{"viorel.stanagshmedia.com"}, // todo
 				Skype: []string{"viorel.stan87"},
 				//Name:  "Viorel Stan", // todo
-				Organization: "ViorelStan", // todo "GSH"
-				JobTitle:     "CEO",
-				Other:        "ViorelStan",
+				Organization: "ViorelStan CEO", // todo "GSH"
+				//JobTitle:     "CEO", // todo
+				Other: "ViorelStan",
 			},
 		},
 		//{

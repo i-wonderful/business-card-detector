@@ -72,8 +72,8 @@ func TestDetectProblem2(t *testing.T) {
 			&model.Person{
 				Email:        []string{"INFO@HUGE.PARTNERS", "SUPPORT@HUGE.PARTNERS"},
 				Organization: "HUGE",
-				Name:         "FOR ADVERTISERS",
-				Other:        "BETTING;GAMBLING;FOR AFFILIATES",
+				Name:         "GAMBLING BETTING",
+				Other:        "FOR ADVERTISERS;FOR AFFILIATES",
 			},
 		},
 		{

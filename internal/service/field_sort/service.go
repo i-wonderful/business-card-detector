@@ -71,6 +71,10 @@ func (s *Service) Sort(data []string) map[string]interface{} {
 	for _, line := range data {
 		line = clearTrashSymbols(line)
 
+		if company == "" && s.processCompanyByDomain(line, domain, &company) {
+			continue
+		}
+
 		if name == "" && isContainsWithSpace(line, s.names) {
 			name = line
 		} else if sk := extractSimpleSkype(skype, line); sk != "" {
@@ -107,14 +111,6 @@ func (s *Service) Sort(data []string) map[string]interface{} {
 			}
 		}
 
-		if CheckIsPartOfDomain(item, domain) {
-			if company != "" {
-				other = append(other, item)
-				continue
-			}
-			company = item
-			continue
-		}
 		//if math := companyRegex.MatchString(item); math {
 		//	company += " " + item
 		//	continue
@@ -160,6 +156,14 @@ func (s *Service) Sort(data []string) map[string]interface{} {
 	person["other"] = strings.Join(other, ";") + address
 
 	return person
+}
+
+func (s *Service) processCompanyByDomain(line string, domains []string, company *string) bool {
+	if CheckIsPartOfDomain(line, domains) {
+		*company = line
+		return true
+	}
+	return false
 }
 
 func isContains(s string, list []string) bool {

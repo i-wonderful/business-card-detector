@@ -142,6 +142,21 @@ func TestDetectProblem5(t *testing.T) {
 				Other:        "01X",
 			},
 		},
+		{
+			"1_20 vladislav globus.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/1_20 vladislav globus.jpg",
+			&model.Person{
+				Email:        []string{"info@globuspay.io"},
+				Site:         []string{},
+				Phone:        []string{"+971558318566"},
+				Skype:        []string{},
+				Telegram:     []string{"@globuspaid"},
+				Name:         "Vladislav Belov",
+				Organization: "GLOBUS PAY",
+				JobTitle:     "Head of Business Development",
+				Other:        "sripe;Vsemc;We provide best payment;solutions for your business",
+			},
+		},
 	}
 
 	detector, config := createDetector2(t)

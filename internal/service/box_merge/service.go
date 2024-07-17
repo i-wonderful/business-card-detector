@@ -8,6 +8,8 @@ import (
 	"unicode"
 )
 
+const closerHPercent = 0.25
+const percentCloserH = 0.08 // если высота боксов не различается больше чем на 8%, то считаем боксы близкими
 // MergeBoxes - merge boxes with close values
 func MergeBoxes(boxes []DetectWorld) []DetectWorld {
 	sortByHeight(boxes)
@@ -19,15 +21,15 @@ func MergeBoxes(boxes []DetectWorld) []DetectWorld {
 		prev := &boxes[i]
 		if i+1 < len(boxes) {
 			next := &boxes[i+1]
-			isCloser25Percent := isCloser25Values(prev.Box.H, next.Box.H)
-			isCloser2Percent := isCloser2Values(prev.Box.PTop1.X, next.Box.PTop1.X)
+			isCloser25Percent := isCloserH(prev.Box.H, next.Box.H)
+			isCloser2Percent := isCloserX(prev.Box.PTop1.X, next.Box.PTop1.X)
 			if isCloser25Percent && isCloser2Percent &&
 				isOnlyLetters(prev.Text) && isOnlyLetters(next.Text) {
 
 				if i+2 < len(boxes) {
 					next2 := &boxes[i+2]
-					isCloser25Percent2 := isCloser25Values(next.Box.H, next2.Box.H)
-					isCloser2Percent2 := isCloser2Values(next.Box.PTop1.X, next2.Box.PTop1.X)
+					isCloser25Percent2 := isCloserH(next.Box.H, next2.Box.H)
+					isCloser2Percent2 := isCloserX(next.Box.PTop1.X, next2.Box.PTop1.X)
 					if isCloser25Percent2 && isCloser2Percent2 &&
 						isOnlyLetters(next.Text) && isOnlyLetters(next2.Text) {
 
@@ -73,7 +75,7 @@ func sortByHeight(worlds []DetectWorld) []DetectWorld {
 	sort.Slice(worlds, func(i, j int) bool {
 		w1 := worlds[i]
 		w2 := worlds[j]
-		if isCloser25Values(w1.Box.H, w2.Box.H) {
+		if isCloserH(w1.Box.H, w2.Box.H) {
 			return w1.Box.PTop1.Y < w2.Box.PTop1.Y
 		}
 		return w1.Box.H > w2.Box.H
@@ -112,15 +114,15 @@ func sortByProbAndY(worlds []DetectWorld) []DetectWorld {
 }
 
 // Числа отличаются не более чем на 25%
-func isCloser25Values(a, b int) bool {
+func isCloserH(a, b int) bool {
 	diff := math.Abs(float64(a - b))
-	limitPercent := 0.25 * float64(Max(a, b))
+	limitPercent := closerHPercent * float64(Max(a, b))
 	return diff <= limitPercent
 }
 
-func isCloser2Values(a, b int) bool {
+func isCloserX(a, b int) bool {
 	diff := math.Abs(float64(a - b))
-	limitPercent := 0.02 * float64(Max(a, b)) // todo 0.03 (?)
+	limitPercent := percentCloserH * float64(Max(a, b)) // todo 0.03 (?)
 	return diff <= limitPercent
 }
 
