@@ -62,7 +62,7 @@ func TestDetectProblem(t *testing.T) {
 			&model.Person{
 				Email:    []string{"guilherme.rezende@nobrebet.com"},
 				Site:     []string{"www.nobrebet.com"},
-				Name:     "Rs BRqsil", // todo "GUILHERME REZENDE" compare name with emain
+				Name:     "GUILHERME REZENDE",
 				JobTitle: "LEAD ANALYST",
 			},
 		},

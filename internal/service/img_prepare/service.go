@@ -3,6 +3,8 @@ package img_prepare
 import (
 	"card_detector/internal/service/detect/onnx"
 	manage_file "card_detector/internal/util/file"
+	"github.com/disintegration/imaging"
+	"golang.org/x/image/draw"
 	"image"
 	"log"
 	"os"
@@ -12,7 +14,6 @@ import (
 	boxes_util "card_detector/internal/util/boxes"
 	"card_detector/internal/util/img"
 	aa_imaging "github.com/aaronland/go-image/imaging"
-	"github.com/disintegration/imaging"
 	"github.com/rwcarlsen/goexif/exif"
 )
 
@@ -46,15 +47,15 @@ func (s *Service) Rotage(imgFile *os.File) (image.Image, string) {
 	//im, _ = img.OpenJPEGAsNRGBA(imgFile.Name())
 	im, _ = RotateImageWithOrientation(im, orientation)
 
-	// увеличить контраст
-	//im = imaging.AdjustContrast(im, 20)
-
 	// резкость (???)
 	//im = imaging.Sharpen(im, 0.36)
 	// светлость
 	im = imaging.AdjustGamma(im, 1.6)
+	// яркость
 	im = imaging.AdjustBrightness(im, -10)
 	//im = img.BinarizeImage(im, 80)
+	// увеличить контраст
+	//im = imaging.AdjustContrast(im, 20)
 
 	//----- save rotated image
 	//bytes := img.ToBytes(im)
@@ -73,8 +74,16 @@ func (s *Service) Rotage(imgFile *os.File) (image.Image, string) {
 func (s *Service) CropCard(im image.Image, boxes []model.TextArea) image.Image {
 	for _, box := range boxes {
 		if box.Label == onnx.CARD_CLASS {
-			subImg, offsetX, offsetY := img.CropSquare(im, box.X, box.Y, box.Width, box.Height)
+			var padding int //15
+			if box.IsVertical() {
+				padding = 0
+			} else {
+				padding = 10
+			}
+
+			subImg, offsetX, offsetY := img.CropSquare(im, box.X-padding, box.Y-padding, box.Width+padding, box.Height+padding)
 			boxes_util.Transpose(boxes, offsetX, offsetY)
+
 			return subImg
 		}
 	}
@@ -86,7 +95,8 @@ func (s *Service) ResizeAndSaveForPaddle(im *image.Image, boxes []model.TextArea
 	oldWidth := (*im).Bounds().Max.X
 	oldHeight := (*im).Bounds().Max.Y
 	resized := img.ResizeImageByHeight(*im, paddleSize)
-
+	//resized = imaging.Sharpen(resized, -0.36)
+	//resized = imaging.AdjustContrast(resized, 40)
 	// Масштабирование
 	if oldWidth > paddleSize {
 		scaleX := float64(paddleSize) / float64(oldWidth)
@@ -94,11 +104,14 @@ func (s *Service) ResizeAndSaveForPaddle(im *image.Image, boxes []model.TextArea
 		boxes_util.Scaling(boxes, scaleX, scaleY)
 	}
 
+	resized = resizeImage(resized, paddleSize)
+
 	// Сохранение
 	format := "jpg"
 	if resized.Bounds().Max.X < 600 || resized.Bounds().Max.Y < 600 {
 		format = "tiff"
-	} else if resized.Bounds().Max.X < 1000 || resized.Bounds().Max.Y < 1000 {
+	} else // if resized.Bounds().Max.X < 900 || resized.Bounds().Max.Y < 900
+	{
 		format = "png"
 	}
 
@@ -162,4 +175,27 @@ func getOrientation(imgFile *os.File) string {
 	} else {
 		return orientation.String()
 	}
+}
+
+func resizeImage(img image.Image, minSize int) image.Image {
+	bounds := img.Bounds()
+	width, height := bounds.Dx(), bounds.Dy()
+
+	if width >= minSize && height >= minSize {
+		return img
+	}
+
+	var newWidth, newHeight int
+	if width < height {
+		newWidth = minSize
+		newHeight = height * minSize / width
+	} else {
+		newHeight = minSize
+		newWidth = width * minSize / height
+	}
+
+	newImg := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
+	draw.ApproxBiLinear.Scale(newImg, newImg.Bounds(), img, bounds, draw.Over, nil)
+
+	return newImg
 }

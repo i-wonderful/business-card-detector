@@ -48,7 +48,7 @@ func TestDetectProblem5(t *testing.T) {
 			&model.Person{
 				Email:        []string{"arkadijs.narcuks@lpb.lv"},
 				Site:         []string{"www.lpb.lv"},
-				Phone:        []string{"+37167772962", "+371)22352883"},
+				Phone:        []string{"+371)67772962", "+371)22352883"},
 				Name:         "Arkadijs Narcuks",
 				Organization: "LPB",
 				JobTitle:     "E-komercijas departaments", // todo  E-komercijas departaments Klientu vaditajs
@@ -86,7 +86,7 @@ func TestDetectProblem5(t *testing.T) {
 				Site:     []string{"scipiopay.com"},
 				Telegram: []string{"@KlrillMan"},
 				Name:     "KIRILL",
-				JobTitle: "Business Developereyxcru", // FIXME Business Developer
+				JobTitle: "Business Developer",
 				Other:    "com;Cpr;kumo.Ureoio;U126;wwVia.mcteut;81.-12;apura;trust;Telegram;Web;adptrepo",
 			},
 		},
@@ -147,14 +147,26 @@ func TestDetectProblem5(t *testing.T) {
 			BASE_IMG_PROBLEM5_PATH + "/1_20 vladislav globus.jpg",
 			&model.Person{
 				Email:        []string{"info@globuspay.io"},
-				Site:         []string{},
 				Phone:        []string{"+971558318566"},
-				Skype:        []string{},
 				Telegram:     []string{"@globuspaid"},
 				Name:         "Vladislav Belov",
 				Organization: "GLOBUS PAY",
 				JobTitle:     "Head of Business Development",
 				Other:        "sripe;Vsemc;We provide best payment;solutions for your business",
+			},
+		},
+		{
+			"1_39 glenn revpanda.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/1_39 glenn revpanda.jpg",
+			&model.Person{
+				Email:        []string{"glenn@revpanda.com"},
+				Site:         []string{"reypanda.com"}, // todo revpanda
+				Phone:        []string{"+35699883592"},
+				Telegram:     []string{"@glenn79"},
+				Name:         "GLENN DEBATTISTA",
+				Organization: "REV",
+				JobTitle:     "Chief Operating Officer",
+				Other:        "MARKETING AGENCY;;Chief Operating Offcer;glenn_debattista", // todo skype
 			},
 		},
 	}

@@ -35,7 +35,7 @@ func TestDetect(t *testing.T) {
 				Email:        []string{"oren@delasport.com"},
 				Site:         []string{"www.delasport.com"},
 				Phone:        []string{"+35699723767"},
-				Name:         "OREN COHENSHWARTZ",
+				Name:         "OREN COHEN SHWARTZ",
 				Organization: "Delasport",
 				JobTitle:     "CEO",
 				Other:        "WE DELIVER SPORTS",
