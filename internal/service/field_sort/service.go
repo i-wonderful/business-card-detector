@@ -68,6 +68,8 @@ func (s *Service) Sort(data []string) map[string]interface{} {
 		}
 	}
 
+	// todo find picture
+
 	for _, line := range data {
 		line = clearTrashSymbols(line)
 
@@ -75,9 +77,11 @@ func (s *Service) Sort(data []string) map[string]interface{} {
 			continue
 		}
 
-		if name == "" && isContainsWithSpace(line, s.names) {
-			name = line
-		} else if sk := extractSimpleSkype(skype, line); sk != "" {
+		if name == "" && s.processNameByExistingNames(line, &name) {
+			continue
+		}
+
+		if sk := extractSimpleSkype(skype, line); sk != "" {
 			skype = sk
 		} else if isContains(line, s.professions) {
 			jobTitle += " " + line
@@ -166,14 +170,38 @@ func (s *Service) processCompanyByDomain(line string, domains []string, company 
 	return false
 }
 
+func (s *Service) processNameByExistingNames(line string, name *string) bool {
+	isFind, nameFind := isContainsWith(line, s.names)
+	if isFind {
+		*name = insertSpaceIfNeeded(line, nameFind)
+		return true
+	}
+	return false
+}
+
+// insertSpaceIfNeeded - Вставляет пробелы если нужно. После подстроки должны идти пробелы или конец строки.
+func insertSpaceIfNeeded(s, substring string) string {
+	lowerS := strings.ToLower(s)
+	lowerSubstring := strings.ToLower(substring)
+	if strings.HasPrefix(lowerS, lowerSubstring) && len(s) > len(substring) && s[len(substring)] != ' ' {
+		return s[:len(substring)] + " " + s[len(substring):]
+	}
+	return s
+}
+
 func isContains(s string, list []string) bool {
+	isOk, _ := isContainsWith(s, list)
+	return isOk
+}
+
+func isContainsWith(s string, list []string) (bool, string) {
 	s = strings.ToLower(s)
 	for _, p := range list {
 		if strings.Contains(s, p) {
-			return true
+			return true, p
 		}
 	}
-	return false
+	return false, ""
 }
 
 // После найденной подстроки должны идти пробелы или конец строки.

@@ -124,6 +124,15 @@ func TestService_Sort(t *testing.T) {
 			},
 		},
 		{
+			"Contacted name",
+			[]string{
+				"GLENNDEBATTISTA",
+			},
+			map[string]interface{}{
+				"name": "GLENN DEBATTISTA",
+			},
+		},
+		{
 			"Long job title",
 			[]string{
 				"Slava Chernenko",
