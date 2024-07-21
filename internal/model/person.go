@@ -1,7 +1,6 @@
 package model
 
 import (
-	"card_detector/internal/service/field_sort"
 	"fmt"
 )
 
@@ -57,7 +56,7 @@ func NewPerson(fields map[string]interface{}) *Person {
 		p.Phone = append(p.Phone, fields["phone"].([]string)...)
 	}
 	if fields["telegram"] != "" {
-		p.Telegram = append(p.Telegram, fields[field_sort.FIELD_TELEGRAM].([]string)...)
+		p.Telegram = append(p.Telegram, fields["telegram"].([]string)...)
 	}
 	if fields["skype"] != "" {
 		p.Skype = append(p.Skype, fields["skype"].(string))

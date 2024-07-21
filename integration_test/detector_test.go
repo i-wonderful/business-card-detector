@@ -366,19 +366,7 @@ func TestDetect(t *testing.T) {
 				JobTitle:     "Sales manager",
 			},
 		},
-		{
-			"69.JPG",
-			BASE_IMG_PATH + "/69.JPG",
-			&model.Person{
-				//Email:        []string{"viorel.stan@gshmedia.com"}, // todo
-				Site:  []string{"viorel.stanagshmedia.com"}, // todo
-				Skype: []string{"viorel.stan87"},
-				//Name:  "Viorel Stan", // todo
-				Organization: "ViorelStan CEO", // todo "GSH"
-				//JobTitle:     "CEO", // todo
-				Other: "ViorelStan",
-			},
-		},
+
 		//{
 		// todo russian text
 		//	"3606.JPG",

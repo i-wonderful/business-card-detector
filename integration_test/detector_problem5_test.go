@@ -163,10 +163,11 @@ func TestDetectProblem5(t *testing.T) {
 				Site:         []string{"reypanda.com"}, // todo revpanda
 				Phone:        []string{"+35699883592"},
 				Telegram:     []string{"@glenn79"},
+				Skype:        []string{"glenn_debattista"},
 				Name:         "GLENN DEBATTISTA",
 				Organization: "REV",
 				JobTitle:     "Chief Operating Officer",
-				Other:        "MARKETING AGENCY;;Chief Operating Offcer;glenn_debattista", // todo skype
+				Other:        "ONE STOP DIGITAL;MARKETING AGENCY",
 			},
 		},
 	}

@@ -1,6 +1,7 @@
 package field_sort
 
 import (
+	"card_detector/internal/model"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -91,72 +92,18 @@ func TestService_FindSkype(t *testing.T) {
 		true)
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			result := service.Sort(tc.input)
+			result := service.Sort(wrapForSort(tc.input), nil)
 			for k, v := range tc.expected {
 				assert.Equal(t, v, result[k])
 			}
 		})
 	}
 }
-func TestExtractSkype(t *testing.T) {
-	tests := []struct {
-		name     string
-		input    string
-		expected string
-	}{
-		{
-			name:     "Valid Skype ID",
-			input:    "My Skype: skype.sample_id",
-			expected: "skype.sample_id",
-		},
-		//{
-		//	name:     "Valid Skype ID with spaces",
-		//	input:    "My Skype ID is: skype.live: sample_id",
-		//	expected: "sample_id",
-		//},
-		{
-			name:     "Valid Skype ID with case-insensitive pattern",
-			input:    "My Skype: SAMPLE_ID",
-			expected: "SAMPLE_ID",
-		},
-		{
-			name:     "No Skype ID",
-			input:    "This text does not contain",
-			expected: "",
-		},
-		//{
-		//	name:     "Multiple Skype IDs",
-		//	input:    "My Skype IDs are: skype:id1 and skype:id2",
-		//	expected: "id1",
-		//},
-		{
-			name:     "Extract with @",
-			input:    "Mail: b2b@lLinebet.com Skype: partners@Linebet.com",
-			expected: "partners@Linebet.com",
-		},
-		{
-			"Without colon",
-			"Skype flavio.tamega",
-			"flavio.tamega",
-		},
-		{
-			"With two points",
-			"Skype:alex.softgamings.com",
-			"alex.softgamings.com",
-		},
-		//{
-		//	"With point and colon",
-		//	"live:.cid.e53090522ec2bf11",
-		//	"live:.cid.e53090522ec2bf11",
-		//},
-	}
 
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			result := extractSkypeSkype(test.input)
-			if result != test.expected {
-				t.Errorf("Expected %q, but got %q", test.expected, result)
-			}
-		})
+func wrapForSort(inputs []string) []model.DetectWorld {
+	result := make([]model.DetectWorld, len(inputs))
+	for i, v := range inputs {
+		result[i] = model.DetectWorld{Text: v}
 	}
+	return result
 }

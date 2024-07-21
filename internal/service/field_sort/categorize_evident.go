@@ -1,6 +1,9 @@
 package field_sort
 
-import "strings"
+import (
+	"card_detector/internal/service/field_sort/helper"
+	"strings"
+)
 
 const (
 	FIELD_PHONE    = "phone"
@@ -8,20 +11,21 @@ const (
 	FIELD_SKYPE    = "skype"
 	FIELD_EMAIL    = "email"
 	FIELD_URLS     = "site"
+	FIELD_NAME     = "name"
 )
 
 // categorizeEvidentFields - распределение очевидных полей
-// phones, emails, telegram, skype, urls
+// phones, emails, telegram, skype, urls, name
 // @return map[string]interface{}, []string - recognized fields and not recognized fields
-func (s *Service) categorizeEvidentFields(data []string) (map[string]interface{}, []string) {
-	notDetectItems := []string{}
+func (s *Service) categorizeEvidentFields(data []string) (map[string]interface{}, []int) {
+	notDetectItems := []int{}
 	phones := []string{}
 	emails := []string{}
 	urls := []string{}
 	telegram := []string{}
-	skype := ""
+	var skype, name string
 
-	for _, line := range data {
+	for i, line := range data {
 		line = clearTrashSymbols(line)
 
 		if s.processPhone(line, &phones) {
@@ -36,7 +40,7 @@ func (s *Service) categorizeEvidentFields(data []string) (map[string]interface{}
 			continue
 		}
 
-		if s.processSkype(line, &skype) {
+		if skype == "" && s.processSkype(line, &skype) {
 			continue
 		}
 
@@ -44,7 +48,11 @@ func (s *Service) categorizeEvidentFields(data []string) (map[string]interface{}
 			continue
 		}
 
-		notDetectItems = append(notDetectItems, line)
+		if name == "" && s.processNameByExistingNames(line, &name) {
+			continue
+		}
+
+		notDetectItems = append(notDetectItems, i)
 	}
 
 	recognized := map[string]interface{}{
@@ -53,6 +61,7 @@ func (s *Service) categorizeEvidentFields(data []string) (map[string]interface{}
 		FIELD_SKYPE:    skype,
 		FIELD_EMAIL:    emails,
 		FIELD_URLS:     urls,
+		FIELD_NAME:     name,
 	}
 	return recognized, notDetectItems
 }
@@ -89,11 +98,11 @@ func (s *Service) processTelegram(line string, telegram *[]string) bool {
 }
 
 func (s *Service) processSkype(line string, skype *string) bool {
-	if sk := extractLiveSkype(line); sk != "" {
+	if sk := helper.ExtractLiveSkype(line); sk != "" {
 		*skype = sk
 		return true
 	}
-	if sk := extractSkypeSkype(line); sk != "" {
+	if sk := helper.ExtractSkypeSkype(line); sk != "" {
 		*skype = sk
 		return true
 	}

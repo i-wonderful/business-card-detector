@@ -133,3 +133,4 @@ Banker
 komercijas departaments
 BDM
 Business Developer
+Comercial

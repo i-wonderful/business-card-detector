@@ -41,7 +41,7 @@ func TestService_FindSite(t *testing.T) {
 		true)
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			result := service.Sort(tc.input)
+			result := service.Sort(wrapForSort(tc.input), nil)
 			for k, v := range tc.expected {
 				assert.Equal(t, v, result[k])
 			}

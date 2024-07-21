@@ -21,7 +21,7 @@ func TestExtractDomainName(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			result := ExtractDomainNameFromUrl(tc.url)
+			result := ExtractDomainFromUrl(tc.url)
 			assert.Equal(t, tc.expected, result, "URL: %s", tc.url)
 		})
 	}

@@ -28,6 +28,10 @@ type CardDetector interface {
 	Detect(img image.Image) ([]model.TextArea, error)
 }
 
+type FieldSorter interface {
+	Sort(data []model.DetectWorld, boxes []model.TextArea) map[string]interface{}
+}
+
 type Detector2 struct {
 	imgPreparer          ImgPreparer
 	textRecognizeService RecognizerFull
@@ -117,8 +121,8 @@ func (d *Detector2) Detect(imgPath string) (*model.Person, string, error) {
 	}
 
 	// 6. sort text to person item
-	worlds := getOnlyWorlds(detectWorlds)
-	p := d.fieldSorterService.Sort(worlds)
+	//worlds := getOnlyWorlds(detectWorlds)
+	p := d.fieldSorterService.Sort(detectWorlds, boxes)
 
 	// 6. save
 	person := model.NewPerson(p)
@@ -133,14 +137,4 @@ func (d *Detector2) Detect(imgPath string) (*model.Person, string, error) {
 	//manage_file.ClearFolder(d.tmpFolder)
 
 	return person, boxesPath, nil
-}
-
-func getOnlyWorlds(detectWorlds []model.DetectWorld) []string {
-
-	worlds := make([]string, len(detectWorlds))
-	for i, world := range detectWorlds {
-		worlds[i] = world.Text
-	}
-	return worlds
-
 }

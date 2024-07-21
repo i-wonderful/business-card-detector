@@ -25,10 +25,6 @@ type (
 		//	RecognizeByPath(paths []string) ([]string, error)
 	}
 
-	FieldSorter interface {
-		Sort(data []string) map[string]interface{}
-	}
-
 	CardRepo interface {
 		Save(c model.Card) error
 	}
@@ -150,17 +146,18 @@ func (d *Detector) Detect(imgPath string) (*model.Person, error) {
 	// 5. Process text
 	worlds = manage_str2.RemoveSubstrings(worlds)
 
-	p := d.fieldSorterService.Sort(worlds)
-	person := model.NewPerson(p)
+	//p := d.fieldSorterService.Sort(worlds)
+	//person := model.NewPerson(p)
 
 	//manage_file.ClearFolder(d.tmpFolder)
 	//manage_file.ClearFolder(d.storageFolder)
 
-	card := mapCard(*person, "", "", "")
-	if err := d.cardRepo.Save(card); err != nil {
-		fmt.Println("Error saving card:", err)
-	}
-	return person, nil
+	//card := mapCard(*person, "", "", "")
+	//if err := d.cardRepo.Save(card); err != nil {
+	//	fmt.Println("Error saving card:", err)
+	//}
+	//return person, nil
+	return nil, nil
 }
 
 func mapCard(p model.Person, photoUrl, logoUrl, originalName string) model.Card {

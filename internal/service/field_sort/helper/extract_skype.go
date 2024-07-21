@@ -1,21 +1,22 @@
-package field_sort
+package helper
 
 import "regexp"
 
 var skypeRegex = regexp.MustCompile(`^[a-z]{4,31}\.[a-z]{4,31}`)
 var skypeRegexLive = regexp.MustCompile(`(?i)live\s*[:.]{0,2}\s*cid\.([\da-f]+)`)
 var skypeRegexLiveUser = regexp.MustCompile(`(?i)live:([\w\-\.]+)`)
-var skypeSkypeRegex = regexp.MustCompile(`(?i)(skype\s*[:\.]?\s*|s:)([a-zA-Z0-9\.\-_]+(?:@\w+\.[\w.]+)?)`)
+var skypeSkypeRegex = regexp.MustCompile(`(?i)(?:\bskype\s*:\s*|\bs\s*:\s*|\bskype\s+)([\w\.\-_@]+)\b`)
 
-func extractSkypeSkype(text string) string {
+// ExtractSkypeSkype extracts Skype ID from the given text using a predefined regex pattern
+func ExtractSkypeSkype(text string) string {
 	subs := skypeSkypeRegex.FindStringSubmatch(text)
-	if len(subs) > 2 {
-		return subs[2]
+	if len(subs) > 1 {
+		return subs[1]
 	}
 	return ""
 }
 
-func extractLiveSkype(line string) string {
+func ExtractLiveSkype(line string) string {
 	matches := skypeRegexLive.FindStringSubmatch(line)
 	if len(matches) > 1 {
 		return "live:cid." + matches[1]
@@ -28,7 +29,7 @@ func extractLiveSkype(line string) string {
 	return ""
 }
 
-func extractSimpleSkype(skype string, line string) string {
+func ExtractSimpleSkype(skype string, line string) string {
 	if skype != "" {
 		return ""
 	}

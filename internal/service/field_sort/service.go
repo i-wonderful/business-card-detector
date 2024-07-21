@@ -1,10 +1,12 @@
 package field_sort
 
 import (
-	"card_detector/internal/service/field_sort/helper"
+	"card_detector/internal/model"
+	. "card_detector/internal/service/field_sort/helper"
 	manage_file "card_detector/internal/util/file"
 	"log"
 	"regexp"
+	"sort"
 	"strings"
 	"time"
 	"unicode"
@@ -26,7 +28,7 @@ func NewService(pathProfessions, pathCompanies, pathNames string, isLogTime bool
 	}
 }
 
-func (s *Service) Sort(data []string) map[string]interface{} {
+func (s *Service) Sort(data []model.DetectWorld, boxes []model.TextArea) map[string]interface{} {
 	if s.isLogTime {
 		start := time.Now()
 		defer func() {
@@ -44,7 +46,10 @@ func (s *Service) Sort(data []string) map[string]interface{} {
 
 	notDetectItems := []string{}
 
-	recognized, data := s.categorizeEvidentFields(data)
+	worlds := GetOnlyWorlds(data)
+	recognized, indexesNotDetect := s.categorizeEvidentFields(worlds)
+	data = keepIndexes(data, indexesNotDetect)
+
 	if _, ok := recognized[FIELD_TELEGRAM]; ok {
 		telegram = recognized[FIELD_TELEGRAM].([]string)
 	}
@@ -52,38 +57,45 @@ func (s *Service) Sort(data []string) map[string]interface{} {
 		emails = recognized[FIELD_EMAIL].([]string)
 		if len(emails) > 0 {
 			var d string
-			mailName, d, zone = extractMainNameDomainAndZone(emails[0])
+			mailName, d, zone = ExtractMainNameDomainAndZone(emails[0])
 			domain = append(domain, d)
 		}
 	}
 	if _, ok := recognized[FIELD_SKYPE]; ok {
 		skype = recognized[FIELD_SKYPE].(string)
 	}
+	if _, ok := recognized[FIELD_NAME]; ok {
+		name = recognized[FIELD_NAME].(string)
+	}
 
 	if _, ok := recognized[FIELD_URLS]; ok {
 		websites = recognized[FIELD_URLS].([]string)
 		for _, site := range websites {
-			d := helper.ExtractDomainNameFromUrl(site)
+			d := ExtractDomainFromUrl(site)
 			domain = append(domain, d)
 		}
 	}
 
-	// todo find picture
+	if skype == "" {
+		if isOk, box := isContainsSkype(boxes); isOk {
+			worldSkype, index := FindNearestWorld(data, box)
+			if index != -1 {
+				skype = worldSkype.Text
+				data = remove(data, index)
+			}
+		}
+	}
 
-	for _, line := range data {
-		line = clearTrashSymbols(line)
+	for _, word := range data {
+		line := clearTrashSymbols(word.Text)
 
 		if company == "" && s.processCompanyByDomain(line, domain, &company) {
 			continue
 		}
 
-		if name == "" && s.processNameByExistingNames(line, &name) {
-			continue
-		}
-
-		if sk := extractSimpleSkype(skype, line); sk != "" {
-			skype = sk
-		} else if isContains(line, s.professions) {
+		//
+		//} else
+		if isContains(line, s.professions) {
 			jobTitle += " " + line
 		} else if company == "" && isContains(line, s.companies) {
 			company = line
@@ -115,19 +127,16 @@ func (s *Service) Sort(data []string) map[string]interface{} {
 			}
 		}
 
-		//if math := companyRegex.MatchString(item); math {
-		//	company += " " + item
-		//	continue
-		//}
-		//}
-
 		if len(telegram) == 0 {
 			if s := extractTelegram(item); s != "" {
 				telegram = append(telegram, s)
 				continue
 			}
 		}
-
+		if sk := ExtractSimpleSkype(skype, item); sk != "" {
+			skype = sk
+			continue
+		}
 		if name == "" {
 			if m := nameRegex.MatchString(item); m {
 				name = item
@@ -151,7 +160,7 @@ func (s *Service) Sort(data []string) map[string]interface{} {
 	person := recognized
 	person[FIELD_EMAIL] = emails
 	person[FIELD_PHONE] = append(person[FIELD_PHONE].([]string), clearPhones(phones)...)
-	person["name"] = strings.TrimSpace(name)
+	person[FIELD_NAME] = strings.TrimSpace(name)
 	person[FIELD_SKYPE] = skype
 	person["company"] = strings.TrimSpace(company)
 	person[FIELD_TELEGRAM] = telegram
@@ -246,18 +255,6 @@ func extractBrokenUrl(text string, domains []string, zone string) string {
 
 }
 
-func extractMainNameDomainAndZone(email string) (string, string, string) {
-	parts := strings.Split(email, "@")
-	if len(parts) != 2 {
-		return "", "", "" // Неверный формат адреса электронной почты
-	}
-	domainParts := strings.Split(parts[1], ".")
-	if len(domainParts) < 2 {
-		return "", "", "" // Неверный формат домена
-	}
-	return parts[0], domainParts[0], domainParts[1]
-}
-
 func clearTrashSymbols(val string) string {
 	val = strings.TrimFunc(val, func(r rune) bool {
 		return !unicode.IsLetter(r) && !unicode.IsNumber(r) && r != '+' && r != '@' && r != '(' && r != ')'
@@ -341,4 +338,30 @@ func trim(val []string) []string {
 		result = append(result, strings.TrimSpace(v))
 	}
 	return result
+}
+
+func keepIndexes(slice []model.DetectWorld, indexes []int) []model.DetectWorld {
+	sort.Ints(indexes) // sort indexes in ascending order
+	newSlice := make([]model.DetectWorld, 0)
+	index := 0
+	for i, v := range slice {
+		if index < len(indexes) && indexes[index] == i {
+			newSlice = append(newSlice, v)
+			index++
+		}
+	}
+	return newSlice
+}
+
+func isContainsSkype(boxes []model.TextArea) (bool, *model.TextArea) {
+	for _, box := range boxes {
+		if box.Label == "skype" {
+			return true, &box
+		}
+	}
+	return false, nil
+}
+
+func remove(slice []model.DetectWorld, index int) []model.DetectWorld {
+	return append(slice[:index], slice[index+1:]...)
 }
