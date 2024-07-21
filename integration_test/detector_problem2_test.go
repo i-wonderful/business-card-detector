@@ -107,7 +107,7 @@ func TestDetectProblem2(t *testing.T) {
 				Email:        []string{"slava@monotech.group"},
 				Name:         "Slava Chernenko",
 				Organization: "MONOTECH",
-				JobTitle:     "Senior Partnershipso and Accounts Manager", // todo "Senior Partnerships and Accounts Manager"
+				JobTitle:     "Senior Partnerships and Accounts Manager",
 			},
 		},
 		{

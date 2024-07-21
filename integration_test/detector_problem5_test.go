@@ -143,6 +143,17 @@ func TestDetectProblem5(t *testing.T) {
 			},
 		},
 		{
+			"1_10 delano genial.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/1_10 delano genial.jpg",
+			&model.Person{
+				Email: []string{"delano.queiroz@genial.com.vc"},
+				Site:  []string{"genialinvestimentos.com.br"},
+				Phone: []string{"+55 (21)99945-9191", "+55(11)3206-8267/807"},
+				Name:  "Delano Queiroz",
+				Other: "tankacgupt;Preee;eli;Sao Paulo-SP",
+			},
+		},
+		{
 			"1_20 vladislav globus.jpg",
 			BASE_IMG_PROBLEM5_PATH + "/1_20 vladislav globus.jpg",
 			&model.Person{
@@ -160,7 +171,7 @@ func TestDetectProblem5(t *testing.T) {
 			BASE_IMG_PROBLEM5_PATH + "/1_39 glenn revpanda.jpg",
 			&model.Person{
 				Email:        []string{"glenn@revpanda.com"},
-				Site:         []string{"reypanda.com"}, // todo revpanda
+				Site:         []string{"revpanda.com"},
 				Phone:        []string{"+35699883592"},
 				Telegram:     []string{"@glenn79"},
 				Skype:        []string{"glenn_debattista"},

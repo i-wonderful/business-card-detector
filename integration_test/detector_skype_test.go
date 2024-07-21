@@ -7,6 +7,8 @@ import (
 	"testing"
 )
 
+const BASE_IMG_PROBLEM4_PATH = "/home/olga/projects/card_detector_imgs/problem4"
+
 func TestDetectSkype(t *testing.T) {
 	testCases := []struct {
 		name     string
@@ -46,9 +48,24 @@ func TestDetectSkype(t *testing.T) {
 				Site:  []string{"viorel.stanagshmedia.com"}, // todo
 				Skype: []string{"viorel.stan87"},            // not detect pict
 				//Name:  "Viorel Stan", // todo
-				Organization: "ViorelStan CEO", // todo "GSH"
-				//JobTitle:     "CEO", // todo
-				Other: "ViorelStan",
+				Organization: "Viorel Stan", // todo "GSH"
+				JobTitle:     "CEO",
+				Other:        "ViorelStan",
+			},
+		},
+		{
+			"problem4_1.jpg",
+			BASE_IMG_PROBLEM4_PATH + "/1.jpg",
+			&model.Person{
+				Email:        []string{"aiga@entez.com"},
+				Site:         []string{"entez.com"},
+				Phone:        []string{"+37129 146 960"},
+				Name:         "Aiga Bunkse",
+				Telegram:     []string{"@aigabunkse"},
+				Skype:        []string{"Aiga Bunkse"},
+				Organization: "", // todo vertical text entez
+				JobTitle:     "Account Manager",
+				Other:        "ZETNN;B10N",
 			},
 		},
 	}

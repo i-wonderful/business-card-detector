@@ -95,16 +95,11 @@ func (s *Service) ResizeAndSaveForPaddle(im *image.Image, boxes []model.TextArea
 	oldWidth := (*im).Bounds().Max.X
 	oldHeight := (*im).Bounds().Max.Y
 	resized := img.ResizeImageByHeight(*im, paddleSize)
-	//resized = imaging.Sharpen(resized, -0.36)
-	//resized = imaging.AdjustContrast(resized, 40)
-	// Масштабирование
-	//if oldWidth > paddleSize {
-	//	scaleX := float64(paddleSize) / float64(oldWidth)
-	//	scaleY := float64(paddleSize) / float64(oldHeight)
-	//	boxes_util.Scaling(boxes, scaleX, scaleY)
-	//}
 
 	resized = resizeImage(resized, paddleSize)
+	resized = imaging.AdjustContrast(resized, 2)
+	resized = imaging.AdjustSigmoid(resized, 0.5, -3.0)
+
 	newWidth := resized.Bounds().Max.X
 	newHeight := resized.Bounds().Max.Y
 	if newWidth != oldWidth || newHeight != oldHeight {

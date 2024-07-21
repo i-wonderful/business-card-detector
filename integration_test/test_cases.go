@@ -87,19 +87,7 @@ var testCases = []testCase{
 	//		Organization: "-R/VENTRACK",
 	//	},
 	//},
-	//{
-	//	"IMG_2919.JPG",
-	//	"./data/IMG_2919.JPG",
-	//	&Person{
-	//		Name:         "Jozef Fabian",
-	//		Email:        "f@sportsinnovation.dk", // todo wrong
-	//		Phone:        "+45 52 22 4150",
-	//		JobTitle:     "HEAD OF CLIENT SUCCESS",
-	//		Site:         "www.sportsinnovation.dk",
-	//		Skype:        "livejof", // todo wrong
-	//		Organization: "INNOVATION",
-	//	},
-	//},
+
 	//{
 	//	"IMG_2920.JPG",
 	//	"./data/IMG_2920.JPG",
