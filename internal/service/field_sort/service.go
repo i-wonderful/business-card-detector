@@ -5,7 +5,7 @@ import (
 	. "card_detector/internal/service/field_sort/helper"
 	manage_file "card_detector/internal/util/file"
 	"log"
-	"regexp"
+	"net/http"
 	"sort"
 	"strings"
 	"time"
@@ -87,7 +87,7 @@ func (s *Service) Sort(data []model.DetectWorld, boxes []model.TextArea) map[str
 	}
 
 	for _, word := range data {
-		line := clearTrashSymbols(word.Text)
+		line := ClearTrashSymbols(word.Text)
 
 		if company == "" && s.processCompanyByDomain(line, domain, &company) {
 			continue
@@ -117,11 +117,11 @@ func (s *Service) Sort(data []model.DetectWorld, boxes []model.TextArea) map[str
 			}
 		}
 		if len(websites) == 0 {
-			if isSimpleUrl(item) {
+			if IsSimpleUrlAndCheck(item) {
 				websites = append(websites, item)
 				continue
 			}
-			if s := extractBrokenUrl(item, domain, zone); s != "" {
+			if s := ExtractBrokenUrl(item, domain, zone); s != "" {
 				websites = append(websites, s)
 				continue
 			}
@@ -143,8 +143,8 @@ func (s *Service) Sort(data []model.DetectWorld, boxes []model.TextArea) map[str
 				continue
 			}
 		}
-		if !NameIsFull(name) && ContainsIgnoreCase(item, mailName) || ContainsIgnoreCase(mailName, item) {
-			name += " " + item
+
+		if s.processNameByMailName(item, mailName, &name) {
 			continue
 		}
 
@@ -156,6 +156,8 @@ func (s *Service) Sort(data []model.DetectWorld, boxes []model.TextArea) map[str
 
 		other = append(other, item)
 	}
+
+	s.checkAndFixUrls(websites, emails)
 
 	person := recognized
 	person[FIELD_EMAIL] = emails
@@ -172,7 +174,7 @@ func (s *Service) Sort(data []model.DetectWorld, boxes []model.TextArea) map[str
 }
 
 func (s *Service) processCompanyByDomain(line string, domains []string, company *string) bool {
-	if CheckIsPartOfDomain(line, domains) {
+	if CheckIsPartOfDomain(line, domains) && !IsSimpleUrl(line) {
 		*company = line
 		return true
 	}
@@ -182,20 +184,63 @@ func (s *Service) processCompanyByDomain(line string, domains []string, company 
 func (s *Service) processNameByExistingNames(line string, name *string) bool {
 	isFind, nameFind := isContainsWith(line, s.names)
 	if isFind {
-		*name = insertSpaceIfNeeded(line, nameFind)
+		*name = InsertSpaceIfNeeded(line, nameFind)
 		return true
 	}
 	return false
 }
 
-// insertSpaceIfNeeded - Вставляет пробелы если нужно. После подстроки должны идти пробелы или конец строки.
-func insertSpaceIfNeeded(s, substring string) string {
-	lowerS := strings.ToLower(s)
-	lowerSubstring := strings.ToLower(substring)
-	if strings.HasPrefix(lowerS, lowerSubstring) && len(s) > len(substring) && s[len(substring)] != ' ' {
-		return s[:len(substring)] + " " + s[len(substring):]
+func (s *Service) processNameByMailName(line string, mailName string, name *string) bool {
+	if NameIsFull(*name) || mailName == "" {
+		return false
 	}
-	return s
+
+	mailNames := strings.Split(mailName, ".")
+	for _, m := range mailNames {
+		if len(m) < 3 {
+			continue
+		}
+		if ContainsIgnoreCase(line, m) || ContainsIgnoreCase(m, line) {
+			*name += " " + line
+			return true
+		}
+	}
+	return false
+}
+
+func (s *Service) checkAndFixUrls(urls []string, emails []string) {
+	if len(urls) == 0 || len(emails) == 0 {
+		return
+	}
+	url := ExtractDomainAndZoneUrlFromUrl(urls[0])
+	partsEmail := strings.Split(emails[0], "@")
+	emailUrl := partsEmail[1]
+
+	diff := StringDifference(url, emailUrl)
+	if diff == 0 {
+		return
+	}
+	if diff < 3 {
+		urlOk := isSiteReachable(url)
+		if urlOk {
+			emails[0] = strings.Replace(emails[0], emailUrl, url, 1)
+		} else if isSiteReachable(emailUrl) {
+			urls[0] = strings.Replace(urls[0], url, emailUrl, 1)
+		}
+	}
+}
+
+func isSiteReachable(url string) bool {
+	if !strings.HasPrefix(url, "http://") && !strings.HasPrefix(url, "https://") {
+		url = "http://" + url
+	}
+	resp, err := http.Get(url)
+	if err != nil {
+		return false
+	}
+	defer resp.Body.Close()
+
+	return resp.StatusCode == http.StatusOK
 }
 
 func isContains(s string, list []string) bool {
@@ -231,37 +276,6 @@ func isContainsWithSpace(s string, list []string) bool {
 	return false
 }
 
-func extractBrokenUrl(text string, domains []string, zone string) string {
-	if len(domains) == 0 || zone == "" {
-		return ""
-	}
-
-	for _, domain := range domains {
-		urlRegex := regexp.MustCompile(`(?i)(www\.)?` + domain + `\s*\.?\s*` + zone + `\s*`)
-
-		// Поиск совпадения в тексте
-		match := urlRegex.FindString(text)
-		if match == "" {
-			continue
-		}
-
-		if strings.HasPrefix(match, "www") {
-			return "www." + domain + "." + zone
-		}
-		return domain + "." + zone
-	}
-
-	return ""
-
-}
-
-func clearTrashSymbols(val string) string {
-	val = strings.TrimFunc(val, func(r rune) bool {
-		return !unicode.IsLetter(r) && !unicode.IsNumber(r) && r != '+' && r != '@' && r != '(' && r != ')'
-	})
-	return val
-}
-
 func clearPhones(phones []string) []string {
 	for i, phone := range phones {
 		phones[i] = strings.TrimLeftFunc(phone, func(r rune) bool {
@@ -274,7 +288,7 @@ func clearPhones(phones []string) []string {
 
 	rez := make([]string, 0)
 	for _, phone := range phones {
-		if countDigits(phone) > 8 {
+		if CountDigits(phone) > 8 {
 			rez = append(rez, phone)
 		}
 	}
@@ -295,36 +309,6 @@ func CheckIsPartOfDomain(item string, domains []string) bool {
 		}
 	}
 	return false
-}
-
-func ContainsIgnoreCase(s, substr string) bool {
-	if s == "" || substr == "" {
-		return false
-	}
-	s, substr = strings.ToUpper(s), strings.ToUpper(substr)
-	return strings.Contains(s, substr)
-}
-
-func countDigits(input string) int {
-	count := 0
-	for _, char := range input {
-		if unicode.IsDigit(char) {
-			count++
-		}
-	}
-	return count
-}
-
-func notContainsLetters(phone string) bool {
-	for i, r := range phone {
-		if unicode.IsDigit(r) {
-			// Проверить соседние символы на наличие букв
-			if (i > 0 && unicode.IsLetter(rune(phone[i-1]))) || (i < len(phone)-1 && unicode.IsLetter(rune(phone[i+1]))) {
-				return false
-			}
-		}
-	}
-	return true
 }
 
 func NameIsFull(val string) bool {

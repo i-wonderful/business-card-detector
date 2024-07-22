@@ -358,10 +358,10 @@ func TestDetect(t *testing.T) {
 			"4095.JPG",
 			BASE_IMG_PATH + "/IMG_4095.jpg",
 			&model.Person{
-				Email:    []string{"taras.kolesnikov@coinspaid.com"},
-				Telegram: []string{"t.me/Taras_CoinsPaid"},
-				Phone:    []string{"+375445165298"},
-				//Name:         "TARAS KOLESNIKOV", todo TARAS KOLESNIKOV
+				Email:        []string{"taras.kolesnikov@coinspaid.com"},
+				Telegram:     []string{"t.me/Taras_CoinsPaid"},
+				Phone:        []string{"+375445165298"},
+				Name:         "TARASKOLESNIKOV", // todo TARAS KOLESNIKOV
 				Organization: "CoinsPaid",
 				JobTitle:     "Sales manager",
 			},

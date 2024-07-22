@@ -1,6 +1,7 @@
 package field_sort
 
 import (
+	"card_detector/internal/service/field_sort/helper"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -97,7 +98,7 @@ func TestExtractURL(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			result := extractURL(tc.input)
+			result := helper.ExtractURL(tc.input)
 			for k, v := range tc.expected {
 				assert.Equal(t, v, result[k])
 			}

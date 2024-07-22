@@ -1,5 +1,5 @@
 name: card_detector
-version: 3.0.2
+version: 3.0.3
 
 port: 8080
 

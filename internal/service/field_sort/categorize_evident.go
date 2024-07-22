@@ -1,7 +1,7 @@
 package field_sort
 
 import (
-	"card_detector/internal/service/field_sort/helper"
+	. "card_detector/internal/service/field_sort/helper"
 	"strings"
 )
 
@@ -26,7 +26,7 @@ func (s *Service) categorizeEvidentFields(data []string) (map[string]interface{}
 	var skype, name string
 
 	for i, line := range data {
-		line = clearTrashSymbols(line)
+		line = ClearTrashSymbols(line)
 
 		if s.processPhone(line, &phones) {
 			continue
@@ -67,7 +67,7 @@ func (s *Service) categorizeEvidentFields(data []string) (map[string]interface{}
 }
 
 func (s *Service) processPhone(line string, phones *[]string) bool {
-	if phoneRegex.MatchString(line) && notContainsLetters(line) {
+	if phoneRegex.MatchString(line) && NotContainsLetters(line) {
 		p := phoneRegex.FindString(line)
 		*phones = append(*phones, p)
 		return true
@@ -98,11 +98,11 @@ func (s *Service) processTelegram(line string, telegram *[]string) bool {
 }
 
 func (s *Service) processSkype(line string, skype *string) bool {
-	if sk := helper.ExtractLiveSkype(line); sk != "" {
+	if sk := ExtractLiveSkype(line); sk != "" {
 		*skype = sk
 		return true
 	}
-	if sk := helper.ExtractSkypeSkype(line); sk != "" {
+	if sk := ExtractSkypeSkype(line); sk != "" {
 		*skype = sk
 		return true
 	}
@@ -110,7 +110,7 @@ func (s *Service) processSkype(line string, skype *string) bool {
 }
 
 func (s *Service) processUrls(line string, urls *[]string) bool {
-	if w := extractURL(line); len(w) > 0 {
+	if w := ExtractURL(line); len(w) > 0 {
 		*urls = append(*urls, w...)
 		return true
 	}

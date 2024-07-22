@@ -50,9 +50,9 @@ func (s *Service) Rotage(imgFile *os.File) (image.Image, string) {
 	// резкость (???)
 	//im = imaging.Sharpen(im, 0.36)
 	// светлость
-	im = imaging.AdjustGamma(im, 1.6)
+	//im = imaging.AdjustGamma(im, 1.6)
 	// яркость
-	im = imaging.AdjustBrightness(im, -10)
+	//im = imaging.AdjustBrightness(im, -5)
 	//im = img.BinarizeImage(im, 80)
 	// увеличить контраст
 	//im = imaging.AdjustContrast(im, 20)
@@ -97,7 +97,12 @@ func (s *Service) ResizeAndSaveForPaddle(im *image.Image, boxes []model.TextArea
 	resized := img.ResizeImageByHeight(*im, paddleSize)
 
 	resized = resizeImage(resized, paddleSize)
-	resized = imaging.AdjustContrast(resized, 2)
+	// светлость
+	resized = imaging.AdjustGamma(resized, 1.6)
+	// яркость
+	resized = imaging.AdjustBrightness(resized, -10)
+
+	resized = imaging.AdjustContrast(resized, 15)
 	resized = imaging.AdjustSigmoid(resized, 0.5, -3.0)
 
 	newWidth := resized.Bounds().Max.X

@@ -4,12 +4,7 @@ import "strings"
 
 // ExtractDomainFromUrl - извлечение имени домена из URL
 func ExtractDomainFromUrl(url string) string {
-	// Удаляем протокол, если он есть
-	if strings.Contains(url, "://") {
-		parts := strings.Split(url, "://")
-		url = parts[len(parts)-1]
-	}
-	url = strings.TrimPrefix(url, "www.")
+	url = ExtractDomainAndZoneUrlFromUrl(url)
 	parts := strings.Split(url, ".")
 
 	// Возвращаем первую часть (имя домена)
@@ -18,6 +13,17 @@ func ExtractDomainFromUrl(url string) string {
 	}
 
 	return ""
+}
+
+func ExtractDomainAndZoneUrlFromUrl(url string) string {
+	// Удаляем протокол, если он есть
+	if strings.Contains(url, "://") {
+		parts := strings.Split(url, "://")
+		url = parts[len(parts)-1]
+	}
+	url = strings.TrimPrefix(url, "www.")
+
+	return url
 }
 
 // ExtractMainNameDomainAndZone - извлечение основного имени, домена и зоны

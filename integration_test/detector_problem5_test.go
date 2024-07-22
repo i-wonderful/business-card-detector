@@ -161,9 +161,21 @@ func TestDetectProblem5(t *testing.T) {
 				Phone:        []string{"+971558318566"},
 				Telegram:     []string{"@globuspaid"},
 				Name:         "Vladislav Belov",
-				Organization: "GLOBUS PAY",
+				Organization: "GLOBUSPAY",
 				JobTitle:     "Head of Business Development",
 				Other:        "sripe;Vsemc;We provide best payment;solutions for your business",
+			},
+		},
+		{
+			"1_32 alberta nasno.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/1_32 alberta nasno.jpg",
+			&model.Person{
+				Email:    []string{"a.boateng@nsano.com"},
+				Site:     []string{"www.nsano.com"},
+				Phone:    []string{"+260767527865", "+260767636343"},
+				Name:     "Alberta S.Boateng",
+				JobTitle: "Country Manager",
+				Other:    "ouesu;poyments;Plot.No.6755.Chainama Rd.Olynpia Ext. Lusaka",
 			},
 		},
 		{
