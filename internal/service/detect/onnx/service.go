@@ -1,6 +1,7 @@
 package onnx
 
 import (
+	img2 "card_detector/internal/util/img"
 	"fmt"
 	"github.com/nfnt/resize"
 	ort "github.com/yalue/onnxruntime_go"
@@ -110,6 +111,8 @@ func prepare_input(img image.Image) ([]float32, int64, int64) {
 
 	img = resize.Resize(IMG_SIZE, IMG_SIZE, img, resize.Lanczos3)
 
+	path := manage_file.GenerateFileName("./tmp", "for_onnx", "jpg")
+	img2.SaveJpeg(&img, path)
 	// collect the colors of pixels to different arrays
 	red := []float32{}
 	green := []float32{}

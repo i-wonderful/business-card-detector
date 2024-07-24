@@ -4,7 +4,6 @@ import (
 	"card_detector/internal/service/detect/onnx"
 	manage_file "card_detector/internal/util/file"
 	"github.com/disintegration/imaging"
-	"golang.org/x/image/draw"
 	"image"
 	"log"
 	"os"
@@ -57,6 +56,10 @@ func (s *Service) Rotage(imgFile *os.File) (image.Image, string) {
 	// увеличить контраст
 	//im = imaging.AdjustContrast(im, 20)
 
+	//im = img.CutShapeFromCenter(im)
+	//path := manage_file.GenerateFileName(s.tmpFolder, "cut", "jpg")
+	//img.SaveJpeg(&im, path)
+
 	//----- save rotated image
 	//bytes := img.ToBytes(im)
 	//currentFilePath := s.storageFolder + "/" + uuid.New().String() + "." + format
@@ -96,7 +99,7 @@ func (s *Service) ResizeAndSaveForPaddle(im *image.Image, boxes []model.TextArea
 	oldHeight := (*im).Bounds().Max.Y
 	resized := img.ResizeImageByHeight(*im, paddleSize)
 
-	resized = resizeImage(resized, paddleSize)
+	resized = img.ResizeImage(resized, paddleSize)
 	// светлость
 	resized = imaging.AdjustGamma(resized, 1.6)
 	// яркость
@@ -182,27 +185,4 @@ func getOrientation(imgFile *os.File) string {
 	} else {
 		return orientation.String()
 	}
-}
-
-func resizeImage(img image.Image, minSize int) image.Image {
-	bounds := img.Bounds()
-	width, height := bounds.Dx(), bounds.Dy()
-
-	if width >= minSize && height >= minSize {
-		return img
-	}
-
-	var newWidth, newHeight int
-	if width < height {
-		newWidth = minSize
-		newHeight = height * minSize / width
-	} else {
-		newHeight = minSize
-		newWidth = width * minSize / height
-	}
-
-	newImg := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
-	draw.ApproxBiLinear.Scale(newImg, newImg.Bounds(), img, bounds, draw.Over, nil)
-
-	return newImg
 }

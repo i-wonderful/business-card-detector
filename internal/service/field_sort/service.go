@@ -6,6 +6,7 @@ import (
 	manage_file "card_detector/internal/util/file"
 	"log"
 	"net/http"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -77,13 +78,24 @@ func (s *Service) Sort(data []model.DetectWorld, boxes []model.TextArea) map[str
 	}
 
 	if skype == "" {
-		if isOk, box := isContainsSkype(boxes); isOk {
+		if isOk, box := isContainsLabel(boxes, "skype"); isOk {
 			worldSkype, index := FindNearestWorld(data, box)
 			if index != -1 {
 				skype = worldSkype.Text
 				data = remove(data, index)
 			}
 		}
+	}
+
+	if len(telegram) == 0 {
+		if isOk, box := isContainsLabel(boxes, "telegram"); isOk {
+			worldTelegram, index := FindNearestWorld(data, box)
+			if index != -1 {
+				telegram = append(telegram, worldTelegram.Text)
+				data = remove(data, index)
+			}
+		}
+
 	}
 
 	for _, word := range data {
@@ -93,8 +105,6 @@ func (s *Service) Sort(data []model.DetectWorld, boxes []model.TextArea) map[str
 			continue
 		}
 
-		//
-		//} else
 		if isContains(line, s.professions) {
 			jobTitle += " " + line
 		} else if company == "" && isContains(line, s.companies) {
@@ -195,7 +205,9 @@ func (s *Service) processNameByMailName(line string, mailName string, name *stri
 		return false
 	}
 
-	mailNames := strings.Split(mailName, ".")
+	re := regexp.MustCompile(`[._]`)
+	mailNames := re.Split(mailName, -1)
+
 	for _, m := range mailNames {
 		if len(m) < 3 {
 			continue
@@ -337,9 +349,9 @@ func keepIndexes(slice []model.DetectWorld, indexes []int) []model.DetectWorld {
 	return newSlice
 }
 
-func isContainsSkype(boxes []model.TextArea) (bool, *model.TextArea) {
+func isContainsLabel(boxes []model.TextArea, label string) (bool, *model.TextArea) {
 	for _, box := range boxes {
-		if box.Label == "skype" {
+		if box.Label == label {
 			return true, &box
 		}
 	}
