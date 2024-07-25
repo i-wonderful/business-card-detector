@@ -18,17 +18,26 @@ model_rec_path = sys.argv[3]
 
 rec_image_shape=[3, 30, 320] # [3, 48, 320]
 
-engine = RapidOCR(rec_model_path=model_rec_path, det_model_path=model_det_path, rec_image_shape=rec_image_shape)
+engine = RapidOCR(rec_model_path=model_rec_path, det_model_path=model_det_path,
+                  rec_image_shape=rec_image_shape,
+                  # det_score_mode='slow',
+                  # det_box_thresh=0.2,
+                  # rec_batch_num=10,
+                  det_limit_side_len=200,
+                  )
 
 box_thresh = 0.4
 unclip_ratio = 1.4
 text_score = 0.88
 
-result, elapse = engine(img_path, box_thresh=box_thresh, unclip_ratio=unclip_ratio, text_score=text_score,
+result, elapse = engine(img_path,
+                        det_box_thresh=box_thresh, unclip_ratio=unclip_ratio, text_score=text_score,
                         rec_image_shape=rec_image_shape,
-                        #drop_score=0.9
+                        #det_donot_use_dilation=True,
+                        drop_score=0.4,
+                        use_cls=False,
                         # drop_score=0.3,
-                        # crop_word_box=True
+                        crop_word_box=True
                         )
 
 for idx in range(len(result)):

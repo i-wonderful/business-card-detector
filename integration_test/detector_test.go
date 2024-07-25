@@ -147,7 +147,7 @@ func TestDetect(t *testing.T) {
 				Name:         "Russ Yershon",
 				Email:        []string{"russell@connectingbrands.co.uk"},
 				Phone:        []string{"+44 (0)7500828120"},
-				JobTitle:     "Sports partnership and activation specialist Talent Manager to wide network of Football Legends Director", // todo
+				JobTitle:     "Sports partnership and activation specialist",
 				Site:         []string{"Connectingbrands.co.uk"},
 				Organization: "CONNECTING", // todo CONNECTING BRANDS .co.ux
 				//Skype:        []string{"russ.yershon"}, todo

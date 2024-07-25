@@ -48,7 +48,9 @@ func ClearTrashSymbols(val string) string {
 func InsertSpaceIfNeeded(s, substring string) string {
 	lowerS := strings.ToLower(s)
 	lowerSubstring := strings.ToLower(substring)
-	if strings.HasPrefix(lowerS, lowerSubstring) && len(s) > len(substring) && s[len(substring)] != ' ' {
+	if strings.HasPrefix(lowerS, lowerSubstring) && len(s) > len(substring) &&
+		unicode.IsLetter(rune(s[len(substring)])) {
+		//	(s[len(substring)] != ' ' && s[len(substring)] != ',' && s[len(substring)] != '.')
 		return s[:len(substring)] + " " + s[len(substring):]
 	}
 	return s

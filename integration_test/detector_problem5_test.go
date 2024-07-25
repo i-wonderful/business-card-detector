@@ -167,6 +167,32 @@ func TestDetectProblem5(t *testing.T) {
 			},
 		},
 		{
+			"1_28 kolawole wewire.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/1_28 kolawole wewire.jpg",
+			&model.Person{
+				Email:        []string{"kofo@wewire.com"},
+				Site:         []string{"wewire.com"},
+				Phone:        []string{"+234 807444 0966"},
+				Name:         "Kofoworola Kolawole",
+				Organization: "WeWire",
+				JobTitle:     "Lead, BD Nigeria",
+				Other:        "Daynents",
+			},
+		},
+		{
+			"1_29 dende first bank.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/1_29 dende first bank.jpg",
+			&model.Person{
+				Email:        []string{"Zacharie.d.dende@fbnbankrdc.com"},
+				Site:         []string{"www.fbnbankrdc.com"},
+				Phone:        []string{"+243817002229", "+243829832902"},
+				Name:         "DENDE DIA DENDE Zacharie",
+				Organization: "FirstBank",
+				JobTitle:     "Branch Manager",
+				Other:        "DRC;FirstBank DRC SA;07,Av/ de l'Aerodrome,C/Kalamu",
+			},
+		},
+		{
 			"1_32 alberta nasno.jpg",
 			BASE_IMG_PROBLEM5_PATH + "/1_32 alberta nasno.jpg",
 			&model.Person{
@@ -176,6 +202,43 @@ func TestDetectProblem5(t *testing.T) {
 				Name:     "Alberta S.Boateng",
 				JobTitle: "Country Manager",
 				Other:    "ouesu;poyments;Plot.No.6755.Chainama Rd.Olynpia Ext. Lusaka",
+			},
+		},
+		{
+			"1_34 cenk lingdom bank.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/1_34 cenk lingdom bank.jpg",
+			&model.Person{
+				Email:        []string{"cenk.saltan@thekingdombank.com"},
+				Site:         []string{"thekingdombank.com"},
+				Name:         "Cenk Saltan",
+				Organization: "Kingdom Bank", // todo The Kingdom Bank
+				JobTitle:     "Business Development Manager",
+				Other:        "seftlement",
+			},
+		},
+		{
+			"1_35 jamie orbital.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/1_35 jamie orbital.jpg",
+			&model.Person{
+				Email:    []string{"jamie.zammitt@getorbital.com"},
+				Site:     []string{"getorbital.com"},
+				Phone:    []string{"+35054096000"},
+				Name:     "Jamie Zammitt",
+				JobTitle: "Business Development Director",
+				Other:    "2C2 Leisure lsland;Business Centre;Ocean Village, Gibraltar",
+			},
+		},
+		{
+			"1_36 amit netwallet.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/1_36 amit netwallet.jpg",
+			&model.Person{
+				Email:        []string{"lehri@thenetwallet.com"},
+				Phone:        []string{"+971585935717"},
+				Telegram:     []string{"@netwallet1"},
+				Name:         "AMIT BANSAL",
+				Organization: "NetWallet",
+				JobTitle:     "Account Manager Payments-Asia Pacific",
+				Other:        "Spend Your Money With Confidence",
 			},
 		},
 		{
@@ -191,6 +254,42 @@ func TestDetectProblem5(t *testing.T) {
 				Organization: "REV",
 				JobTitle:     "Chief Operating Officer",
 				Other:        "ONE STOP DIGITAL;MARKETING AGENCY",
+			},
+		},
+		{
+			"1_42 vittor paybrokers.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/1_42 vittor paybrokers.jpg",
+			&model.Person{
+				Email:        []string{"vittor.alberti@paybrokers.com.br"},
+				Phone:        []string{"+5541992535669"},
+				Name:         "VITTOR ALBERTI",
+				Organization: "PAYBROKERS",
+				JobTitle:     "ACCOUNT MANAGER",
+				Other:        "PiX;com",
+			},
+		},
+		{
+			"1_43 taras coinspaid.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/1_43 taras coinspaid.jpg",
+			&model.Person{
+				Email:    []string{"taras.kolesnikov@coinspaid.com"},
+				Telegram: []string{"@Taras_CoinsPaid"},
+				Name:     "Taras Kolesnikov",
+				JobTitle: "LEAD SALES MANAGER",
+				Other:    "etypto",
+			},
+		},
+		{
+			"1_45 caroline capitalize.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/1_45 caroline capitalize.jpg",
+			&model.Person{
+				Email:        []string{"cm@capitalixe.com"},
+				Site:         []string{"www.capitalixe.com"},
+				Phone:        []string{"+4402080888035", "+44 0)7553734915"},
+				Name:         "Caroline Moreno",
+				Organization: "",
+				JobTitle:     "Head of Business Development",
+				Other:        "erypto;Forbes;HONOREE;EUROPE2021",
 			},
 		},
 	}

@@ -105,9 +105,11 @@ func (s *Service) Sort(data []model.DetectWorld, boxes []model.TextArea) map[str
 			continue
 		}
 
-		if isContains(line, s.professions) {
-			jobTitle += " " + line
-		} else if company == "" && isContains(line, s.companies) {
+		if jobTitle == "" && s.processJobTitle(line, &jobTitle) {
+			continue
+		}
+
+		if company == "" && isContains(line, s.companies) {
 			company = line
 		} else if address == "" && ContainsIgnoreCase(line, "address") {
 			address = line
@@ -220,6 +222,18 @@ func (s *Service) processNameByMailName(line string, mailName string, name *stri
 	return false
 }
 
+func (s *Service) processJobTitle(line string, jobTitle *string) bool {
+	isFind, namesFind := isContainsManyWith(line, s.professions)
+	if isFind {
+		*jobTitle = line
+		for _, n := range namesFind { // вставляем пробелы, если в должности они пропущены
+			*jobTitle = InsertSpaceIfNeeded(*jobTitle, n)
+		}
+		return true
+	}
+	return false
+}
+
 func (s *Service) checkAndFixUrls(urls []string, emails []string) {
 	if len(urls) == 0 || len(emails) == 0 {
 		return
@@ -268,6 +282,19 @@ func isContainsWith(s string, list []string) (bool, string) {
 		}
 	}
 	return false, ""
+}
+
+func isContainsManyWith(s string, list []string) (bool, []string) {
+	s = strings.ToLower(s)
+	contains := make([]string, 0)
+	isFind := false
+	for _, p := range list {
+		if strings.Contains(s, p) {
+			contains = append(contains, p)
+			isFind = true
+		}
+	}
+	return isFind, contains
 }
 
 // После найденной подстроки должны идти пробелы или конец строки.
