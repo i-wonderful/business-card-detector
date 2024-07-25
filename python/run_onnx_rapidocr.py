@@ -1,5 +1,6 @@
-from rapidocr_onnxruntime import RapidOCR
 import sys
+
+from rapidocr_onnxruntime import RapidOCR
 
 #
 # Detector PaddleOCR onnx
@@ -8,8 +9,8 @@ import sys
 #   - path to detection pnnx model
 #   - path to recognition pnnx model
 # example:
-#model_rec_path = './lib/paddleocr/onnx/en_PP-OCRv4_rec_infer.onnx'
-#model_det_path = './lib/paddleocr/onnx/en_PP-OCRv3_det_infer.onnx'
+# model_rec_path = './lib/paddleocr/onnx/en_PP-OCRv4_rec_infer.onnx'
+# model_det_path = './lib/paddleocr/onnx/en_PP-OCRv3_det_infer.onnx'
 
 img_path = sys.argv[1]
 model_det_path = sys.argv[2]
@@ -23,11 +24,13 @@ box_thresh = 0.4
 unclip_ratio = 1.4
 text_score = 0.88
 
-
-result, elapse = engine(img_path, box_thresh=box_thresh, unclip_ratio=unclip_ratio, text_score=text_score, rec_image_shape=rec_image_shape)
+result, elapse = engine(img_path, box_thresh=box_thresh, unclip_ratio=unclip_ratio, text_score=text_score,
+                        rec_image_shape=rec_image_shape,
+                        #drop_score=0.9
+                        # drop_score=0.3,
+                        # crop_word_box=True
+                        )
 
 for idx in range(len(result)):
     res = result[idx]
     print(res)
-
-

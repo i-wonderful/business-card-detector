@@ -8,8 +8,9 @@ import (
 	"unicode"
 )
 
-const closerHPercent = 0.25
-const percentCloserH = 0.08 // если высота боксов не различается больше чем на 8%, то считаем боксы близкими
+const closerHPercent = 0.25 // если высота боксов не различается больше чем на 25%, то считаем боксы близкими
+const percentCloserX = 0.15 // если расстояние между боксами не различается больше чем на 15%, то считаем боксы близкими
+
 // MergeBoxes - merge boxes with close values
 func MergeBoxes(boxes []DetectWorld) []DetectWorld {
 	sortByHeight(boxes)
@@ -22,14 +23,15 @@ func MergeBoxes(boxes []DetectWorld) []DetectWorld {
 		if i+1 < len(boxes) {
 			next := &boxes[i+1]
 			isCloser25Percent := isCloserH(prev.Box.H, next.Box.H)
-			isCloser2Percent := isCloserX(prev.Box.PTop1.X, next.Box.PTop1.X)
+			hMax := Max(prev.Box.H, next.Box.H)
+			isCloser2Percent := isCloserX(prev.Box.PTop1.X, next.Box.PTop1.X, hMax)
 			if isCloser25Percent && isCloser2Percent &&
 				isOnlyLetters(prev.Text) && isOnlyLetters(next.Text) {
 
 				if i+2 < len(boxes) {
 					next2 := &boxes[i+2]
 					isCloser25Percent2 := isCloserH(next.Box.H, next2.Box.H)
-					isCloser2Percent2 := isCloserX(next.Box.PTop1.X, next2.Box.PTop1.X)
+					isCloser2Percent2 := isCloserX(next.Box.PTop1.X, next2.Box.PTop1.X, hMax)
 					if isCloser25Percent2 && isCloser2Percent2 &&
 						isOnlyLetters(next.Text) && isOnlyLetters(next2.Text) {
 
@@ -120,9 +122,9 @@ func isCloserH(a, b int) bool {
 	return diff <= limitPercent
 }
 
-func isCloserX(a, b int) bool {
+func isCloserX(a, b, h int) bool {
 	diff := math.Abs(float64(a - b))
-	limitPercent := percentCloserH * float64(Max(a, b)) // todo 0.03 (?)
+	limitPercent := percentCloserX * float64(h)
 	return diff <= limitPercent
 }
 

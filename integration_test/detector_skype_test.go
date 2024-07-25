@@ -48,9 +48,9 @@ func TestDetectSkype(t *testing.T) {
 				Site:  []string{"viorel.stanagshmedia.com"}, // todo
 				Skype: []string{"viorel.stan87"},            // not detect pict
 				//Name:  "Viorel Stan", // todo
-				Organization: "ViorelStan CEO", // todo "GSH"
-				//JobTitle:     "CEO",
-				Other: "ViorelStan",
+				Organization: "ViorelStan", // todo "GSH"
+				JobTitle:     "CEO",
+				Other:        "ViorelStan",
 			},
 		},
 		{

@@ -21,14 +21,14 @@ func TestWithinTenPercent(t *testing.T) {
 
 func TestCloserHeight(t *testing.T) {
 	tests := []struct {
-		a, b   int
-		result bool
+		a, b, h int
+		result  bool
 	}{
-		{89, 82, true},
+		{89, 82, 10, true},
 	}
 
 	for _, test := range tests {
-		if got := isCloserX(test.a, test.b); got != test.result {
+		if got := isCloserX(test.a, test.b, test.h); got != test.result {
 			t.Errorf("withinTenPercent(%d, %d) = %v; want %v", test.a, test.b, got, test.result)
 		}
 	}

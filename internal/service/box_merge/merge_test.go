@@ -79,6 +79,40 @@ func TestMerge(t *testing.T) {
 				),
 			},
 		},
+		{
+			"Merge Vladislav Belov2",
+			[]model.DetectWorld{
+				{
+					Text: "Vladislav",
+					Box: model.NewBoxFromPoints(
+						model.NewPoint(97, 315),
+						model.NewPoint(427, 315),
+						model.NewPoint(427, 377),
+						model.NewPoint(97, 377),
+					),
+					Prob: 0.98896325,
+				},
+				{
+					Text: "Belov",
+					Box: model.NewBoxFromPoints(
+						model.NewPoint(89, 389),
+						model.NewPoint(299, 391),
+						model.NewPoint(298, 454),
+						model.NewPoint(88, 452),
+					),
+					Prob: 0.9925569,
+				},
+			},
+			model.DetectWorld{
+				Text: "Vladislav Belov",
+				Box: model.NewBoxFromPoints(
+					model.NewPoint(89, 315),
+					model.NewPoint(427, 315),
+					model.NewPoint(427, 454),
+					model.NewPoint(88, 452),
+				),
+			},
+		},
 	}
 
 	for _, tc := range testCases {

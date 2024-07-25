@@ -49,6 +49,18 @@ func TestDetectTelegram(t *testing.T) {
 				Other:        "Maks S",
 			},
 		},
+		{
+			"1_40_invert.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/1_40_invert.jpg",
+			&model.Person{
+				Email: []string{"ms@paycord.com"},
+				//Telegram: []string{"m_pkr"}, //todo
+				//Name:         "", // todo
+				Organization: "paycord",
+				JobTitle:     "Chief Operating Officer",
+				Other:        "Maks S",
+			},
+		},
 	}
 
 	testDetector, config := createDetector2(t)
