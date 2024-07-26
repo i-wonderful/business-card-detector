@@ -17,6 +17,7 @@ ul li {
 /* ------------------------ Header ---------------------------- */
 
 .card-detector-title {
+
     display: flex;
     justify-content: center;
     align-items: center;
@@ -35,7 +36,7 @@ ul li {
 }
 
 .word-spacer {
-    width: 30px;
+    width: 36px;
 }
 
 /* ---------------------------- Footer --------------------------- */
