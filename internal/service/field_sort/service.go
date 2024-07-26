@@ -4,6 +4,7 @@ import (
 	"card_detector/internal/model"
 	. "card_detector/internal/service/field_sort/helper"
 	manage_file "card_detector/internal/util/file"
+	manage_str "card_detector/internal/util/str"
 	"log"
 	"net/http"
 	"regexp"
@@ -99,7 +100,7 @@ func (s *Service) Sort(data []model.DetectWorld, boxes []model.TextArea) map[str
 	}
 
 	for _, word := range data {
-		line := ClearTrashSymbols(word.Text)
+		line := manage_str.ClearTrashSymbols(word.Text)
 
 		if company == "" && s.processCompanyByDomain(line, domain, &company) {
 			continue
@@ -109,7 +110,7 @@ func (s *Service) Sort(data []model.DetectWorld, boxes []model.TextArea) map[str
 			continue
 		}
 
-		if company == "" && isContains(line, s.companies) {
+		if company == "" && manage_str.IsContains(line, s.companies) {
 			company = line
 		} else if address == "" && ContainsIgnoreCase(line, "address") {
 			address = line
@@ -194,7 +195,7 @@ func (s *Service) processCompanyByDomain(line string, domains []string, company 
 }
 
 func (s *Service) processNameByExistingNames(line string, name *string) bool {
-	isFind, nameFind := isContainsWith(line, s.names)
+	isFind, nameFind := manage_str.IsContainsWith(line, s.names)
 	if isFind {
 		*name = InsertSpaceIfNeeded(line, nameFind)
 		return true
@@ -267,21 +268,6 @@ func isSiteReachable(url string) bool {
 	defer resp.Body.Close()
 
 	return resp.StatusCode == http.StatusOK
-}
-
-func isContains(s string, list []string) bool {
-	isOk, _ := isContainsWith(s, list)
-	return isOk
-}
-
-func isContainsWith(s string, list []string) (bool, string) {
-	s = strings.ToLower(s)
-	for _, p := range list {
-		if strings.Contains(s, p) {
-			return true, p
-		}
-	}
-	return false, ""
 }
 
 func isContainsManyWith(s string, list []string) (bool, []string) {

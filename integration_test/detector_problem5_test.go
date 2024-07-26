@@ -16,7 +16,6 @@ func TestDetectProblem5(t *testing.T) {
 		expected *model.Person
 	}{
 		{
-			// todo
 			"0_3. Yummypay Danil.jpg",
 			BASE_IMG_PROBLEM5_PATH + "/0_3. Yummypay Danil.jpg",
 			&model.Person{
@@ -30,7 +29,6 @@ func TestDetectProblem5(t *testing.T) {
 				Other:        "Ae-406sy.ygt.pap;5-59;mptp;skype:;email:",
 			},
 		},
-
 		{
 			"0_5. Newton CCO.jpg",
 			BASE_IMG_PROBLEM5_PATH + "/0_5. Newton CCO.jpg",
@@ -67,6 +65,18 @@ func TestDetectProblem5(t *testing.T) {
 			},
 		},
 		{
+			"0_17. kirill.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/0_17. kirill.jpg",
+			&model.Person{
+				Email:    []string{"d.k@scipiopay.com"},
+				Site:     []string{"scipiopay.com"},
+				Telegram: []string{"@KlrillMan"},
+				Name:     "KIRILL",
+				JobTitle: "Business Developer",
+				Other:    "com;Cpr;kumo.Ureoio;U126;wwVia.mcteut;81.-12;apura;trust;Telegram;Web;adptrepo",
+			},
+		},
+		{
 			"0_18. gate2way.jpg",
 			BASE_IMG_PROBLEM5_PATH + "/0_18. gate2way.jpg",
 			&model.Person{
@@ -76,18 +86,6 @@ func TestDetectProblem5(t *testing.T) {
 				Organization: "gate2way",
 				JobTitle:     "BDM",
 				Other:        "Tnelil;",
-			},
-		},
-		{
-			"0_17. kirill.jpg", // 1_17. kirill.jpg
-			BASE_IMG_PROBLEM5_PATH + "/0_17. kirill.jpg",
-			&model.Person{
-				Email:    []string{"d.k@scipiopay.com"},
-				Site:     []string{"scipiopay.com"},
-				Telegram: []string{"@KlrillMan"},
-				Name:     "KIRILL",
-				JobTitle: "Business Developer",
-				Other:    "com;Cpr;kumo.Ureoio;U126;wwVia.mcteut;81.-12;apura;trust;Telegram;Web;adptrepo",
 			},
 		},
 		{
@@ -114,6 +112,19 @@ func TestDetectProblem5(t *testing.T) {
 				Telegram:     []string{"@GTC_Payment"},
 				Organization: "Global Transaction Charge",
 				Other:        "u2.femo;Btopcce;Phone;Email;Web",
+			},
+		},
+		{
+			"0_27. David zammit.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/0_27. David zammit.jpg",
+			&model.Person{
+				Email:    []string{"dz@vallettapay.com"},
+				Site:     []string{"www.vallettapay.com"},
+				Phone:    []string{"+35679707069"},
+				Skype:    []string{"davidzammitfcca"},
+				Name:     "David Zammit",
+				JobTitle: "CEO",
+				Other:    "Website",
 			},
 		},
 		{

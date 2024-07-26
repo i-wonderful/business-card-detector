@@ -37,13 +37,6 @@ func NotContainsLetters(phone string) bool {
 	return true
 }
 
-func ClearTrashSymbols(val string) string {
-	val = strings.TrimFunc(val, func(r rune) bool {
-		return !unicode.IsLetter(r) && !unicode.IsNumber(r) && r != '+' && r != '@' && r != '(' && r != ')'
-	})
-	return val
-}
-
 // InsertSpaceIfNeeded - Вставляет пробелы если нужно. После подстроки должны идти пробелы или конец строки.
 func InsertSpaceIfNeeded(s, substring string) string {
 	lowerS := strings.ToLower(s)

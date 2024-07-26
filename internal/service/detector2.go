@@ -110,8 +110,7 @@ func (d *Detector2) Detect(imgPath string) (*model.Person, string, error) {
 	}
 
 	// 5. merge text blocks
-	detectWorlds = box_merge.MergeBoxes(detectWorlds)
-	//detectWorlds = box_merge.MergeBoxes(detectWorlds)
+	detectWorlds = box_merge.MergeBoxesVertical(detectWorlds)
 
 	if d.isDebug {
 		log.Println("Recognized worlds: ")

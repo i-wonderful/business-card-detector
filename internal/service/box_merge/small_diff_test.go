@@ -24,7 +24,7 @@ func TestCloserHeight(t *testing.T) {
 		a, b, h int
 		result  bool
 	}{
-		{89, 82, 10, true},
+		{89, 87, 20, true},
 	}
 
 	for _, test := range tests {

@@ -2,6 +2,7 @@ package field_sort
 
 import (
 	. "card_detector/internal/service/field_sort/helper"
+	. "card_detector/internal/util/str"
 	"strings"
 )
 
@@ -78,7 +79,7 @@ func (s *Service) processPhone(line string, phones *[]string) bool {
 func (s *Service) processEmail(line string, emails *[]string, skype *string) bool {
 	if match := emailRegex.FindStringSubmatch(line); len(match) > 1 {
 		findEmail := strings.Replace(match[1], " ", "", -1)
-		if !isContains(findEmail, *emails) && !ContainsIgnoreCase(line, "skype") {
+		if !IsContains(findEmail, *emails) && !ContainsIgnoreCase(line, "skype") {
 			*emails = append(*emails, findEmail)
 		} else if *skype == "" {
 			*skype = findEmail

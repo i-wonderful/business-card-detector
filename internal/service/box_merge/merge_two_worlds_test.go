@@ -117,7 +117,7 @@ func TestMerge(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			merged := MergeBoxes(tc.boxes)
+			merged := MergeBoxesVertical(tc.boxes)
 			if assert.Equal(t, 1, len(merged)) {
 				assert.Equal(t, tc.expected.Text, merged[0].Text)
 				assert.Equal(t, tc.expected.Box.PTop1, merged[0].Box.PTop1)

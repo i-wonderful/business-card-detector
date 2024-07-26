@@ -23,7 +23,7 @@ engine = RapidOCR(rec_model_path=model_rec_path, det_model_path=model_det_path,
                   # det_score_mode='slow',
                   # det_box_thresh=0.2,
                   # rec_batch_num=10,
-                  det_limit_side_len=200,
+                  #det_limit_side_len=200,
                   )
 
 box_thresh = 0.4
@@ -34,10 +34,10 @@ result, elapse = engine(img_path,
                         det_box_thresh=box_thresh, unclip_ratio=unclip_ratio, text_score=text_score,
                         rec_image_shape=rec_image_shape,
                         #det_donot_use_dilation=True,
-                        drop_score=0.4,
-                        use_cls=False,
+                        #drop_score=0.4,
+                        #use_cls=False,
                         # drop_score=0.3,
-                        crop_word_box=True
+                        #crop_word_box=True
                         )
 
 for idx in range(len(result)):
