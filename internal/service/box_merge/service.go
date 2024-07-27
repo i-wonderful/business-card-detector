@@ -11,6 +11,8 @@ import (
 
 const closerHPercent = 0.25 // если высота боксов не различается больше чем на 25%, то считаем боксы близкими
 const percentCloserX = 0.15 // если расстояние между боксами не различается больше чем на 15%, то считаем боксы близкими
+const closerLineByYPercent = 0.09
+
 var keyWorlds = []string{"Phone", "tel", "Email", "mail", "Skype", "Website", "site", "web", "telegram"}
 
 // MergeBoxesVertical - merge boxes with close values
@@ -33,14 +35,17 @@ func MergeBoxesVertical(boxes []DetectWorld) []DetectWorld {
 
 		if i+1 < len(boxes) {
 			next := &boxes[i+1]
-			isCloser25Percent := isCloserH(prev.Box.H, next.Box.H)
 			hMax := Max(prev.Box.H, next.Box.H)
-			isCloser2Percent := isCloserX(prev.Box.PTop1.X, next.Box.PTop1.X, hMax)
-			if isCloser25Percent && isCloser2Percent &&
+
+			isCloserH := isCloserHeight(prev.Box.H, next.Box.H)
+			isCloserXCoord := isCloserX(prev.Box.PTop1.X, next.Box.PTop1.X, hMax)
+			isCloserLines := isCloserLines(prev.Box, next.Box)
+			// todo check if merge fio and job
+			if isCloserH && (isCloserXCoord || isCloserLines) &&
 				isOnlyLetters(prev.Text) && isOnlyLetters(next.Text) {
 				if i+2 < len(boxes) {
 					next2 := &boxes[i+2]
-					isCloser25Percent2 := isCloserH(next.Box.H, next2.Box.H)
+					isCloser25Percent2 := isCloserHeight(next.Box.H, next2.Box.H)
 					isCloser2Percent2 := isCloserX(next.Box.PTop1.X, next2.Box.PTop1.X, hMax)
 					if isCloser25Percent2 && isCloser2Percent2 &&
 						isOnlyLetters(next.Text) && isOnlyLetters(next2.Text) {
@@ -76,6 +81,24 @@ func MergeBoxesVertical(boxes []DetectWorld) []DetectWorld {
 	}
 
 	return rez
+}
+
+func isCloserLines(box Rectangle, box2 Rectangle) bool {
+	maxHeightDifference := Max(box.H, box2.H)
+	// Calculate the bottom y-coordinate of the first rectangle
+	bottomYBox := Max(box.PBot1.Y, box.PBot2.Y)
+
+	// Calculate the top y-coordinate of the second rectangle
+	topYBox2 := Min(box2.PTop1.Y, box2.PTop2.Y)
+
+	// Calculate the distance between the bottom of the first rectangle and the top of the second rectangle
+	distance := Abs(topYBox2 - bottomYBox)
+
+	// Calculate the 10% of the height of the rectangles
+	threshold := closerLineByYPercent * float64(maxHeightDifference)
+
+	// Check if the distance is within the threshold
+	return float64(distance) <= threshold
 }
 
 func MergeKeyWorldsHorizontal(boxes []DetectWorld) []DetectWorld {
@@ -115,7 +138,7 @@ func sortByHeight(worlds []DetectWorld) []DetectWorld {
 	sort.Slice(worlds, func(i, j int) bool {
 		w1 := worlds[i]
 		w2 := worlds[j]
-		if isCloserH(w1.Box.H, w2.Box.H) {
+		if isCloserHeight(w1.Box.H, w2.Box.H) {
 			return w1.Box.PTop1.Y < w2.Box.PTop1.Y
 		}
 		return w1.Box.H > w2.Box.H
@@ -154,7 +177,7 @@ func sortByY(worlds []DetectWorld) []DetectWorld {
 }
 
 // Числа отличаются не более чем на 25%
-func isCloserH(a, b int) bool {
+func isCloserHeight(a, b int) bool {
 	diff := math.Abs(float64(a - b))
 	limitPercent := closerHPercent * float64(Max(a, b))
 	return diff <= limitPercent

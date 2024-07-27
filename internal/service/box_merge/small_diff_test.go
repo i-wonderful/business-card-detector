@@ -13,7 +13,7 @@ func TestWithinTenPercent(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if got := isCloserH(test.a, test.b); got != test.result {
+		if got := isCloserHeight(test.a, test.b); got != test.result {
 			t.Errorf("withinTenPercent(%d, %d) = %v; want %v", test.a, test.b, got, test.result)
 		}
 	}

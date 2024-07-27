@@ -32,7 +32,7 @@ func TestDetectTelegram(t *testing.T) {
 			&model.Person{
 				Email:    []string{"german_cvo@expay.cash"},
 				Telegram: []string{"magnus_exp"},
-				Name:     "GermanS",
+				Name:     "German S",
 				JobTitle: "CVO Expay",
 				Other:    "GermanS;NFC))",
 			},

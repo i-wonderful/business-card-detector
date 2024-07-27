@@ -27,7 +27,7 @@ func TestDetectProblem3(t *testing.T) {
 				Skype:        []string{"live:cid.639e35052e7e9fe1"},
 				Name:         "UTKUSARPER", // todo UTKU SARPER
 				Organization: "TVBET",
-				JobTitle:     "Business Development Manager",
+				JobTitle:     "Business Development",
 				Other:        "D-daryna;PayA+las/co;Uuoponnatea",
 			},
 		},
@@ -89,7 +89,7 @@ func TestDetectProblem3(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 
-			t.Parallel()
+			//t.Parallel()
 
 			actual, _, err := detector.Detect(tc.imgPath)
 

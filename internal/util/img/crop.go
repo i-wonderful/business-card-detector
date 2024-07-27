@@ -100,7 +100,7 @@ func CropToSquareCenter(img image.Image, percent float64) image.Image {
 }
 
 // CutSquareFromCenter вырезает квадратное изображение из центра прямоугольного изображения.
-func CutSquareFromCenter(srcImg image.Image) (image.Image, error) {
+func CutSquareFromCenter(srcImg image.Image) (image.Image, int, int) {
 	// Определение размеров исходного изображения
 	srcBounds := srcImg.Bounds()
 	width, height := srcBounds.Dx(), srcBounds.Dy()
@@ -118,7 +118,7 @@ func CutSquareFromCenter(srcImg image.Image) (image.Image, error) {
 	// Копирование части исходного изображения в новое квадратное изображение
 	draw.Draw(dstImg, dstImg.Bounds(), srcImg, srcImg.Bounds().Min.Add(image.Pt(x, y)), draw.Src)
 
-	return dstImg, nil
+	return dstImg, x, y
 }
 
 // CutShapeFromCenter вырезает квадратное или прямоугольное изображение из центра прямоугольного изображения,

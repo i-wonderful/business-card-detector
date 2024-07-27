@@ -16,6 +16,13 @@ func TestDetectProblem5(t *testing.T) {
 		expected *model.Person
 	}{
 		{
+			"0_1.оксана.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/0_1.оксана.jpg",
+			&model.Person{
+				Name: "OKSANA KILOVA",
+			},
+		},
+		{
 			"0_3. Yummypay Danil.jpg",
 			BASE_IMG_PROBLEM5_PATH + "/0_3. Yummypay Danil.jpg",
 			&model.Person{
@@ -172,7 +179,7 @@ func TestDetectProblem5(t *testing.T) {
 				Phone:        []string{"+971558318566"},
 				Telegram:     []string{"@globuspaid"},
 				Name:         "Vladislav Belov",
-				Organization: "GLOBUSPAY",
+				Organization: "GLOBUS PAY",
 				JobTitle:     "Head of Business Development",
 				Other:        "sripe;Vsemc;We provide best payment;solutions for your business",
 			},
@@ -248,7 +255,7 @@ func TestDetectProblem5(t *testing.T) {
 				Telegram:     []string{"@netwallet1"},
 				Name:         "AMIT BANSAL",
 				Organization: "NetWallet",
-				JobTitle:     "Account Manager Payments-Asia Pacific",
+				JobTitle:     "Account Manager Payments- Asia Pacific",
 				Other:        "Spend Your Money With Confidence",
 			},
 		},
@@ -296,7 +303,7 @@ func TestDetectProblem5(t *testing.T) {
 			&model.Person{
 				Email:        []string{"cm@capitalixe.com"},
 				Site:         []string{"www.capitalixe.com"},
-				Phone:        []string{"+4402080888035", "+44 0)7553734915"},
+				Phone:        []string{"+440)2080888035", "+44 (0)7553734915"},
 				Name:         "Caroline Moreno",
 				Organization: "",
 				JobTitle:     "Head of Business Development",

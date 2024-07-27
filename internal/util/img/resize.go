@@ -65,43 +65,12 @@ func ResizeImageByHeight(img image.Image, h int) image.Image {
 	// Создаем новое изображение с рассчитанными размерами
 	//newImg := imaging.Resize(img, newW, h, imaging.Lanczos)
 
-	newImg := r.Thumbnail(uint(newW), uint(h), img, r.NearestNeighbor) //  r.Bilinear
+	newImg := r.Thumbnail(uint(newW), uint(h), img, r.Lanczos3) //  r.Bilinear
 
 	// Заполняем фон белым цветом, чтобы избежать прозрачного фона
 	//newImg = imaging.Fill(newImg, bounds.Max.X, bounds.Max.Y, color.White, imaging.Top, imaging.Left)
 
 	return newImg
 }
-
-//func ResizeToL(img image.Image, l int) image.Image {
-//	bounds := img.Bounds()
-//	w, h := bounds.Max.X, bounds.Max.Y
-//
-//	// Определяем большую сторону
-//	max := int(math.Max(float64(w), float64(h)))
-//
-//	// Если большая сторона меньше l, вычисляем новые размеры
-//	if max < l {
-//		ratio := float64(l) / float64(max)
-//		newW, newH := int(float64(w)*ratio), int(float64(h)*ratio)
-//
-//		// Создаем новое изображение с новыми размерами
-//		newImg := image.NewRGBA(image.Box(0, 0, newW, newH))
-//
-//		// Растягиваем исходное изображение
-//		for x := 0; x < newW; x++ {
-//			for y := 0; y < newH; y++ {
-//				srcX := int(float64(x) / ratio)
-//				srcY := int(float64(y) / ratio)
-//				newImg.Set(x, y, img.At(srcX, srcY))
-//			}
-//		}
-//
-//		return newImg
-//	}
-//
-//	// Если большая сторона не меньше l, возвращаем исходное изображение
-//	return img
-//}
 
 // todo try https://github.com/aaronland/go-image/blob/main/resize/resize.go

@@ -77,16 +77,28 @@ func (s *Service) Rotage(imgFile *os.File) (image.Image, string) {
 func (s *Service) CropCard(im image.Image, boxes []model.TextArea) image.Image {
 	for _, box := range boxes {
 		if box.Label == onnx.CARD_CLASS {
+			if box.IsSquare() {
+				im, offsetX, offsetY := img.CutSquareFromCenter(im)
+				boxes_util.Transpose(boxes, offsetX, offsetY)
+				log.Printf("Cropped center square: %dx%d", im.Bounds().Max.X, im.Bounds().Max.Y)
+				return im
+			}
+
 			var padding int //15
 			if box.IsVertical() {
 				padding = 0
 			} else {
 				padding = 10
 			}
+			x := box.X - padding
+			y := box.Y - padding
+			w := box.Width + padding // ??? calculate
+			h := box.Height + padding
 
-			subImg, offsetX, offsetY := img.CropSquare(im, box.X-padding, box.Y-padding, box.Width+padding, box.Height+padding)
+			subImg, offsetX, offsetY := img.CropSquare(im, x, y, w, h)
 			boxes_util.Transpose(boxes, offsetX, offsetY)
 
+			log.Printf("Cropped card: %dx%d", subImg.Bounds().Max.X, subImg.Bounds().Max.Y)
 			return subImg
 		}
 	}
@@ -99,7 +111,10 @@ func (s *Service) ResizeAndSaveForPaddle(im *image.Image, boxes []model.TextArea
 	oldHeight := (*im).Bounds().Max.Y
 	resized := img.ResizeImageByHeight(*im, paddleSize)
 
-	resized = img.ResizeImage(resized, paddleSize)
+	log.Printf("Resized To H = %dx%d", resized.Bounds().Max.X, resized.Bounds().Max.Y)
+
+	resized = img.ResizeImage(resized, paddleSize) // ?? растянуть до нужного размера
+	log.Printf("Scaled = %dx%d", resized.Bounds().Max.X, resized.Bounds().Max.Y)
 	// светлость
 	resized = imaging.AdjustGamma(resized, 1.6)
 	// яркость

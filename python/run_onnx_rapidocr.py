@@ -35,7 +35,7 @@ result, elapse = engine(img_path,
                         rec_image_shape=rec_image_shape,
                         #det_donot_use_dilation=True,
                         #drop_score=0.4,
-                        #use_cls=False,
+                        use_cls=False,
                         # drop_score=0.3,
                         #crop_word_box=True
                         )
