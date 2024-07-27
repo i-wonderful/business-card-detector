@@ -7,7 +7,12 @@ import (
 
 func ClearTrashSymbols(val string) string {
 	val = strings.TrimFunc(val, func(r rune) bool {
-		return !unicode.IsLetter(r) && !unicode.IsNumber(r) && r != '+' && r != '@' && r != '(' && r != ')'
+		return !unicode.IsLetter(r) && !unicode.IsNumber(r) &&
+			r != '+' &&
+			r != '@' &&
+			r != '(' &&
+			r != ')' &&
+			r != '.'
 	})
 	return val
 }

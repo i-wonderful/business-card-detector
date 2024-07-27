@@ -52,6 +52,8 @@ func (s *Service) Sort(data []model.DetectWorld, boxes []model.TextArea) map[str
 	recognized, indexesNotDetect := s.categorizeEvidentFields(worlds)
 	data = keepIndexes(data, indexesNotDetect)
 
+	data = s.categorizeByIcons(recognized, data, boxes)
+
 	if _, ok := recognized[FIELD_TELEGRAM]; ok {
 		telegram = recognized[FIELD_TELEGRAM].([]string)
 	}
@@ -76,27 +78,6 @@ func (s *Service) Sort(data []model.DetectWorld, boxes []model.TextArea) map[str
 			d := ExtractDomainFromUrl(site)
 			domain = append(domain, d)
 		}
-	}
-
-	if skype == "" {
-		if isOk, box := isContainsLabel(boxes, "skype"); isOk {
-			worldSkype, index := FindNearestWorld(data, box)
-			if index != -1 {
-				skype = worldSkype.Text
-				data = remove(data, index)
-			}
-		}
-	}
-
-	if len(telegram) == 0 {
-		if isOk, box := isContainsLabel(boxes, "telegram"); isOk {
-			worldTelegram, index := FindNearestWorld(data, box)
-			if index != -1 {
-				telegram = append(telegram, worldTelegram.Text)
-				data = remove(data, index)
-			}
-		}
-
 	}
 
 	for _, word := range data {
@@ -208,6 +189,10 @@ func (s *Service) processNameByMailName(line string, mailName string, name *stri
 		return false
 	}
 
+	if len(mailName) < 3 {
+		return s.processNameByInitials(line, mailName, name)
+	}
+
 	re := regexp.MustCompile(`[._]`)
 	mailNames := re.Split(mailName, -1)
 
@@ -221,6 +206,42 @@ func (s *Service) processNameByMailName(line string, mailName string, name *stri
 		}
 	}
 	return false
+}
+
+func (s *Service) processNameByInitials(line string, mailName string, name *string) bool {
+	if len(mailName) > 3 {
+		return false
+	}
+	initials := GetInitials(line)
+	if initials == "" {
+		return false
+	}
+
+	if ContainsIgnoreCase(mailName, initials) || ContainsIgnoreCase(initials, mailName) {
+		*name = line
+		return true
+	}
+	return false
+}
+
+func GetInitials(name string) string {
+	// Разделяем строку на слова
+	words := strings.Fields(name)
+
+	if len(words) == 1 {
+		return ""
+	}
+
+	initials := []rune{}
+	for _, word := range words {
+		if len(word) > 0 && unicode.IsLetter(rune(word[0])) {
+			initials = append(initials, rune(word[0]))
+		}
+	}
+	if len(initials) == 0 {
+		return ""
+	}
+	return string(initials)
 }
 
 func (s *Service) processJobTitle(line string, jobTitle *string) bool {
@@ -360,15 +381,6 @@ func keepIndexes(slice []model.DetectWorld, indexes []int) []model.DetectWorld {
 		}
 	}
 	return newSlice
-}
-
-func isContainsLabel(boxes []model.TextArea, label string) (bool, *model.TextArea) {
-	for _, box := range boxes {
-		if box.Label == label {
-			return true, &box
-		}
-	}
-	return false, nil
 }
 
 func remove(slice []model.DetectWorld, index int) []model.DetectWorld {

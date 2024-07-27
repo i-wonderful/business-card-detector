@@ -172,6 +172,18 @@ func TestDetectProblem5(t *testing.T) {
 			},
 		},
 		{
+			"1_12 daniele payfun.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/1_12 daniele payfun.jpg",
+			&model.Person{
+				Email:        []string{"daniele.costa@p4f.com"},
+				Phone:        []string{"+551198828-7406"},
+				Name:         "Daniele Costa",
+				Organization: "pay4funp4f",
+				//JobTitle:     "Marketing", todo
+				Other: "PAY FOR FUH",
+			},
+		},
+		{
 			"1_20 vladislav globus.jpg",
 			BASE_IMG_PROBLEM5_PATH + "/1_20 vladislav globus.jpg",
 			&model.Person{
@@ -182,6 +194,18 @@ func TestDetectProblem5(t *testing.T) {
 				Organization: "GLOBUS PAY",
 				JobTitle:     "Head of Business Development",
 				Other:        "sripe;Vsemc;We provide best payment;solutions for your business",
+			},
+		},
+		{
+			"1_22 matt pay.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/1_22 matt pay.jpg",
+			&model.Person{
+				Email:        []string{"mc@pay.cc"},
+				Phone:        []string{"+357 97 422172"},
+				Telegram:     []string{"@mcpaycc"},
+				Name:         "MATT C.",
+				Organization: "pay",
+				JobTitle:     "Head of Sales",
 			},
 		},
 		{
