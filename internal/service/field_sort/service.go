@@ -7,7 +7,6 @@ import (
 	manage_str "card_detector/internal/util/str"
 	"log"
 	"net/http"
-	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -46,10 +45,9 @@ func (s *Service) Sort(data []model.DetectWorld, boxes []model.TextArea) map[str
 	websites := []string{}
 	telegram := []string{}
 
-	notDetectItems := []string{}
+	notDetectItems := []model.DetectWorld{}
 
-	worlds := GetOnlyWorlds(data)
-	recognized, indexesNotDetect := s.categorizeEvidentFields(worlds)
+	recognized, indexesNotDetect, nameWorld := s.categorizeEvidentFields(data)
 	data = keepIndexes(data, indexesNotDetect)
 
 	data = s.categorizeByIcons(recognized, data, boxes)
@@ -96,13 +94,13 @@ func (s *Service) Sort(data []model.DetectWorld, boxes []model.TextArea) map[str
 		} else if address == "" && ContainsIgnoreCase(line, "address") {
 			address = line
 		} else {
-			notDetectItems = append(notDetectItems, line)
+			notDetectItems = append(notDetectItems, word)
 		}
 	}
 
-	other := []string{}
-	for _, item := range notDetectItems {
-		item = strings.TrimSpace(item)
+	notDetectItems2 := []model.DetectWorld{}
+	for _, word := range notDetectItems {
+		item := strings.TrimSpace(word.Text)
 
 		if len(emails) == 0 {
 			if s := extractEmail(item); s != "" {
@@ -134,11 +132,13 @@ func (s *Service) Sort(data []model.DetectWorld, boxes []model.TextArea) map[str
 		if name == "" {
 			if m := nameRegex.MatchString(item); m {
 				name = item
+				nameWorld = word
 				continue
 			}
 		}
 
 		if s.processNameByMailName(item, mailName, &name) {
+			nameWorld = word
 			continue
 		}
 
@@ -148,9 +148,10 @@ func (s *Service) Sort(data []model.DetectWorld, boxes []model.TextArea) map[str
 			continue
 		}
 
-		other = append(other, item)
+		notDetectItems2 = append(notDetectItems2, word)
 	}
 
+	s.processSurnameIfSingleName(&name, &nameWorld, notDetectItems2)
 	s.checkAndFixUrls(websites, emails)
 
 	person := recognized
@@ -162,7 +163,7 @@ func (s *Service) Sort(data []model.DetectWorld, boxes []model.TextArea) map[str
 	person[FIELD_TELEGRAM] = telegram
 	person[FIELD_URLS] = websites
 	person["jobTitle"] = strings.TrimSpace(jobTitle)
-	person["other"] = strings.Join(other, ";") + address
+	person["other"] = strings.Join(GetOnlyWorlds(notDetectItems2), ";") + address
 
 	return person
 }
@@ -173,75 +174,6 @@ func (s *Service) processCompanyByDomain(line string, domains []string, company 
 		return true
 	}
 	return false
-}
-
-func (s *Service) processNameByExistingNames(line string, name *string) bool {
-	isFind, nameFind := manage_str.IsContainsWith(line, s.names)
-	if isFind {
-		*name = InsertSpaceIfNeeded(line, nameFind)
-		return true
-	}
-	return false
-}
-
-func (s *Service) processNameByMailName(line string, mailName string, name *string) bool {
-	if NameIsFull(*name) || mailName == "" {
-		return false
-	}
-
-	if len(mailName) < 3 {
-		return s.processNameByInitials(line, mailName, name)
-	}
-
-	re := regexp.MustCompile(`[._]`)
-	mailNames := re.Split(mailName, -1)
-
-	for _, m := range mailNames {
-		if len(m) < 3 {
-			continue
-		}
-		if ContainsIgnoreCase(line, m) || ContainsIgnoreCase(m, line) {
-			*name += " " + line
-			return true
-		}
-	}
-	return false
-}
-
-func (s *Service) processNameByInitials(line string, mailName string, name *string) bool {
-	if len(mailName) > 3 {
-		return false
-	}
-	initials := GetInitials(line)
-	if initials == "" {
-		return false
-	}
-
-	if ContainsIgnoreCase(mailName, initials) || ContainsIgnoreCase(initials, mailName) {
-		*name = line
-		return true
-	}
-	return false
-}
-
-func GetInitials(name string) string {
-	// Разделяем строку на слова
-	words := strings.Fields(name)
-
-	if len(words) == 1 {
-		return ""
-	}
-
-	initials := []rune{}
-	for _, word := range words {
-		if len(word) > 0 && unicode.IsLetter(rune(word[0])) {
-			initials = append(initials, rune(word[0]))
-		}
-	}
-	if len(initials) == 0 {
-		return ""
-	}
-	return string(initials)
 }
 
 func (s *Service) processJobTitle(line string, jobTitle *string) bool {
@@ -355,11 +287,6 @@ func CheckIsPartOfDomain(item string, domains []string) bool {
 		}
 	}
 	return false
-}
-
-func NameIsFull(val string) bool {
-	names := strings.Split(val, " ")
-	return len(names) >= 2
 }
 
 func trim(val []string) []string {

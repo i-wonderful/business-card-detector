@@ -179,7 +179,7 @@ func TestDetectProblem5(t *testing.T) {
 				Phone:        []string{"+551198828-7406"},
 				Name:         "Daniele Costa",
 				Organization: "pay4funp4f",
-				//JobTitle:     "Marketing", todo
+				//JobTitle:     "Marketing", // todo
 				Other: "PAY FOR FUH",
 			},
 		},
@@ -209,6 +209,32 @@ func TestDetectProblem5(t *testing.T) {
 			},
 		},
 		{
+			"1_25 waseem consultipay.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/1_25 waseem consultipay.jpg",
+			&model.Person{
+				Email:        []string{"waseem@consultipay.com"},
+				Phone:        []string{"+23057779800"},
+				Telegram:     []string{"@Victorinv"},
+				Name:         "Waseem SK ALLY",
+				Organization: "ConsultiPay",
+				JobTitle:     "Sales Manager",
+				Other:        "Email;SOLUTIONSYOUCANTRUST",
+			},
+		},
+		{
+			"1_27 karolis genome.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/1_27 karolis genome.jpg",
+			&model.Person{
+				Email:        []string{"karolis.dula@genome.eu"},
+				Site:         []string{"genome.eu"},
+				Phone:        []string{"+37067764865"},
+				Name:         "KAROLIS DULA",
+				Organization: "genome",
+				JobTitle:     "Head of Account Management",
+				Other:        "Email;SOLUTIONSYOUCANTRUST",
+			},
+		},
+		{
 			"1_28 kolawole wewire.jpg",
 			BASE_IMG_PROBLEM5_PATH + "/1_28 kolawole wewire.jpg",
 			&model.Person{
@@ -232,6 +258,19 @@ func TestDetectProblem5(t *testing.T) {
 				Organization: "FirstBank",
 				JobTitle:     "Branch Manager",
 				Other:        "DRC;FirstBank DRC SA;07,Av/ de l'Aerodrome,C/Kalamu",
+			},
+		},
+		{
+			"1_30 cedric alianspay.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/1_30 cedric alianspay.jpg",
+			&model.Person{
+				Email:        []string{"cedric.handou@aliansgroup.tech", "contact@aliansgroup.tech"},
+				Site:         []string{"www.alianspay.com"},
+				Phone:        []string{"+237687506102", "+237655696734", "+237678456912"},
+				Name:         "Cedric HANDOU",
+				Organization: "AliansPay",
+				JobTitle:     "Head of Key Accounts",
+				Other:        "Fournisseur de solutions de paiement",
 			},
 		},
 		{
@@ -299,6 +338,19 @@ func TestDetectProblem5(t *testing.T) {
 			},
 		},
 		{
+			" 1_41 jesper qb.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/1_41 jesper qb.jpg",
+			&model.Person{
+				Email:        []string{"jesper.sundstrom@quickbit.com"},
+				Site:         []string{"quickbit.com"},
+				Phone:        []string{"+46768004001"},
+				Name:         "Jesper Sundstrom",
+				Organization: "CRYPTOPAYMENTS",
+				JobTitle:     "Head of Growth",
+				Other:        "MADEEASY;Quickbit eu AB (publ;Lastmakargatan 20;Sweden",
+			},
+		},
+		{
 			"1_42 vittor paybrokers.jpg",
 			BASE_IMG_PROBLEM5_PATH + "/1_42 vittor paybrokers.jpg",
 			&model.Person{
@@ -322,6 +374,17 @@ func TestDetectProblem5(t *testing.T) {
 			},
 		},
 		{
+			"1_44 angel bitlabz.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/1_44 angel bitlabz.jpg",
+			&model.Person{
+				Email:    []string{"amarinov-sales@bitlabz.com"},
+				Site:     []string{"www.bitlabz.com"},
+				Phone:    []string{"+359898242881"},
+				Name:     "Angel Marinov",
+				JobTitle: "Business Development",
+			},
+		},
+		{
 			"1_45 caroline capitalize.jpg",
 			BASE_IMG_PROBLEM5_PATH + "/1_45 caroline capitalize.jpg",
 			&model.Person{
@@ -332,6 +395,25 @@ func TestDetectProblem5(t *testing.T) {
 				Organization: "",
 				JobTitle:     "Head of Business Development",
 				Other:        "erypto;Forbes;HONOREE;EUROPE2021",
+			},
+		},
+		{
+			"1_46 andrey akslyse.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/1_46 andrey akslyse.jpg",
+			&model.Person{
+				Email:    []string{"ak@slyse.me"},
+				Telegram: []string{"@ak_slyse"},
+				Name:     "Andrey Konakov",
+				JobTitle: "Co-founder/coo",
+			},
+		},
+		{
+			"1_49 phivos letknow.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/1_49 phivos letknow.jpg",
+			&model.Person{
+				Email:        []string{"phivosc@letknow.com"},
+				Name:         "Phivos Constantinou",
+				Organization: "LetKnow Pay",
 			},
 		},
 	}

@@ -1,6 +1,7 @@
 package field_sort
 
 import (
+	"card_detector/internal/model"
 	. "card_detector/internal/service/field_sort/helper"
 	. "card_detector/internal/util/str"
 	"strings"
@@ -18,16 +19,17 @@ const (
 // categorizeEvidentFields - распределение очевидных полей
 // phones, emails, telegram, skype, urls, name
 // @return map[string]interface{}, []string - recognized fields and not recognized fields
-func (s *Service) categorizeEvidentFields(data []string) (map[string]interface{}, []int) {
+func (s *Service) categorizeEvidentFields(data []model.DetectWorld) (map[string]interface{}, []int, model.DetectWorld) {
 	notDetectItems := []int{}
 	phones := []string{}
 	emails := []string{}
 	urls := []string{}
 	telegram := []string{}
 	var skype, name string
+	var nameWorld model.DetectWorld
 
-	for i, line := range data {
-		line = ClearTrashSymbols(line)
+	for i, world := range data {
+		line := ClearTrashSymbols(world.Text)
 
 		if s.processPhone(line, &phones) {
 			continue
@@ -50,6 +52,7 @@ func (s *Service) categorizeEvidentFields(data []string) (map[string]interface{}
 		}
 
 		if name == "" && s.processNameByExistingNames(line, &name) {
+			nameWorld = world
 			continue
 		}
 
@@ -64,7 +67,7 @@ func (s *Service) categorizeEvidentFields(data []string) (map[string]interface{}
 		FIELD_URLS:     urls,
 		FIELD_NAME:     name,
 	}
-	return recognized, notDetectItems
+	return recognized, notDetectItems, nameWorld
 }
 
 func (s *Service) processPhone(line string, phones *[]string) bool {

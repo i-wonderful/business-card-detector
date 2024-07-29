@@ -3,7 +3,7 @@ package box_merge
 import (
 	. "card_detector/internal/model"
 	. "card_detector/internal/util/calc"
-	manage_str "card_detector/internal/util/str"
+	. "card_detector/internal/util/str"
 	"math"
 	"sort"
 	"unicode"
@@ -26,7 +26,7 @@ func MergeBoxesVertical(boxes []DetectWorld) []DetectWorld {
 	for i < len(boxes) {
 		prev := &boxes[i]
 
-		if manage_str.IsContains(prev.Text, keyWorlds) {
+		if IsContains(prev.Text, keyWorlds) {
 			rez = append(rez, *prev)
 			i++
 			isNeedMergeKeyWorlds = true
@@ -39,16 +39,15 @@ func MergeBoxesVertical(boxes []DetectWorld) []DetectWorld {
 
 			isCloserH := isCloserHeight(prev.Box.H, next.Box.H)
 			isCloserXCoord := isCloserX(prev.Box.PTop1.X, next.Box.PTop1.X, hMax)
-			isCloserLines := isCloserLines(prev.Box, next.Box)
-			// todo check if merge fio and job
-			if isCloserH && (isCloserXCoord || isCloserLines) &&
-				isOnlyLetters(prev.Text) && isOnlyLetters(next.Text) {
+			//isCloserLines := isCloserLines(prev.Box, next.Box)
+			if isCloserH && isCloserXCoord &&
+				IsOnlyLetters(prev.Text) && IsOnlyLetters(next.Text) {
 				if i+2 < len(boxes) {
 					next2 := &boxes[i+2]
 					isCloser25Percent2 := isCloserHeight(next.Box.H, next2.Box.H)
 					isCloser2Percent2 := isCloserX(next.Box.PTop1.X, next2.Box.PTop1.X, hMax)
 					if isCloser25Percent2 && isCloser2Percent2 &&
-						isOnlyLetters(next.Text) && isOnlyLetters(next2.Text) {
+						IsOnlyLetters(next.Text) && IsOnlyLetters(next2.Text) {
 
 						rez = append(rez, DetectWorld{
 							Text: prev.Text + " " + next.Text + " " + next2.Text,
@@ -105,7 +104,7 @@ func MergeKeyWorldsHorizontal(boxes []DetectWorld) []DetectWorld {
 	keyWorldsBoxes := []DetectWorld{}
 	rez := []DetectWorld{}
 	for _, w := range boxes {
-		if len(w.Text) < 6 && manage_str.IsContains(w.Text, keyWorlds) {
+		if len(w.Text) < 6 && IsContains(w.Text, keyWorlds) {
 			keyWorldsBoxes = append(keyWorldsBoxes, w)
 		} else {
 			rez = append(rez, w)
@@ -121,7 +120,7 @@ func MergeKeyWorldsHorizontal(boxes []DetectWorld) []DetectWorld {
 	for _, kwBox := range keyWorldsBoxes {
 		_, index := findNearestHorizontal(kwBox, rez)
 		if index >= 0 {
-			rez[index].Text = manage_str.ClearTrashSymbols(kwBox.Text) + " " + manage_str.ClearTrashSymbols(rez[index].Text)
+			rez[index].Text = ClearTrashSymbols(kwBox.Text) + " " + ClearTrashSymbols(rez[index].Text)
 			rez[index].Box.PTop1 = kwBox.Box.PTop1
 			rez[index].Box.PBot2 = kwBox.Box.PBot2
 		}
@@ -153,15 +152,6 @@ func isContainsDigits(val string) bool {
 		}
 	}
 	return false
-}
-
-func isOnlyLetters(val string) bool {
-	for _, r := range val {
-		if !unicode.IsLetter(r) /*&& r != ' ' && r != '-' && r != ',' && r != '.'*/ { // todo ???
-			return false
-		}
-	}
-	return true
 }
 
 func sortByY(worlds []DetectWorld) []DetectWorld {
