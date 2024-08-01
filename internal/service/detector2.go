@@ -4,7 +4,6 @@ import (
 	"card_detector/internal/service/box_merge"
 	"image"
 	"log"
-	"os"
 	"path/filepath"
 	"time"
 
@@ -14,9 +13,10 @@ import (
 )
 
 type ImgPreparer interface {
-	Rotage(imgFile *os.File) (image.Image, string)
+	Rotage(imgPath string) (image.Image, string, error)
 	CropCard(img image.Image, boxes []model.TextArea) image.Image
 	ResizeAndSaveForPaddle(im *image.Image, boxes []model.TextArea) (image.Image, string, error)
+	FillIcons(im image.Image, boxes []model.TextArea) image.Image
 }
 
 type RecognizerFull interface {
@@ -73,18 +73,11 @@ func (d *Detector2) Detect(imgPath string) (*model.Person, string, error) {
 			log.Printf(">>> Time full detection: %s", time.Since(start))
 		}()
 	}
-
-	// ----------------------
-	file, err := os.Open(imgPath)
+	// 1. возможный поворот
+	im, imgPath, err := d.imgPreparer.Rotage(imgPath)
 	if err != nil {
 		return nil, "", err
 	}
-	defer file.Close()
-	// ----------------------
-
-	// 1. возможный поворот
-	im, _ := d.imgPreparer.Rotage(file)
-
 	// 2. find card items
 	boxes, err := d.cardDetector.Detect(im)
 	if err != nil {
@@ -95,13 +88,16 @@ func (d *Detector2) Detect(imgPath string) (*model.Person, string, error) {
 	if d.isDebug {
 		log.Println("Detected: ")
 		for _, box := range boxes {
-			log.Println(box)
+			log.Println(box.ToString())
 		}
 	}
 
+	im2, _ := img.OpenImg(imgPath)
 	// 3. Prepare image for recognize text: crop card and resize to optimal square for paddle
-	im = d.imgPreparer.CropCard(im, boxes)
-	im, absPath, _ := d.imgPreparer.ResizeAndSaveForPaddle(&im, boxes)
+	im2 = d.imgPreparer.CropCard(im2, boxes)
+	boxes, _ = d.cardDetector.Detect(im2)
+	im2 = d.imgPreparer.FillIcons(im2, boxes)
+	im2, absPath, _ := d.imgPreparer.ResizeAndSaveForPaddle(&im2, boxes)
 
 	// 4. recognize text
 	detectWorlds, err := d.textRecognizeService.RecognizeImgByPath(absPath)
@@ -126,8 +122,8 @@ func (d *Detector2) Detect(imgPath string) (*model.Person, string, error) {
 	// 6. save
 	person := model.NewPerson(p)
 
-	boxesPath := img.DrawTextAndItemsBoxes(im, detectWorlds, boxes, d.storageFolder)
-	card := mapCard(*person, boxesPath, "", filepath.Base(file.Name()))
+	boxesPath := img.DrawTextAndItemsBoxes(im2, detectWorlds, boxes, d.storageFolder)
+	card := mapCard(*person, boxesPath, "", filepath.Base(imgPath))
 	if err := d.cardRepo.Save(card); err != nil {
 		log.Println("Error saving card:", err)
 	}

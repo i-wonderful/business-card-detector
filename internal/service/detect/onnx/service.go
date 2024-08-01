@@ -1,12 +1,12 @@
 package onnx
 
 import (
-	img2 "card_detector/internal/util/img"
 	"fmt"
 	"github.com/nfnt/resize"
 	ort "github.com/yalue/onnxruntime_go"
 	"image"
 	"log"
+	"math"
 	"sort"
 	"time"
 
@@ -21,7 +21,7 @@ const CARD_CLASS = "card"
 var yolo_classes = []string{"card", "location", "logo", "mail", "phone", "skype", "telegram", "web", "whatsapp"}
 
 const IOU_LIMIT = 0.8 // 0.8
-const PROB_MIN = 0.4  // 0.5
+const PROB_MIN = 0.3  // 0.5
 
 type box struct {
 	x1, y1, x2, y2 float64
@@ -78,17 +78,7 @@ func (s *CardDetectService) Detect(img image.Image) ([]model.TextArea, error) {
 		h := y2 - y1
 		w := x2 - x1
 
-		// борьба с наклонами.
-		// прибавка по высоте
-		//hAdd := get10Percent(h)
-		//y1 = y1 - hAdd
-		//h += 2 * hAdd
-		// прибавка по ширине
-		//wAdd := get20Percent(h)
-		//x1 = x1 - wAdd
-		//w += 2 * wAdd
-
-		prediction := model.TextArea{X: int(x1), Y: int(y1), Width: int(w), Height: int(h), Label: p.label}
+		prediction := model.TextArea{X: int(x1), Y: int(y1), Width: int(w), Height: int(h), Label: p.label, Prob: p.prob}
 		result = append(result, prediction)
 	}
 
@@ -105,14 +95,25 @@ func detect_objects_on_image(pathModel string, img image.Image) []box {
 //	the ONNX library for Go, requires you to provide tensor RGB as a flat array,
 //
 // e.g. to concat these three colors in one after one
-func prepare_input(img image.Image) ([]float32, int64, int64) {
-	size := img.Bounds().Size()
+func prepare_input(src image.Image) ([]float32, int64, int64) {
+	size := src.Bounds().Size()
 	img_width, img_height := int64(size.X), int64(size.Y)
 
-	img = resize.Resize(IMG_SIZE, IMG_SIZE, img, resize.Lanczos3)
+	//img = img2.ScaleToSquare(img, IMG_SIZE)
+	//img := imaging.Clone(src)
+	//img := img2.NormalizeImage(src)
+	//img = imaging.Resize(img, IMG_SIZE, IMG_SIZE, imaging.Lanczos)
+	//imaging.Invert(&img)
 
-	path := manage_file.GenerateFileName("./tmp", "for_onnx", "jpg")
-	img2.SaveJpeg(&img, path)
+	//img := imaging.Resize(src, IMG_SIZE, IMG_SIZE, imaging.Linear)
+	//src = imaging.AdjustSigmoid(src, 0.6, -7.0)
+	//img = imaging.AdjustBrightness(img, -7)
+	//src = imaging.AdjustGamma(src, 0.6)
+	img := resize.Resize(IMG_SIZE, IMG_SIZE, src, resize.Lanczos3)
+
+	//path := manage_file.GenerateFileName("./tmp", "for_onnx", "jpg")
+	//img2.SaveJpeg(&img, path)
+
 	// collect the colors of pixels to different arrays
 	red := []float32{}
 	green := []float32{}
@@ -223,4 +224,25 @@ func get10Percent(v float64) float64 {
 
 func get20Percent(v float64) float64 {
 	return v * 0.2
+}
+
+func normalizeChannel(channel []float32) []float32 {
+	var sum, sumSquared float64
+	length := float64(len(channel))
+
+	for _, value := range channel {
+		sum += float64(value)
+		sumSquared += float64(value) * float64(value)
+	}
+
+	mean := sum / length
+	variance := sumSquared/length - mean*mean
+	stddev := float32(math.Sqrt(variance))
+
+	normalized := make([]float32, len(channel))
+	for i, value := range channel {
+		normalized[i] = (value - float32(mean)) / stddev
+	}
+
+	return normalized
 }

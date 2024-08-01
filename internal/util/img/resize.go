@@ -67,6 +67,7 @@ func ResizeImageByHeight(img image.Image, h int) image.Image {
 
 	newImg := r.Thumbnail(uint(newW), uint(h), img, r.Lanczos3) //  r.Bilinear
 
+	//newImg := imaging.Resize(img, newW, h, imaging.Lanczos)
 	// Заполняем фон белым цветом, чтобы избежать прозрачного фона
 	//newImg = imaging.Fill(newImg, bounds.Max.X, bounds.Max.Y, color.White, imaging.Top, imaging.Left)
 

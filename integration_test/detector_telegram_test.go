@@ -30,11 +30,10 @@ func TestDetectTelegram(t *testing.T) {
 			"1_18 roman expay.jpg",
 			BASE_IMG_PROBLEM5_PATH + "/1_18 roman expay.jpg",
 			&model.Person{
-				Email: []string{"roman_cco@expay.cash"},
-				//Telegram: []string{"polzadeneg1"},
+				Email:    []string{"roman_cco@expay.cash"},
+				Telegram: []string{"polzadeneg1"},
 				Name:     "Roman Blinov",
 				JobTitle: "CCO Expay",
-				Other:    "Apolzadeneg1", // todo tg
 			},
 		},
 		{
@@ -52,20 +51,19 @@ func TestDetectTelegram(t *testing.T) {
 			"1_40 maks paycord.jpg",
 			BASE_IMG_PROBLEM5_PATH + "/1_40 maks paycord.jpg",
 			&model.Person{
-				Email: []string{"ms@paycord.com"},
-				//Telegram: []string{"m_pkr"}, //todo
+				Email:        []string{"ms@paycord.com"},
+				Telegram:     []string{"m_pkr"},
 				Name:         "Maks S",
 				Organization: "paycord",
 				JobTitle:     "Chief Operating Officer",
-				Other:        "",
 			},
 		},
 		{
 			"1_40_invert.jpg",
 			BASE_IMG_PROBLEM5_PATH + "/1_40_invert.jpg",
 			&model.Person{
-				Email: []string{"ms@paycord.com"},
-				//Telegram: []string{"m_pkr"}, //todo
+				Email:    []string{"ms@paycord.com"},
+				Telegram: []string{"m_pkr"},
 				//Name:         "", // todo
 				Organization: "paycord",
 				JobTitle:     "Chief Operating Officer",

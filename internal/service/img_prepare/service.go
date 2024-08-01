@@ -34,17 +34,31 @@ func NewService(storageFolder string, tmpFolder string) *Service {
 	}
 }
 
-func (s *Service) Rotage(imgFile *os.File) (image.Image, string) {
+func (s *Service) Rotage(imgPath string) (image.Image, string, error) {
+	// ----------------------
+	imgFile, err := os.Open(imgPath)
+	if err != nil {
+		return nil, "", err
+	}
+	defer imgFile.Close()
+	// ----------------------
+
 	orientation := getOrientation(imgFile)
 
-	im, _, err := image.Decode(imgFile)
+	im, format, err := image.Decode(imgFile)
 	if err != nil {
 		log.Printf("Error decoding image: %v", err)
-		return nil, ""
+		return nil, "", err
 	}
 
 	//im, _ = img.OpenJPEGAsNRGBA(imgFile.Name())
 	im, _ = RotateImageWithOrientation(im, orientation)
+
+	if orientation != ORIENTATION_NONE {
+		path := manage_file.GenerateFileName(s.tmpFolder, "rotated", format)
+		img.Save(&im, format, path)
+		imgPath = path
+	}
 
 	// резкость (???)
 	//im = imaging.Sharpen(im, 0.36)
@@ -70,7 +84,7 @@ func (s *Service) Rotage(imgFile *os.File) (image.Image, string) {
 	//}
 	// -----
 
-	return im, ""
+	return im, imgPath, nil
 }
 
 // CropCard - crop card by square from image and transpose boxes
@@ -100,6 +114,15 @@ func (s *Service) CropCard(im image.Image, boxes []model.TextArea) image.Image {
 
 			log.Printf("Cropped card: %dx%d", subImg.Bounds().Max.X, subImg.Bounds().Max.Y)
 			return subImg
+		}
+	}
+	return im
+}
+
+func (s *Service) FillIcons(im image.Image, boxes []model.TextArea) image.Image {
+	for _, box := range boxes {
+		if box.Label == "skype" || box.Label == "telegram" {
+			im = img.FillRectangle(im, box.X, box.Y, box.Width, box.Height)
 		}
 	}
 	return im
