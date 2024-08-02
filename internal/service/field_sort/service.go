@@ -153,6 +153,7 @@ func (s *Service) Sort(data []model.DetectWorld, boxes []model.TextArea) map[str
 
 	s.processSurnameIfSingleName(&name, &nameWorld, notDetectItems2)
 	s.checkAndFixUrls(websites, emails)
+	s.checkAndFixOrganization(&company, domain)
 
 	person := recognized
 	person[FIELD_EMAIL] = emails
@@ -196,7 +197,7 @@ func (s *Service) checkAndFixUrls(urls []string, emails []string) {
 	partsEmail := strings.Split(emails[0], "@")
 	emailUrl := partsEmail[1]
 
-	diff := StringDifference(url, emailUrl)
+	diff := LevenshteinDistance(url, emailUrl)
 	if diff == 0 {
 		return
 	}
@@ -208,6 +209,28 @@ func (s *Service) checkAndFixUrls(urls []string, emails []string) {
 			urls[0] = strings.Replace(urls[0], url, emailUrl, 1)
 		}
 	}
+}
+
+func (s *Service) checkAndFixOrganization(org *string, domainNames []string) {
+	if len(*org) == 0 || len(domainNames) == 0 {
+		return
+	}
+	domainName := domainNames[0]
+
+	clearOrg := strings.Replace(strings.ToLower(*org), " ", "", -1)
+	clearDomainName := strings.Replace(strings.ToLower(domainName), "-", "", -1)
+	diff := LevenshteinDistance(clearOrg, clearDomainName)
+
+	if diff == 0 || diff > 3 {
+		return
+	} else {
+		*org = domainName
+	}
+
+	if diff < 3 {
+		*org = domainName
+	}
+
 }
 
 func isSiteReachable(url string) bool {

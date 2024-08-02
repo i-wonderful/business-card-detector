@@ -341,6 +341,17 @@ func TestDetect(t *testing.T) {
 			},
 		},
 		{
+			"IMG_4050.jpg",
+			BASE_IMG_PATH + "/IMG_4050.jpg",
+			&model.Person{
+				Email:        []string{"irina.b@payop.com"},
+				Site:         []string{"payop.com"},
+				Name:         "Borkun Irynd", // todo Borkun Iryna
+				Organization: "payop",
+				JobTitle:     "Head of Business Development",
+			},
+		},
+		{
 			"4077.JPG",
 			BASE_IMG_PATH + "/IMG_4077.jpg",
 			&model.Person{

@@ -61,6 +61,30 @@ func TestDetectProblem5(t *testing.T) {
 			},
 		},
 		{
+			"0_11. corytech Nik.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/0_11. corytech Nik.jpg",
+			&model.Person{
+				Email:        []string{"nik.chepenko@corytech.io"},
+				Phone:        []string{"+380958744466"},
+				Name:         "CHEPENKO", // todo NIK CHEPENKO
+				Organization: "corytech",
+				JobTitle:     "HEAD OF SALES",
+				Other:        "Crpto;DEPARTMENT",
+			},
+		},
+		{
+			"0_11. corytech Nik-clear.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/0_11. corytech Nik-clear.jpg",
+			&model.Person{
+				Email:        []string{"nik.chepenko@corytech.io"},
+				Phone:        []string{"+380958744466"},
+				Name:         "NIK CHEPENKO",
+				Organization: "corytech",
+				JobTitle:     "HEAD OF SALES",
+				Other:        "DEPARTMENT",
+			},
+		},
+		{
 			"0_14. paytiqo.jpg",
 			BASE_IMG_PROBLEM5_PATH + "/0_14. paytiqo.jpg",
 			&model.Person{
@@ -295,6 +319,16 @@ func TestDetectProblem5(t *testing.T) {
 				Organization: "Kingdom Bank", // todo The Kingdom Bank
 				JobTitle:     "Business Development Manager",
 				Other:        "seftlement",
+			},
+		}, {
+			"1_34 cenk lingdom bank-clear.jpg",
+			BASE_IMG_PROBLEM5_PATH + "/1_34 cenk lingdom bank-clear.jpg",
+			&model.Person{
+				Email:        []string{"cenk.saltan@thekingdombank.com"},
+				Site:         []string{"thekingdombank.com"},
+				Name:         "Cenk Saltan",
+				Organization: "The Kingdom Bank",
+				JobTitle:     "Business Development Manager",
 			},
 		},
 		{

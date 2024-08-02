@@ -49,6 +49,57 @@ func InsertSpaceIfNeeded(s, substring string) string {
 	return s
 }
 
+// Функция для нахождения минимального значения среди трех чисел
+func min(a, b, c int) int {
+	if a < b {
+		if a < c {
+			return a
+		}
+		return c
+	}
+	if b < c {
+		return b
+	}
+	return c
+}
+
+// LevenshteinDistance - Функция для вычисления расстояния Левенштейна
+func LevenshteinDistance(a, b string) int {
+	a = strings.ToLower(a)
+	b = strings.ToLower(b)
+
+	// Создание двумерного среза для хранения значений
+	dp := make([][]int, len(a)+1)
+	for i := range dp {
+		dp[i] = make([]int, len(b)+1)
+	}
+
+	// Инициализация базовых значений
+	for i := 0; i <= len(a); i++ {
+		dp[i][0] = i
+	}
+	for j := 0; j <= len(b); j++ {
+		dp[0][j] = j
+	}
+
+	// Заполнение таблицы
+	for i := 1; i <= len(a); i++ {
+		for j := 1; j <= len(b); j++ {
+			if a[i-1] == b[j-1] {
+				dp[i][j] = dp[i-1][j-1]
+			} else {
+				dp[i][j] = min(
+					dp[i-1][j]+1,   // Удаление
+					dp[i][j-1]+1,   // Вставка
+					dp[i-1][j-1]+1, // Замена
+				)
+			}
+		}
+	}
+
+	return dp[len(a)][len(b)]
+}
+
 // StringDifference - calculates how different two strings are.
 func StringDifference(a, b string) int {
 	a = strings.ToLower(a)
