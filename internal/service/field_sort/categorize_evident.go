@@ -51,7 +51,7 @@ func (s *Service) categorizeEvidentFields(data []model.DetectWorld) (map[string]
 			continue
 		}
 
-		if name == "" && s.processNameByExistingNames(line, &name) {
+		if name == "" && s.processNameByKnownNames(line, &name) {
 			nameWorld = world
 			continue
 		}

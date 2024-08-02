@@ -14,3 +14,12 @@ func IsOnlyLetters(val string) bool {
 	}
 	return true
 }
+
+func IsOnlyLettersExtend(val string) bool {
+	for _, r := range val {
+		if !unicode.IsLetter(r) && r != '-' && r != ' ' && r != ',' && r != '.' { // todo ???
+			return false
+		}
+	}
+	return true
+}

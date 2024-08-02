@@ -126,3 +126,17 @@ func StringDifference(a, b string) int {
 	diff += calc.Abs(len(aRunes) - len(bRunes))
 	return diff
 }
+
+// RemoveSingleBrackets удаляет одиночные скобки из строки
+func RemoveSingleBrackets(phone string) string {
+	openCount := strings.Count(phone, "(")
+	closeCount := strings.Count(phone, ")")
+
+	if openCount == closeCount {
+		return phone
+	}
+
+	phone = strings.ReplaceAll(phone, "(", "")
+	phone = strings.ReplaceAll(phone, ")", "")
+	return phone
+}

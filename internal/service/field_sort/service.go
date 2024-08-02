@@ -85,7 +85,7 @@ func (s *Service) Sort(data []model.DetectWorld, boxes []model.TextArea) map[str
 			continue
 		}
 
-		if jobTitle == "" && s.processJobTitle(line, &jobTitle) {
+		if s.processJobByKnownJobs(line, &jobTitle) {
 			continue
 		}
 
@@ -154,6 +154,7 @@ func (s *Service) Sort(data []model.DetectWorld, boxes []model.TextArea) map[str
 	s.processSurnameIfSingleName(&name, &nameWorld, notDetectItems2)
 	s.checkAndFixUrls(websites, emails)
 	s.checkAndFixOrganization(&company, domain)
+	s.processJobByNearestName(&jobTitle, &nameWorld, notDetectItems2)
 
 	person := recognized
 	person[FIELD_EMAIL] = emails
@@ -175,62 +176,6 @@ func (s *Service) processCompanyByDomain(line string, domains []string, company 
 		return true
 	}
 	return false
-}
-
-func (s *Service) processJobTitle(line string, jobTitle *string) bool {
-	isFind, namesFind := isContainsManyWith(line, s.professions)
-	if isFind {
-		*jobTitle = line
-		for _, n := range namesFind { // вставляем пробелы, если в должности они пропущены
-			*jobTitle = InsertSpaceIfNeeded(*jobTitle, n)
-		}
-		return true
-	}
-	return false
-}
-
-func (s *Service) checkAndFixUrls(urls []string, emails []string) {
-	if len(urls) == 0 || len(emails) == 0 {
-		return
-	}
-	url := ExtractDomainAndZoneUrlFromUrl(urls[0])
-	partsEmail := strings.Split(emails[0], "@")
-	emailUrl := partsEmail[1]
-
-	diff := LevenshteinDistance(url, emailUrl)
-	if diff == 0 {
-		return
-	}
-	if diff < 3 {
-		urlOk := isSiteReachable(url)
-		if urlOk {
-			emails[0] = strings.Replace(emails[0], emailUrl, url, 1)
-		} else if isSiteReachable(emailUrl) {
-			urls[0] = strings.Replace(urls[0], url, emailUrl, 1)
-		}
-	}
-}
-
-func (s *Service) checkAndFixOrganization(org *string, domainNames []string) {
-	if len(*org) == 0 || len(domainNames) == 0 {
-		return
-	}
-	domainName := domainNames[0]
-
-	clearOrg := strings.Replace(strings.ToLower(*org), " ", "", -1)
-	clearDomainName := strings.Replace(strings.ToLower(domainName), "-", "", -1)
-	diff := LevenshteinDistance(clearOrg, clearDomainName)
-
-	if diff == 0 || diff > 3 {
-		return
-	} else {
-		*org = domainName
-	}
-
-	if diff < 3 {
-		*org = domainName
-	}
-
 }
 
 func isSiteReachable(url string) bool {
@@ -279,6 +224,7 @@ func isContainsWithSpace(s string, list []string) bool {
 
 func clearPhones(phones []string) []string {
 	for i, phone := range phones {
+		phone = RemoveSingleBrackets(phone)
 		phones[i] = strings.TrimLeftFunc(phone, func(r rune) bool {
 			return !unicode.IsDigit(r) && r != '+'
 		})

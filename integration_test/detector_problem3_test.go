@@ -27,7 +27,7 @@ func TestDetectProblem3(t *testing.T) {
 				Skype:        []string{"live:cid.639e35052e7e9fe1"},
 				Name:         "UTKUSARPER", // todo UTKU SARPER
 				Organization: "TVBET",
-				JobTitle:     "Business Development",
+				JobTitle:     "Business Development Manager",
 				Other:        "D-daryna;PayA+las/co;Uuoponnatea",
 			},
 		},
@@ -87,9 +87,10 @@ func TestDetectProblem3(t *testing.T) {
 	manage_file.ClearFolder(config.TmpFolder)
 
 	for _, tc := range testCases {
+		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 
-			//t.Parallel()
+			t.Parallel()
 
 			actual, _, err := detector.Detect(tc.imgPath)
 

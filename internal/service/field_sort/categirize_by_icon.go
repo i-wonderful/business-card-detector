@@ -22,7 +22,7 @@ func (s *Service) categorizeByIcons(recognized map[string]interface{}, data []mo
 
 	if skype == "" {
 		if isOk, box := isContainsLabel(boxes, "skype"); isOk {
-			worldSkype, index := helper.FindNearestWorld(data, box)
+			worldSkype, index := helper.FindNearestWorldToBox(data, box)
 			if index != -1 {
 				skype = worldSkype.Text
 				data = remove(data, index)
@@ -32,7 +32,7 @@ func (s *Service) categorizeByIcons(recognized map[string]interface{}, data []mo
 
 	if len(telegram) == 0 {
 		if isOk, box := isContainsLabel(boxes, "telegram"); isOk {
-			worldTelegram, index := helper.FindNearestWorld(data, box)
+			worldTelegram, index := helper.FindNearestWorldToBox(data, box)
 			if index != -1 {
 				telegram = append(telegram, worldTelegram.Text)
 				data = remove(data, index)

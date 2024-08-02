@@ -46,7 +46,7 @@ func TestDetect(t *testing.T) {
 			BASE_IMG_PATH + "/first/IMG_2913.jpg",
 			&model.Person{
 				Email:        []string{"craig@summer-creative.com"},
-				Phone:        []string{"+34711017134", "+440)2033555336"},
+				Phone:        []string{"+34711017134", "+4402033555336"},
 				Name:         "Craig Edwards",
 				Organization: "SUMMER CREATIVE",
 				JobTitle:     "Business Development Manager",
@@ -147,11 +147,10 @@ func TestDetect(t *testing.T) {
 				Name:         "Russ Yershon",
 				Email:        []string{"russell@connectingbrands.co.uk"},
 				Phone:        []string{"+44 (0)7500828120"},
-				JobTitle:     "Sports partnership and activation specialist",
+				JobTitle:     "Sports partnership and activation specialist Talent Manager to wide network of Football Legends Director",
 				Site:         []string{"Connectingbrands.co.uk"},
 				Organization: "CONNECTING", // todo CONNECTING BRANDS .co.ux
 				//Skype:        []string{"russ.yershon"}, todo
-				//Telegram:     []string{"@connectingt"},
 			},
 		},
 		//	{
@@ -325,6 +324,18 @@ func TestDetect(t *testing.T) {
 				Organization: "369",
 				JobTitle:     "Ceneral Manager", // todo General Manager
 				Other:        "CAMING;LATAN;bmomn;6p93;petinry",
+			},
+		},
+		{
+			"IMG_4374.jpg",
+			BASE_IMG_PATH + "/IMG_4374.jpg",
+			&model.Person{
+				Email:        []string{"unikolic@elbet.com"},
+				Phone:        []string{"+381114141900", "+381 60381 6063"},
+				Name:         "Uros Nikolic",
+				Organization: "elbet",
+				JobTitle:     "Sales Representative",
+				Other:        "Bulevar Mihajla Pupina 165e;Belgrade, Serbia",
 			},
 		},
 		{

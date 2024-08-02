@@ -75,7 +75,7 @@ func TestDetectProblem(t *testing.T) {
 				Phone:        []string{"+34 658777836"},
 				Name:         "Oscar Murueta",
 				Organization: "SIS",
-				JobTitle:     "",
+				JobTitle:     "Commercial Executive - Latam",
 				Other:        "Sports;Information;Services;Office;2 Whitehall Avenue;Kingston;Milton Keynes;MK10 ОАХ",
 			},
 		},
@@ -87,6 +87,7 @@ func TestDetectProblem(t *testing.T) {
 	manage_file.ClearFolder(config.TmpFolder)
 
 	for _, tc := range testCases {
+		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 
 			t.Parallel()

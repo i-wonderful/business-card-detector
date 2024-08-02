@@ -19,12 +19,14 @@ func NewBoxFromPoints(p1, p2, p3, p4 Point) Rectangle {
 	h1 := p4.Y - p1.Y
 	h2 := p3.Y - p2.Y
 	h := (h1 + h2) / 2
+	w := p2.X - p1.X
 	return Rectangle{
 		PTop1: p1,
 		PTop2: p2,
 		PBot1: p3,
 		PBot2: p4,
 		H:     h,
+		W:     w,
 	}
 }
 

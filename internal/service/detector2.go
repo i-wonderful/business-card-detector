@@ -86,7 +86,7 @@ func (d *Detector2) Detect(imgPath string) (*model.Person, string, error) {
 	boxes = boxes_card.MergeCardBoxes(boxes)
 
 	if d.isDebug {
-		log.Println("Detected: ")
+		log.Println("Detected boxes: ")
 		for _, box := range boxes {
 			log.Println(box.ToString())
 		}
@@ -116,7 +116,6 @@ func (d *Detector2) Detect(imgPath string) (*model.Person, string, error) {
 	}
 
 	// 6. sort text to person item
-	//worlds := getOnlyWorlds(detectWorlds)
 	p := d.fieldSorterService.Sort(detectWorlds, boxes)
 
 	// 6. save

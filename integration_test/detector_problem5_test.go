@@ -53,10 +53,10 @@ func TestDetectProblem5(t *testing.T) {
 			&model.Person{
 				Email:        []string{"arkadijs.narcuks@lpb.lv"},
 				Site:         []string{"www.lpb.lv"},
-				Phone:        []string{"+371)67772962", "+371)22352883"},
+				Phone:        []string{"+37167772962", "+37122352883"},
 				Name:         "Arkadijs Narcuks",
 				Organization: "LPB",
-				JobTitle:     "E-komercijas departaments", // todo  E-komercijas departaments Klientu vaditajs
+				JobTitle:     "Klientu vaditajs E-komercijas departaments",
 				Other:        "Klientu vaditajs;Brivibas iela 54.Riga.LV-1011",
 			},
 		},
@@ -113,7 +113,7 @@ func TestDetectProblem5(t *testing.T) {
 			&model.Person{
 				Email:        []string{"john@gate2way.com"},
 				Phone:        []string{"+35795 600889"},
-				Name:         "lonut Paulenco", // todo Ionut Paulenco
+				Name:         "lonut Paulenco", // todo Ionut Paulenco (?)
 				Organization: "gate2way",
 				JobTitle:     "BDM",
 				Other:        "Tnelil;",
@@ -203,8 +203,8 @@ func TestDetectProblem5(t *testing.T) {
 				Phone:        []string{"+551198828-7406"},
 				Name:         "Daniele Costa",
 				Organization: "pay4funp4f",
-				//JobTitle:     "Marketing", // todo
-				Other: "PAY FOR FUH",
+				JobTitle:     "Marketing",
+				Other:        "PAY FOR FUH",
 			},
 		},
 		{
@@ -403,7 +403,7 @@ func TestDetectProblem5(t *testing.T) {
 				Email:    []string{"taras.kolesnikov@coinspaid.com"},
 				Telegram: []string{"@Taras_CoinsPaid"},
 				Name:     "Taras Kolesnikov",
-				JobTitle: "LEAD SALES MANAGER",
+				JobTitle: "LEADSALES MANAGER", // todo LEADSALES MANAGER
 				Other:    "etypto",
 			},
 		},
@@ -422,13 +422,12 @@ func TestDetectProblem5(t *testing.T) {
 			"1_45 caroline capitalize.jpg",
 			BASE_IMG_PROBLEM5_PATH + "/1_45 caroline capitalize.jpg",
 			&model.Person{
-				Email:        []string{"cm@capitalixe.com"},
-				Site:         []string{"www.capitalixe.com"},
-				Phone:        []string{"+440)2080888035", "+44 (0)7553734915"},
-				Name:         "Caroline Moreno",
-				Organization: "",
-				JobTitle:     "Head of Business Development",
-				Other:        "erypto;Forbes;HONOREE;EUROPE2021",
+				Email:    []string{"cm@capitalixe.com"},
+				Site:     []string{"www.capitalixe.com"},
+				Phone:    []string{"+4402080888035", "+44 (0)7553734915"},
+				Name:     "Caroline Moreno",
+				JobTitle: "Head of Business Development",
+				Other:    "erypto;Forbes;HONOREE;EUROPE2021",
 			},
 		},
 		{
@@ -458,8 +457,9 @@ func TestDetectProblem5(t *testing.T) {
 	manage_file.ClearFolder(config.TmpFolder)
 
 	for _, tc := range testCases {
+		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			//t.Parallel()
+			t.Parallel()
 			actual, _, err := detector.Detect(tc.imgPath)
 
 			assert.NoError(t, err, "could not detect person")

@@ -4,14 +4,17 @@ import (
 	. "card_detector/internal/model"
 	. "card_detector/internal/service/field_sort/helper"
 	. "card_detector/internal/util/str"
-	"math"
 	"regexp"
 	"strings"
 	"unicode"
 )
 
-// processNameByExistingNames - определить имя по существующим именам
-func (s *Service) processNameByExistingNames(line string, name *string) bool {
+// processNameByKnownNames checks if the given line contains any known names and modifies the name string accordingly.
+//
+// line: the input string to check for known names.
+// name: a pointer to a string to be modified if a known name is found.
+// bool: true if a known name is found and processed, false otherwise.
+func (s *Service) processNameByKnownNames(line string, name *string) bool {
 	isFind, nameFind := IsContainsWith(line, s.names)
 	if isFind {
 		*name = InsertSpaceIfNeeded(line, nameFind)
@@ -67,55 +70,24 @@ func (s *Service) processNameByInitials(line string, mailName string, name *stri
 //
 // Parameters: name *string, item *DetectWorld, worlds []DetectWorld
 // Returns nothing.
-func (s *Service) processSurnameIfSingleName(name *string, worldName *DetectWorld, worlds []DetectWorld) {
-	if len(worlds) == 0 || *name == "" || nameIsFull(*name) {
+func (s *Service) processSurnameIfSingleName(name *string, nameBox *DetectWorld, worldBoxes []DetectWorld) {
+	if len(worldBoxes) == 0 || *name == "" || nameIsFull(*name) {
 		return
 	}
-	nearest, isAbove := findNearest(worldName, worlds)
+	nearest := FindNearestByY(nameBox, worldBoxes)
 	if nearest == nil {
 		return
 	}
+	isAbove := IsAbove(*nameBox, *nearest)
 	if isAbove {
-		*name = nearest.Text + " " + *name
-	} else {
 		*name += " " + nearest.Text
+		nameBox.Box.PBot1 = nearest.Box.PBot1
+		nameBox.Box.PBot2 = nearest.Box.PBot2
+	} else {
+		*name = nearest.Text + " " + *name
+		nameBox.Box.PTop1 = nearest.Box.PTop1
+		nameBox.Box.PTop2 = nearest.Box.PTop2
 	}
-}
-
-const distanceThreshold = 0.2
-
-func findNearest(item *DetectWorld, worlds []DetectWorld) (*DetectWorld, bool) {
-	var nearest *DetectWorld
-	minDistance := math.MaxFloat64
-	itemBottom := item.Box.PBot1.Y
-	itemTop := item.Box.PTop1.Y
-	isAbove := false
-
-	for _, world := range worlds {
-		if !IsOnlyLetters(world.Text) {
-			continue
-		}
-
-		worldTop := world.Box.PTop1.Y
-		worldBottom := world.Box.PBot1.Y
-		maxDistance := math.Max(float64(item.Box.H), float64(world.Box.H)) * distanceThreshold
-
-		distanceToTop := math.Abs(float64(itemBottom - worldTop))
-		distanceToBottom := math.Abs(float64(worldBottom - itemTop))
-
-		if (distanceToTop <= maxDistance || distanceToBottom <= maxDistance) && (distanceToTop < minDistance || distanceToBottom < minDistance) {
-			nearest = &world
-			if distanceToTop < distanceToBottom {
-				minDistance = distanceToTop
-				isAbove = false
-			} else {
-				minDistance = distanceToBottom
-				isAbove = true
-			}
-		}
-	}
-
-	return nearest, isAbove
 }
 
 func nameIsFull(val string) bool {
