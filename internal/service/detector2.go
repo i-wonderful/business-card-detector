@@ -2,6 +2,7 @@ package service
 
 import (
 	"card_detector/internal/service/box_merge"
+	manage_file "card_detector/internal/util/file"
 	"image"
 	"log"
 	"path/filepath"
@@ -121,14 +122,14 @@ func (d *Detector2) Detect(imgPath string) (*model.Person, string, error) {
 	// 6. save
 	person := model.NewPerson(p)
 
-	boxesPath := img.DrawTextAndItemsBoxes(im2, detectWorlds, boxes, d.storageFolder)
+	boxesPath := imgPath //img.DrawTextAndItemsBoxes(im2, detectWorlds, boxes, d.storageFolder)
 	card := mapCard(*person, boxesPath, "", filepath.Base(imgPath))
 	if err := d.cardRepo.Save(card); err != nil {
 		log.Println("Error saving card:", err)
 	}
 
-	//manage_file.ClearFolder(d.storageFolder)
-	//manage_file.ClearFolder(d.tmpFolder)
+	manage_file.ClearFolder(d.storageFolder)
+	manage_file.ClearFolder(d.tmpFolder)
 
 	return person, boxesPath, nil
 }
