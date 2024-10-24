@@ -17,11 +17,13 @@ import (
 
 type FindTextService struct {
 	apiUrl string
+	log    *log.Logger
 }
 
 func NewFindTextService() *FindTextService {
 	return &FindTextService{
 		apiUrl: os.Getenv("API_URL"), // todo
+		log:    log.Default(),
 	}
 }
 func (s *FindTextService) PredictTextCoord(pathImg string) ([]model2.TextArea, error) {

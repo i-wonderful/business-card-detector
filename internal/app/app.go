@@ -1,6 +1,14 @@
 package app
 
 import (
+	"context"
+	"fmt"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
 	"card_detector/internal/controller/http/router"
 	"card_detector/internal/repo/inmemory"
 	"card_detector/internal/service"
@@ -9,56 +17,55 @@ import (
 	shistory "card_detector/internal/service/history"
 	"card_detector/internal/service/img_prepare"
 	"card_detector/internal/service/text_recognize/paddleocr"
-	"context"
-	"fmt"
-	"log"
-	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
+
+	"card_detector/pkg/log"
 )
 
-type app2 struct {
+type app struct {
 	config *Config
 }
 
-func NewApp2(config *Config) *app2 {
-	return &app2{
+func NewApp2(config *Config) *app {
+	return &app{
 		config: config,
 	}
 }
 
-func (a *app2) Run() error {
+func (a *app) Run() error {
+
+	logger, err := log.NewLogger("app", a.config.Log.Level, false)
 
 	// repo
 	cardRepo := inmemory.NewCardRepo()
 
 	// service
-	imgPreparer := img_prepare.NewService(a.config.StorageFolder, a.config.TmpFolder)
+	imgPreparer := img_prepare.NewService(a.config.StorageFolder, a.config.TmpFolder, logger)
 
 	isLogTime := a.config.Log.Time
 	textRecognizer, err := paddleocr.NewService(isLogTime,
 		a.config.Paddleocr.RunPath,
 		a.config.Paddleocr.DetPath,
 		a.config.Paddleocr.RecPath,
-		a.config.TmpFolder)
+		a.config.TmpFolder,
+		logger)
 	if err != nil {
-		log.Fatal("text recognizer creation error", err)
+		logger.Fatal("text recognizer creation error", err)
 	}
 	cardDetector, err := onnx.NewService(
 		a.config.Onnx.PathRuntime,
 		a.config.Onnx.PathModel,
-		isLogTime)
+		isLogTime,
+		logger)
 	if err != nil {
-		log.Fatal("card detector creation error", err)
+		logger.Fatal("card detector creation error", err)
 	}
 
 	fieldSorter := field_sort.NewService(
 		a.config.PathProfessionList,
 		a.config.PathCompanyList,
 		a.config.PathNamesList,
-		isLogTime)
+		isLogTime,
+		logger)
 	getterService := shistory.NewService(cardRepo)
 
 	// detector
@@ -71,10 +78,10 @@ func (a *app2) Run() error {
 		a.config.StorageFolder,
 		a.config.TmpFolder,
 		isLogTime,
-		a.config.IsDebug)
+		logger)
 
 	// handlers
-	h := router.NewRouter(detectService, getterService, a.config.TmpFolder, a.config.Version)
+	h := router.NewRouter(detectService, getterService, a.config.TmpFolder, a.config.Version, logger)
 
 	// start server
 	srv := &http.Server{
@@ -82,10 +89,10 @@ func (a *app2) Run() error {
 		Handler: h,
 	}
 	go func() {
-		log.Println("Starting app:", a.config.Name, a.config.Version)
-		log.Println("Listening on port", a.config.Port)
+		logger.Info(fmt.Sprintf("Starting app: %s version: %s", a.config.Name, a.config.Version))
+		logger.Info(fmt.Sprintf("Listening on port: %d", a.config.Port))
 		if err := srv.ListenAndServe(); err != http.ErrServerClosed {
-			log.Fatalf("ListenAndServe(): %v", err)
+			logger.Fatal("ListenAndServe()", err)
 		}
 	}()
 
@@ -102,11 +109,11 @@ func (a *app2) Run() error {
 	defer cancel()
 
 	// Doesn't block if no connections, but will otherwise wait until the timeout deadline.
-	log.Printf("Shutting down server...")
+	logger.Info("Shutting down server...")
 	if err := srv.Shutdown(ctx); err != nil {
-		log.Fatalf("Server Shutdown: %v", err)
+		logger.Fatal("Server Shutdown", err)
 	}
 
-	log.Printf("Server gracefully stopped")
+	logger.Info("Server gracefully stopped")
 	return nil
 }

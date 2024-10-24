@@ -1,11 +1,12 @@
 package history
 
 import (
-	"card_detector/internal/model"
 	"html/template"
-	"log"
 	"net/http"
 	"time"
+
+	"card_detector/internal/model"
+	"card_detector/pkg/log"
 )
 
 type Getter interface {
@@ -14,11 +15,13 @@ type Getter interface {
 
 type Handler struct {
 	getter Getter
+	log    *log.Logger
 }
 
-func NewHandler(getter Getter) *Handler {
+func NewHandler(getter Getter, log *log.Logger) *Handler {
 	return &Handler{
 		getter: getter,
+		log:    log,
 	}
 }
 
@@ -31,7 +34,7 @@ func (h *Handler) Handle(w http.ResponseWriter, r *http.Request) {
 		Funcs(funcMap).
 		ParseFiles("./template/history.html")
 	if err != nil {
-		log.Println(err)
+		h.log.Error("Error parse template history", err)
 	}
 
 	cards := h.getter.GetAll()
@@ -40,7 +43,7 @@ func (h *Handler) Handle(w http.ResponseWriter, r *http.Request) {
 	// Генерируем вывод на основе шаблона и данных
 	err = tmpl.Execute(w, cards)
 	if err != nil {
-		log.Println(err)
+		h.log.Error("Error execute template history", err)
 	}
 }
 

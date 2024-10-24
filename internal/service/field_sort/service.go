@@ -1,16 +1,17 @@
 package field_sort
 
 import (
-	"card_detector/internal/model"
-	. "card_detector/internal/service/field_sort/helper"
-	manage_file "card_detector/internal/util/file"
-	manage_str "card_detector/internal/util/str"
-	"log"
 	"net/http"
 	"sort"
 	"strings"
 	"time"
 	"unicode"
+
+	"card_detector/internal/model"
+	. "card_detector/internal/service/field_sort/helper"
+	manage_file "card_detector/internal/util/file"
+	manage_str "card_detector/internal/util/str"
+	"card_detector/pkg/log"
 )
 
 type Service struct {
@@ -18,14 +19,16 @@ type Service struct {
 	companies   []string
 	names       []string
 	isLogTime   bool
+	log         *log.Logger
 }
 
-func NewService(pathProfessions, pathCompanies, pathNames string, isLogTime bool) *Service {
+func NewService(pathProfessions, pathCompanies, pathNames string, isLogTime bool, logger *log.Logger) *Service {
 	return &Service{
 		professions: manage_file.ReadFile(pathProfessions),
 		companies:   manage_file.ReadFile(pathCompanies),
 		names:       manage_file.ReadFile(pathNames),
 		isLogTime:   isLogTime,
+		log:         logger,
 	}
 }
 
@@ -33,7 +36,7 @@ func (s *Service) Sort(data []model.DetectWorld, boxes []model.TextArea) map[str
 	if s.isLogTime {
 		start := time.Now()
 		defer func() {
-			log.Printf(">>> Time sort fields: %s", time.Since(start))
+			s.log.Info1(">>> Time sort fields: ", "ms", time.Since(start))
 		}()
 	}
 

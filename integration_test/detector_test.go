@@ -10,8 +10,9 @@ import (
 	"card_detector/internal/service/img_prepare"
 	"card_detector/internal/service/text_recognize/paddleocr"
 	manage_file "card_detector/internal/util/file"
+	"card_detector/pkg/log"
 	"github.com/stretchr/testify/assert"
-	"log"
+
 	"os"
 	"strings"
 	"testing"
@@ -473,26 +474,28 @@ func createDetector2(t *testing.T) (*service.Detector2, *app.Config) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
+	logger, _ := log.NewLogger("app test", "debug", false)
 	cardRepo := inmemory.NewCardRepo()
-	imgPreparer := img_prepare.NewService(config.StorageFolder, config.TmpFolder)
+	imgPreparer := img_prepare.NewService(config.StorageFolder, config.TmpFolder, logger)
 
 	textRecognizer, err := paddleocr.NewService(isLogTime,
 		config.Paddleocr.RunPath,
 		config.Paddleocr.DetPath,
 		config.Paddleocr.RecPath,
-		config.TmpFolder)
+		config.TmpFolder,
+		logger)
 	if err != nil {
 		t.Fatal(err)
 	}
 	cardDetector, err := onnx.NewService(
 		config.Onnx.PathRuntime,
 		config.Onnx.PathModel,
-		isLogTime)
+		isLogTime,
+		logger)
 	if err != nil {
-		log.Fatal("card detector creation error", err)
+		t.Fatal("card detector creation error", err)
 	}
-	fieldSorter := field_sort.NewService(config.PathProfessionList, config.PathCompanyList, config.PathNamesList, isLogTime)
+	fieldSorter := field_sort.NewService(config.PathProfessionList, config.PathCompanyList, config.PathNamesList, isLogTime, logger)
 
 	// detector
 	testDetector := service.NewDetector2(
@@ -504,7 +507,7 @@ func createDetector2(t *testing.T) (*service.Detector2, *app.Config) {
 		config.StorageFolder,
 		config.TmpFolder,
 		isLogTime,
-		config.IsDebug)
+		logger)
 
 	return testDetector, config
 }

@@ -1,10 +1,38 @@
 package service
 
 import (
-	"card_detector/internal/model"
+	"card_detector/internal/service/box_merge"
+	manage_file "card_detector/internal/util/file"
+	"fmt"
 	"image"
+	"path/filepath"
 	"time"
+
+	"card_detector/internal/model"
+	boxes_card "card_detector/internal/util/boxes"
+	"card_detector/internal/util/img"
+	"card_detector/pkg/log"
 )
+
+type ImgPreparer interface {
+	Rotage(imgPath string) (image.Image, string, error)
+	CropCard(img image.Image, boxes []model.TextArea) image.Image
+	ResizeAndSaveForPaddle(im *image.Image, boxes []model.TextArea) (image.Image, string, error)
+	FillIcons(im image.Image, boxes []model.TextArea) image.Image
+}
+
+type RecognizerFull interface {
+	RecognizeImg(img *image.Image) ([]model.DetectWorld, error)
+	RecognizeImgByPath(pathImg string) ([]model.DetectWorld, error)
+}
+
+type CardDetector interface {
+	Detect(img image.Image) ([]model.TextArea, error)
+}
+
+type FieldSorter interface {
+	Sort(data []model.DetectWorld, boxes []model.TextArea) map[string]interface{}
+}
 
 type (
 	TextFinder interface {
@@ -22,134 +50,102 @@ type (
 	}
 )
 
-type Detector struct {
+type Detector2 struct {
 	imgPreparer          ImgPreparer
-	textRecognizeService TextRecognizer
-	findTextService      TextFinder
+	textRecognizeService RecognizerFull
+	cardDetector         CardDetector
 	fieldSorterService   FieldSorter
 	cardRepo             CardRepo
 	storageFolder        string
 	tmpFolder            string
 	isLogTime            bool
-	isDebug              bool
+	logger               *log.Logger
 }
 
-func NewDetector(
+func NewDetector2(
 	imgPreparer ImgPreparer,
-	textFindService TextFinder,
-	textRecognizeService TextRecognizer,
+	textRecognizeService RecognizerFull,
+	cardDetector CardDetector,
 	fieldSortService FieldSorter,
 	cardRepo CardRepo,
 	storageFolder string,
 	tmpFolder string,
-	isLogTime bool) *Detector {
-	return &Detector{
+	isLogTime bool,
+	logger *log.Logger) *Detector2 {
+	return &Detector2{
 		imgPreparer:          imgPreparer,
 		textRecognizeService: textRecognizeService,
-		findTextService:      textFindService,
+		cardDetector:         cardDetector,
 		fieldSorterService:   fieldSortService,
 		cardRepo:             cardRepo,
 		storageFolder:        storageFolder,
 		tmpFolder:            tmpFolder,
 		isLogTime:            isLogTime,
-		isDebug:              false,
+		logger:               logger,
 	}
 }
 
-func (d *Detector) Detect(imgPath string) (*model.Person, error) {
-	//if d.isLogTime {
-	//	start := time.Now()
-	//	defer func() {
-	//		log.Printf(">>> Time full detection: %s", time.Since(start))
-	//	}()
-	//}
-	//
-	//// ----------------------
-	//file, err := os.Open(imgPath)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//defer file.Close()
-	//// ----------------------
-	//
-	//// 1. Rotage image for text recognition
-	//_, currentFilePath := d.imgPreparer.Rotage(file)
-	//
-	//// 2. Find text area fields
-	//currentImg, _ := OpenImg(currentFilePath) // OpenJPEGAsNRGBA(currentFilePath) //
-	//fmt.Println("type current from file:", reflect.TypeOf(currentImg))
-	//
-	//coords, err := d.findTextService.PredictTextCoord(currentImg)
-	//if err != nil {
-	//	fmt.Println("Error getting prediction:", err)
-	//	return nil, err
-	//}
-	//
-	//// 2.1 Merge overlapping text areas
-	//coords = rectangle.MergeOverlappingRectangles(coords)
-	//
-	//// 3. Create subimages with text area
-	//var imagesWithText [][]byte
-	//var paths []string
-	//for i, coord := range coords {
-	//	subImage := GetSubImage(currentImg, coord.X, coord.Y, coord.Width, coord.Height)
-	//	subImage, _ = ToTiff(subImage)
-	//
-	//	//fmt.Println("type subImage:", reflect.TypeOf(subImage))
-	//	//subImage = BinarizeImage(subImage, 128)
-	//	//if reflect.TypeOf(subImage) == reflect.TypeOf(&image.YCbCr{}) {
-	//	//	subImage = YCbCrToRGBA(subImage.(*image.YCbCr))
-	//	//}
-	//
-	//	// увеличить контраст
-	//	subImage = imaging.AdjustContrast(subImage, 20)
-	//	//fmt.Println("type subImage:", reflect.TypeOf(subImage))
-	//	// резкость (???)
-	//	subImage = imaging.Sharpen(subImage, 0.36)
-	//	// светлость
-	//	subImage = imaging.AdjustGamma(subImage, 1.6)
-	//
-	//	//subImage = imaging.AdjustBrightness(subImage, -10)
-	//
-	//	subImageBytes, _ := ToTiffBytes(subImage)
-	//	if d.isDebug {
-	//		//SaveImg("./tmp/"+fmt.Sprintf("subimage%d.jpg", i), subImageBytes)
-	//		path := "./tmp/" + fmt.Sprintf("subimage%d.tiff", i)
-	//		SaveTiff(subImage, path)
-	//		paths = append(paths, path)
-	//	}
-	//	imagesWithText = append(imagesWithText, subImageBytes)
-	//}
-	//
-	//// 4. Recognize text
-	////worlds, err := d.textRecognizeService.RecognizeByPath(paths)
-	//d.textRecognizeService.DetectLang(currentFilePath)
-	//worlds, err := d.textRecognizeService.RecognizeBatch(imagesWithText)
-	//if d.isDebug {
-	//	log.Println("Recognized:")
-	//	for _, world := range worlds {
-	//		log.Println(world)
-	//	}
-	//}
-	//if err != nil {
-	//	return nil, err
-	//}
-	//
-	//// 5. Process text
-	//worlds = manage_str2.RemoveSubstrings(worlds)
+func (d *Detector2) Detect(imgPath string) (*model.Person, string, error) {
+	if d.isLogTime {
+		start := time.Now()
+		defer func() {
+			d.logger.Info(fmt.Sprintf("Time full detection: %s", time.Since(start)))
+		}()
+	}
+	// 1. возможный поворот
+	im, imgPath, err := d.imgPreparer.Rotage(imgPath)
+	if err != nil {
+		return nil, "", err
+	}
+	// 2. find card items
+	boxes, err := d.cardDetector.Detect(im)
+	if err != nil {
+		return nil, "", err
+	}
+	boxes = boxes_card.MergeCardBoxes(boxes)
 
-	//p := d.fieldSorterService.Sort(worlds)
-	//person := model.NewPerson(p)
+	d.logger.Debug("Detected boxes: ")
+	for _, box := range boxes {
+		d.logger.Debug(box.ToString())
+	}
 
-	//manage_file.ClearFolder(d.tmpFolder)
-	//manage_file.ClearFolder(d.storageFolder)
+	im2, _ := img.OpenImg(imgPath)
+	// 3. Prepare image for recognize text: crop card and resize to optimal square for paddle
+	im2 = d.imgPreparer.CropCard(im2, boxes)
+	boxes, _ = d.cardDetector.Detect(im2)
+	im2 = d.imgPreparer.FillIcons(im2, boxes)
+	im2, absPath, _ := d.imgPreparer.ResizeAndSaveForPaddle(&im2, boxes)
 
-	//card := mapCard(*person, "", "", "")
-	//if err := d.cardRepo.Save(card); err != nil {
-	//	fmt.Println("Error saving card:", err)
-	//}
-	//return person, nil
-	return nil, nil
+	// 4. recognize text
+	detectWorlds, err := d.textRecognizeService.RecognizeImgByPath(absPath)
+	if err != nil {
+		return nil, "", err
+	}
+
+	// 5. merge text blocks
+	detectWorlds = box_merge.MergeBoxesVertical(detectWorlds)
+
+	d.logger.Debug("Recognized worlds: ")
+	for _, world := range detectWorlds {
+		d.logger.Debug(world.Text)
+	}
+
+	// 6. sort text to person item
+	p := d.fieldSorterService.Sort(detectWorlds, boxes)
+
+	// 6. save
+	person := model.NewPerson(p)
+
+	boxesPath := imgPath //img.DrawTextAndItemsBoxes(im2, detectWorlds, boxes, d.storageFolder)
+	card := mapCard(*person, boxesPath, "", filepath.Base(imgPath))
+	if err := d.cardRepo.Save(card); err != nil {
+		d.logger.Error("Error saving card:", err)
+	}
+
+	manage_file.ClearFolder(d.storageFolder)
+	manage_file.ClearFolder(d.tmpFolder)
+
+	return person, boxesPath, nil
 }
 
 func mapCard(p model.Person, photoUrl, logoUrl, originalName string) model.Card {

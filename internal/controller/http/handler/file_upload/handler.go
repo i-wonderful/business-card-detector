@@ -1,14 +1,15 @@
 package file_upload
 
 import (
-	"card_detector/internal/model"
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"time"
+
+	"card_detector/internal/model"
+	"card_detector/pkg/log"
 )
 
 type Detector interface {
@@ -19,9 +20,10 @@ type FileUploadHandler struct {
 	name       string
 	detector   Detector
 	dirTmpPath string
+	log        *log.Logger
 }
 
-func NewFileUploadHandler(detector Detector, dirTmpPath string) *FileUploadHandler {
+func NewFileUploadHandler(detector Detector, dirTmpPath string, log *log.Logger) *FileUploadHandler {
 	return &FileUploadHandler{
 		name:       "FileUploadHandler",
 		detector:   detector,
@@ -46,7 +48,7 @@ func (h *FileUploadHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	file, handler, err := r.FormFile("image")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		log.Println(err)
+		h.log.Error("Error get file", err)
 		return
 	}
 	defer file.Close()

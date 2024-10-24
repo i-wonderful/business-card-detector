@@ -18,3 +18,5 @@ curl --location 'localhost:8080/detect' \
 - ver1. onnx распознасание границ текста + tesseract recognition
 - ver2. переход на paddleocr
 - ver3. добавлена модель определения границ карточки и итемов внутри нее.
+
+3.1.1 Добавлен логгер zap

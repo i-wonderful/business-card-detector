@@ -5,13 +5,13 @@ import (
 	"github.com/nfnt/resize"
 	ort "github.com/yalue/onnxruntime_go"
 	"image"
-	"log"
 	"math"
 	"sort"
 	"time"
 
 	"card_detector/internal/model"
 	manage_file "card_detector/internal/util/file"
+	"card_detector/pkg/log"
 )
 
 const IMG_SIZE = 640
@@ -33,9 +33,10 @@ type CardDetectService struct {
 	pathToOnnxRuntime string
 	pathToModel       string
 	isLogTime         bool
+	logger            *log.Logger
 }
 
-func NewService(pathToOnnxRuntime string, pathToModel string, isLogTime bool) (*CardDetectService, error) {
+func NewService(pathToOnnxRuntime string, pathToModel string, isLogTime bool, logger *log.Logger) (*CardDetectService, error) {
 	if manage_file.FileExists(pathToOnnxRuntime) == false {
 		return nil, fmt.Errorf("file onnxruntime not found: %s", pathToOnnxRuntime)
 	}
@@ -54,6 +55,7 @@ func NewService(pathToOnnxRuntime string, pathToModel string, isLogTime bool) (*
 		pathToOnnxRuntime: pathToOnnxRuntime,
 		pathToModel:       pathToModel,
 		isLogTime:         isLogTime,
+		logger:            logger,
 	}, nil
 }
 
@@ -61,11 +63,15 @@ func (s *CardDetectService) Detect(img image.Image) ([]model.TextArea, error) {
 	if s.isLogTime {
 		start := time.Now()
 		defer func() {
-			log.Printf(">>> Time onnx: %s", time.Since(start))
+			s.logger.Debug(fmt.Sprintf(">>> Time onnx: %s", time.Since(start)))
 		}()
 	}
 
-	rawPrediction := detect_objects_on_image(s.pathToModel, img)
+	rawPrediction, err := detect_objects_on_image(s.pathToModel, img)
+	if err != nil {
+		s.logger.Error("Onnx error: ", err)
+		return nil, err
+	}
 
 	result := []model.TextArea{}
 	for _, p := range rawPrediction {
@@ -86,10 +92,13 @@ func (s *CardDetectService) Detect(img image.Image) ([]model.TextArea, error) {
 }
 
 // Returns Array of bounding boxes in format [[x1,y1,x2,y2,object_type,probability],..]
-func detect_objects_on_image(pathModel string, img image.Image) []box {
+func detect_objects_on_image(pathModel string, img image.Image) ([]box, error) {
 	input, img_width, img_height := prepare_input(img)
-	output := runModel(pathModel, input)
-	return process_output(output, img_width, img_height)
+	output, err := runModel(pathModel, input)
+	if err != nil {
+		return nil, err
+	}
+	return process_output(output, img_width, img_height), nil
 }
 
 //	the ONNX library for Go, requires you to provide tensor RGB as a flat array,
@@ -137,7 +146,7 @@ func prepare_input(src image.Image) ([]float32, int64, int64) {
 
 }
 
-func runModel(pathToModel string, input []float32) []float32 {
+func runModel(pathToModel string, input []float32) ([]float32, error) {
 
 	inputShape := ort.NewShape(1, 3, IMG_SIZE, IMG_SIZE)
 	inputTensor, _ := ort.NewTensor(inputShape, input)
@@ -151,9 +160,9 @@ func runModel(pathToModel string, input []float32) []float32 {
 
 	err := model.Run()
 	if err != nil {
-		log.Println(err)
+		return nil, err
 	}
-	return outputTensor.GetData()
+	return outputTensor.GetData(), nil
 }
 
 // Returns Array of bounding boxes in format [[x1,y1,x2,y2,object_type,probability],..]

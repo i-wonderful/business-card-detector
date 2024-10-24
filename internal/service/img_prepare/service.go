@@ -1,19 +1,21 @@
 package img_prepare
 
 import (
-	"card_detector/internal/service/detect/onnx"
-	manage_file "card_detector/internal/util/file"
-	"github.com/disintegration/imaging"
+	"fmt"
 	"image"
-	"log"
 	"os"
 	"path/filepath"
 
-	"card_detector/internal/model"
-	boxes_util "card_detector/internal/util/boxes"
-	"card_detector/internal/util/img"
-	aa_imaging "github.com/aaronland/go-image/imaging"
+	"github.com/disintegration/imaging"
 	"github.com/rwcarlsen/goexif/exif"
+
+	"card_detector/internal/model"
+	"card_detector/internal/service/detect/onnx"
+	boxes_util "card_detector/internal/util/boxes"
+	manage_file "card_detector/internal/util/file"
+	"card_detector/internal/util/img"
+	"card_detector/pkg/log"
+	aa_imaging "github.com/aaronland/go-image/imaging"
 )
 
 // ------------------------
@@ -25,12 +27,14 @@ const ORIENTATION_NONE = "1"
 type Service struct {
 	storageFolder string
 	tmpFolder     string
+	log           *log.Logger
 }
 
-func NewService(storageFolder string, tmpFolder string) *Service {
+func NewService(storageFolder string, tmpFolder string, logger *log.Logger) *Service {
 	return &Service{
 		storageFolder: storageFolder,
 		tmpFolder:     tmpFolder,
+		log:           logger,
 	}
 }
 
@@ -47,7 +51,7 @@ func (s *Service) Rotage(imgPath string) (image.Image, string, error) {
 
 	im, format, err := image.Decode(imgFile)
 	if err != nil {
-		log.Printf("Error decoding image: %v", err)
+		s.log.Error("Error decoding image: %v", err)
 		return nil, "", err
 	}
 
@@ -94,7 +98,7 @@ func (s *Service) CropCard(im image.Image, boxes []model.TextArea) image.Image {
 			if box.IsSquare() {
 				im, offsetX, offsetY := img.CutSquareFromCenter(im)
 				boxes_util.Transpose(boxes, offsetX, offsetY)
-				log.Printf("Cropped center square: %dx%d", im.Bounds().Max.X, im.Bounds().Max.Y)
+				s.logDebug("Cropped center square", im.Bounds())
 				return im
 			}
 
@@ -112,7 +116,7 @@ func (s *Service) CropCard(im image.Image, boxes []model.TextArea) image.Image {
 			subImg, offsetX, offsetY := img.CropSquare(im, x, y, w, h)
 			boxes_util.Transpose(boxes, offsetX, offsetY)
 
-			log.Printf("Cropped card: %dx%d", subImg.Bounds().Max.X, subImg.Bounds().Max.Y)
+			s.logDebug("Cropped card", subImg.Bounds())
 			return subImg
 		}
 	}
@@ -134,10 +138,11 @@ func (s *Service) ResizeAndSaveForPaddle(im *image.Image, boxes []model.TextArea
 	oldHeight := (*im).Bounds().Max.Y
 	resized := img.ResizeImageByHeight(*im, paddleSize)
 
-	log.Printf("Resized To H = %dx%d", resized.Bounds().Max.X, resized.Bounds().Max.Y)
+	s.logDebug("Resized To H", resized.Bounds())
 
 	resized = img.ResizeImage(resized, paddleSize) // ?? растянуть до нужного размера
-	log.Printf("Scaled = %dx%d", resized.Bounds().Max.X, resized.Bounds().Max.Y)
+
+	s.logDebug("Scaled", resized.Bounds())
 	// светлость
 	resized = imaging.AdjustGamma(resized, 1.6)
 	// яркость
@@ -176,6 +181,11 @@ func (s *Service) ResizeAndSaveForPaddle(im *image.Image, boxes []model.TextArea
 
 	return resized, absPath, nil
 }
+func (s *Service) logDebug(m string, r image.Rectangle) {
+	s.log.Debug(m,
+		log.Field{Key: "x", Value: r.Max.X},
+		log.Field{Key: "y", Value: r.Max.Y})
+}
 
 // RotateImageWithOrientation will rotate 'im' based on EXIF orientation value defined in 'orientation'.
 func RotateImageWithOrientation(im image.Image, orientation string) (image.Image, error) {
@@ -213,12 +223,11 @@ func getOrientation(imgFile *os.File) string {
 
 	_, err = imgFile.Seek(0, 0) // Устанавливаем курсор в начало файла
 	if err != nil {
-		log.Printf("Error resetting file cursor: %v", err)
+		fmt.Printf("Error resetting file cursor: %v", err)
 	}
 
 	orientation, err := metaData.Get(exif.Orientation)
 	if err != nil {
-		//log.Printf("Error getting orientation: %v", err)
 		return ORIENTATION_NONE
 	} else {
 		return orientation.String()

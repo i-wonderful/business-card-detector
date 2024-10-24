@@ -1,17 +1,18 @@
 package paddleocr
 
 import (
-	"card_detector/internal/model"
-	manage_file "card_detector/internal/util/file"
-	"card_detector/internal/util/img"
 	"fmt"
 	"image"
-	"log"
 	"os/exec"
 	"path/filepath"
 	"regexp"
 	"strconv"
 	"time"
+
+	"card_detector/internal/model"
+	manage_file "card_detector/internal/util/file"
+	"card_detector/internal/util/img"
+	"card_detector/pkg/log"
 )
 
 const MIN_WORD_LEN = 3
@@ -23,9 +24,10 @@ type TextRecognizeService struct {
 	pathPython  string
 	isLog       bool
 	pathTmp     string
+	log         *log.Logger
 }
 
-func NewService(isLog bool, pathToRun, pathDetOnnx, pathRecOnnx, pathTmp string) (*TextRecognizeService, error) {
+func NewService(isLog bool, pathToRun, pathDetOnnx, pathRecOnnx, pathTmp string, log *log.Logger) (*TextRecognizeService, error) {
 	if !manage_file.FileExists(pathToRun) {
 		return nil, fmt.Errorf("file not found: %s", pathToRun)
 	}
@@ -45,6 +47,7 @@ func NewService(isLog bool, pathToRun, pathDetOnnx, pathRecOnnx, pathTmp string)
 		pathPython:  "python",    // "python"
 		pathTmp:     pathTmp,
 		isLog:       isLog,
+		log:         log,
 	}, nil
 }
 
@@ -55,7 +58,7 @@ func (s *TextRecognizeService) RecognizeImg(im *image.Image) ([]model.DetectWorl
 	if s.isLog {
 		start := time.Now()
 		defer func() {
-			log.Printf(">>> Time paddle recognize: %s", time.Since(start))
+			s.log.Info1(">>> Time paddle recognize", "ms", time.Since(start))
 		}()
 	}
 
@@ -71,7 +74,7 @@ func (s *TextRecognizeService) RecognizeImgByPath(pathImg string) ([]model.Detec
 	if s.isLog {
 		start := time.Now()
 		defer func() {
-			log.Printf(">>> Time paddle recognize: %s", time.Since(start))
+			s.log.Info1(">>> Time paddle recognize", "ms", time.Since(start))
 		}()
 	}
 
@@ -79,7 +82,7 @@ func (s *TextRecognizeService) RecognizeImgByPath(pathImg string) ([]model.Detec
 
 	output, err := cmd.Output()
 	if err != nil {
-		log.Printf("Error : %v", err)
+		s.log.Error("Error recognize paddle", err)
 		return nil, err
 	}
 
